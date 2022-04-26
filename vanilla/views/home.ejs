@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+            margin: 0%;
+            height: 100vh;
+            /* display: flex; */
+            position: relative;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        /* header */
+        header {
+            height: 10%;
+            background: rgb(34, 206, 106);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0% 2rem;
+        }
+
+        #something {
+            width: 100%;
+
+        }
+
+        #searchbar {
+            height: 60%;
+            width: 40%;
+            background: white;
+            border-radius: .5rem;
+            border: none;
+            width: 100%;
+        }
+
+        .account {
+            width: 100%;
+            display: flex;
+            justify-content: end;
+            align-items: center;
+            gap: .4rem;
+        }
+
+        .accountImg {
+            display: inline;
+            height: 3rem;
+            width: 3rem;
+            background: url("./anders-jilden-Sc5RKXLBjGg-unsplash.jpg");
+            background-size: cover;
+            border-radius: 50%;
+        }
+
+        /* main filter */
+        #mainFilter {
+            height: 10vh;
+            background: rgb(155, 255, 185);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .selected {
+            background: rgb(66, 196, 105);
+            /* background: ; */
+        }
+
+        #conts {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+        }
+
+        /* sub filter */
+        #subFilter {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            gap: 2rem;
+
+            height: 100%;
+
+            background: rgb(155, 255, 185);
+            flex-grow: .3;
+        }
+
+        /* cont */
+        #cont {
+            height: 100%;
+            background: rgb(190, 255, 210);
+            flex-grow: 2;
+        }
+
+        #relatedAccounts {
+            height: 100%;
+            flex-grow: .8;
+            background: rgb(114, 219, 146);
+        }
+
+        /* related accounts */
+
+
+        /* footer */
+        footer {
+            height: 20vh;
+            width: 100%;
+            background: hsl(145, 74%, 29%);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- header -->
+    <header>
+        <div id="something">something</div>
+        <input type="text" id="searchbar"></input>
+        <div class="account">
+            <h4>accountName</h4>
+            <div class="accountImg"></div>
+        </div>
+    </header>
+    <div id="mainFilter">
+        <button>prop1; time</button>
+        <select>
+            <option value="">prop2; location</option>
+        </select>
+        <button>prop3; camp type</button>
+        <button>prop4; skill</button>
+        <button>prop5; knowledge</button>
+        <button>prop6; tools</button>
+    </div>
+
+    <div id="conts">
+        <div id="subFilter">
+            <button>sub-prop1</button>
+            <button>sub-prop2</button>
+            <button>sub-prop3</button>
+            <button>sub-prop4</button>
+        </div>
+        <div id="cont">
+
+            <div class="post-pro">
+                <div class="post-head">
+                    <div class="post-head-acc">
+                        <div class="post-head-acc-av"></div>
+                        <h3 class="post-head-acc-name"></h3>
+                    </div>
+                    <h3 class="post-head-date"></h3>
+                </div>
+                <div class="post-currentCase">
+                    <div class="post-currentCase-imgs"></div>
+                    <div class="post-currentCase-info"></div>
+                </div>
+                <div class="post-whatToDo">
+                    <div class="post-whatToDo-imgs"></div>
+                    <div class="post-whatToDo-info"></div>
+                    <div class="post-whatToDo-tags">
+                        <div class="post-whatToDo-tags-time"></div>
+                        <div class="post-whatToDo-tags-location"></div>
+                        <div class="post-whatToDo-tags-campType"></div>
+                        <div class="post-whatToDo-tags-prototype"></div>
+                    </div>
+                </div>
+                <div class="post-requirements">
+                    <div class="post-requirements-skillTags"></div>
+                    <div class="post-requirements-knowledgeTags"></div>
+                    <div class="post-requirements-toolsAndMaterials">
+                        <h3 class="donation"></h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="relatedAccounts">
+
+        </div>
+    </div>
+
+
+    <!-- footer -->
+    <footer>
+
+        <!-- implementing ejs (react alt) -->
+        <!-- <% container.forEach((e)=>{ %>
+        <li> <%= e %> </li>
+        <% }) %> -->
+
+    </footer>
+
+    <script src="./home.js">
+        ////// dom elements
+
+
+        ////// data containers
+
+        ////// getting data 
+    </script>
+
+</body>
+
+</html>
