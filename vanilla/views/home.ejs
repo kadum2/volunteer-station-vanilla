@@ -290,6 +290,7 @@
     <script>
         ////// dom elements
         let auth = document.querySelector("#auth")
+        let relatedAccounts = document.querySelector("#relatedAccounts")
 
         let registerEm = document.querySelector("#register-em")
         let registerPw = document.querySelector("#register-pw")
@@ -313,7 +314,7 @@
 
         ///account and auth stuff; 
         ///user register
-        userRegisterBtn.addEventListener("click", () => {
+        userRegisterBtn.addEventListener("click", async () => {
 
             console.log(registerEm.value)
 
@@ -322,20 +323,29 @@
                     em: registerEm.value,
                     pw: registerPw.value
                 }
-                fetch("/regUser", {
+                let d = await fetch("/regUser", {
                     method: "POST",
                     headers: {
                         "content-type": "application/json"
                     },
                     body: JSON.stringify(newUser)
-
                 })
+
+                let pd = await d.json()
+                console.log(pd)
+
+
                 registerEm.value = ""
                 registerPw.value = ""
             }
-
         })
 
+
+        function clearAccountPs() {
+            relatedAccounts.innerHTML = ""
+
+
+        }
 
 
 

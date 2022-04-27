@@ -5,6 +5,7 @@ const app = express()
 const path = require("path");
 const { env } = require("process");
 require("dotenv").config()
+let bcrypt = require("bcrypt")
 
 /////config
 app.use(express.json())
@@ -33,31 +34,98 @@ app.get("/profile", (req, res)=>{
 
 
 
-////registering routes
-app.post("/regUser", (req, res)=>{
+////registering routes;
+// app.post("/regUser", (req, res)=>{
+//     console.log(".....post regUser........")
+//     console.log(req.body)
+
+//     ////call mongodb
+//     mongodb.connect(process.env.MONGOKEY, async (err, client)=>{
+//         let dbb = client.db()
+
+//         let dbusers = await dbb.collection("users").find({}).toArray()
+//         console.log(dbusers)
+
+//         ///check if user exist
+//         if(await dbb.collection("users").findOne({em: req.body.em})){
+//             console.log("exist")
+
+//             res.json(req.body)
+//         }else{
+//             console.log("doesnt exist")
+//             dbb.collection("users").insertOne(req.body)
+
+//             res.json(req.body)  ////sent the stored db one???
+//         }
+//         // dbb.collection("users").insertOne(req.body)
+//         })
+// })
+
+
+
+////registering routes; encrypt
+app.post("/regUser", async (req, res)=>{
     console.log(".....post regUser........")
     console.log(req.body)
 
+try{
+
+    ///check if exist in db; by em
     ////call mongodb
     mongodb.connect(process.env.MONGOKEY, async (err, client)=>{
         let dbb = client.db()
-
-        let dbusers = await dbb.collection("users").find({}).toArray()
-        console.log(dbusers)
-
         if(await dbb.collection("users").findOne({em: req.body.em})){
-            console.log("exist")
+            console.log(await dbb.collection("users").findOne({em: req.body.em}))
+            console.log("user does exist")
+            res.json({status: 'user does exist'})
         }else{
-            console.log("doesnt exist")
-            dbb.collection("users").insertOne(req.body)
+            console.log("user doestn exist; register a new one")
+
+    ///encrypt the pw; 
+    const hashedPassword = await bcrypt.hash(req.body.pw, 10)
+    const user = {em: req.body.em, pw: hashedPassword}
+    let newUser = await dbb.collection("users").insertOne(user) ///to get the id in db
+    res.status(201).send(user)
+    ///or 
+    // res.json({user: newUser})
         }
-        // dbb.collection("users").insertOne(req.body)
+
         })
+
+    ///store in db
+
+    // res.status(201).send()
+}catch{
+    res.status(500).send()
+}
+
+
+
+    //     let dbusers = await dbb.collection("users").find({}).toArray()
+    //     console.log(dbusers)
+
+    //     ///check if user exist
+    //     if(await dbb.collection("users").findOne({em: req.body.em})){
+    //         console.log("exist")
+
+    //         res.json(req.body)
+    //     }else{
+    //         console.log("doesnt exist")
+    //         dbb.collection("users").insertOne(req.body)
+
+    //         res.json(req.body)  ////sent the stored db one???
+    //     }
+    //     // dbb.collection("users").insertOne(req.body)
+
+
 })
 
 
+////login
 
+app.post("/logUser", async (req, res)=>{
 
+})
 
 
 
