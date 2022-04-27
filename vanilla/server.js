@@ -89,42 +89,33 @@ try{
     ///or 
     // res.json({user: newUser})
         }
-
         })
-
-    ///store in db
-
-    // res.status(201).send()
 }catch{
     res.status(500).send()
 }
-
-
-
-    //     let dbusers = await dbb.collection("users").find({}).toArray()
-    //     console.log(dbusers)
-
-    //     ///check if user exist
-    //     if(await dbb.collection("users").findOne({em: req.body.em})){
-    //         console.log("exist")
-
-    //         res.json(req.body)
-    //     }else{
-    //         console.log("doesnt exist")
-    //         dbb.collection("users").insertOne(req.body)
-
-    //         res.json(req.body)  ////sent the stored db one???
-    //     }
-    //     // dbb.collection("users").insertOne(req.body)
-
-
 })
 
 
 ////login
 
-app.post("/logUser", async (req, res)=>{
+app.post("/loginUser", async (req, res)=>{
+    mongodb.connect(process.env.MONGOKEY, async (err, client)=>{
+        let dbb = client.db()
+        ///check if exist
+        let found = await dbb.collection("users").findOne({em: req.body.em})
+        if(found){
+            if(await bcrypt.compare(req.body.pw, found.pw)){
+                console.log("correct cred; login")
+                res.send(found)
+            }else{
+                console.log("not correct cred")
+                res.json("r u hacker")
+            }
+        }else{
+            res.status(402).send("no user found")
+        }
 
+    })
 })
 
 
