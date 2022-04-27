@@ -3,9 +3,11 @@ const { json } = require("express");
 const express = require("express")
 const app = express()
 const path = require("path");
+// const env = require("dotenv")
 const { env } = require("process");
 require("dotenv").config()
 let bcrypt = require("bcrypt")
+const jwt = require("jsonwebtoken")
 
 /////config
 app.use(express.json())
@@ -64,6 +66,8 @@ app.get("/profile", (req, res)=>{
 
 
 ////registering routes; encrypt
+
+
 app.post("/regUser", async (req, res)=>{
     console.log(".....post regUser........")
     console.log(req.body)
@@ -85,6 +89,11 @@ try{
     const hashedPassword = await bcrypt.hash(req.body.pw, 10)
     const user = {em: req.body.em, pw: hashedPassword}
     let newUser = await dbb.collection("users").insertOne(user) ///to get the id in db
+
+        ////jwt; make token
+        let token = jwt.sign(user, process.env.TOKEN)
+
+
     res.status(201).send(user)
     ///or 
     // res.json({user: newUser})
@@ -118,6 +127,23 @@ app.post("/loginUser", async (req, res)=>{
     })
 })
 
+
+
+////authenticate token middleware; 
+
+function authToken(req, res, next){
+    const authHeader = req.headers["authorization"]
+    const token = authHeader && authHeader.split(" ")[1]
+    ///check if exist
+    if(token == null)return res.status(401).send("no token sent")
+
+    ///verify
+    jwt.verify(token, env.process.TOKEN, (err, data)=>{
+        if(err) return res.sendStatus(401)
+        req.user = data
+        next()
+    })
+}
 
 
 const port = 4000 || env.process.PORT
