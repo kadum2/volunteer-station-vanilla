@@ -178,7 +178,7 @@
 
     <!-- header -->
     <header>
-        <div id="something">something</div>
+        <div id="something"><button id="profile-btn">go to profile</button></div>
 
         <input type="text" id="searchbar"></input>
 
@@ -306,6 +306,9 @@
         userRegisterBtn.style.background = "red"
         ////// data containers
 
+        let currentUser
+        let token
+
 
         ////// getting data 
 
@@ -381,10 +384,11 @@
                 let pd = await d.json()
                 console.log(pd)
                 ///deploy the received data; may use a function
-                auth.innerHTML = `em: ${pd.em}, pw; ${pd.pw}`
+                auth.innerHTML = `em: ${pd.user.em}, pw; ${pd.user.pw}`
 
                 // let currentUser 
-                let currentUserToken = pd.token
+                // let currentUserToken = pd.token
+                token = pd.token
 
                 ///empty the values
                 loginEm.value = ""
@@ -392,6 +396,24 @@
             }
         })
 
+
+        let profileBtn = document.querySelector("#profile-btn")
+        // profileBtn.addEventListener("click", async () => {
+        //     let d = await fetch("/profile", {
+        //         headers: new Headers({
+        //             'Authorization': 'berear ' + token,
+        //             'Content-Type': 'application/x-www-form-urlencoded'
+        //         }),
+
+        //         method: "POST",
+
+        //     })
+        // })
+
+
+        profileBtn.addEventListener("click", async () => {
+            fetch(`/profile/${"someone"}`)
+        })
 
         ///check if the user is loged in (token exist); may read the cookie or so??
     </script>

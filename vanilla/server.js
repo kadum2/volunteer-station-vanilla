@@ -1,38 +1,33 @@
 
-const { json } = require("express");
 const express = require("express")
 const app = express()
 const path = require("path");
-// const env = require("dotenv")
-const { env } = require("process");
-require("dotenv").config()
+const { json } = require("express");
+let cookieParser = require("cookie-parser")
+const env = require("dotenv")
+env.config()
 let bcrypt = require("bcrypt")
 const jwt = require("jsonwebtoken")
+let mongodb = require("mongodb").MongoClient  ///mongodb atlas
 
 /////config
 app.use(express.json())
 // require("ejs")
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
-let mongodb = require("mongodb").MongoClient  ///mongodb atlas
 
 ////sending pages; 
 ///setting public dirs
-app.use(express.static("public"))
+// app.use(express.static("public"))
 // app.use("/home",express.static("./home"))
 // app.use("/profile",express.static("./profile"))
 
-///home page route
-let container = [1, 2, 3]
-app.get("/home", (req, res)=>{
-    res.render("home.ejs", {container})
-})
-///profile page route
-app.get("/profile", (req, res)=>{
-    res.render("profile.ejs")
-})
+///setting pages; 
+app.use("/home", express.static("./home"))
+app.use("/profile", express.static("./profile"))
 
 
+//cookie temaplate; token, currentUserData, userData
 
 
 
@@ -91,12 +86,12 @@ try{
     let newUser = await dbb.collection("users").insertOne(user) ///to get the id in db
 
         ////jwt; make token
-        let token = jwt.sign(user, process.env.TOKEN)
+        let token = jwt.sign(user.em, process.env.TOKEN)
 
-
-    res.status(201).send(user)
-    ///or 
-    // res.json({user: newUser})
+        ///send data and token
+        res.json({user: {em: user.em, name: user.name}, token: token})
+        // res.status(201).send(user)
+        ///or 
         }
         })
 }catch{
@@ -115,7 +110,13 @@ app.post("/loginUser", async (req, res)=>{
         if(found){
             if(await bcrypt.compare(req.body.pw, found.pw)){
                 console.log("correct cred; login")
-                res.send(found)
+                // res.send(found)
+                ////jwt; make token
+                let token = jwt.sign(found.em, process.env.TOKEN)
+
+                ///send data and token
+                res.json({user: {em: found.em, name: found.name}, token: token})
+
             }else{
                 console.log("not correct cred")
                 res.json("r u hacker")
@@ -130,22 +131,69 @@ app.post("/loginUser", async (req, res)=>{
 
 
 ////authenticate token middleware; 
+///may make it a function to be used at the middle of routes function 
 
 function authToken(req, res, next){
     const authHeader = req.headers["authorization"]
-    const token = authHeader && authHeader.split(" ")[1]
-    ///check if exist
-    if(token == null)return res.status(401).send("no token sent")
+    console.log(authHeader)
+    // const token = authHeader && authHeader.split(" ")[1]
+    const token = authHeader.split(" ")[1]
 
-    ///verify
-    jwt.verify(token, env.process.TOKEN, (err, data)=>{
+    console.log(token)
+    ///check if exist
+    // if(token == null)return res.status(401).send("no token sent")
+    // if(token == undefined)console.log("no token")
+
+    if(token != "undefined" ){
+        console.log('not undefined')
+
+    jwt.verify(token, process.env.TOKEN, (err, data)=>{
         if(err) return res.sendStatus(401)
         req.user = data
+        console.log(data)
         next()
     })
+    }else{return res.status(401).send("no token sent")}
+    ///verify
+    // jwt.verify(token, env.process.TOKEN, (err, data)=>{
+    //     if(err) return res.sendStatus(401)
+    //     req.user = data
+    //     next()
+    // })
+
+
 }
 
 
-const port = 4000 || env.process.PORT
+////profile route; page and auth token
+// app.post("/profile", (req, res, next)=>{
+
+//     console.log("....profile.....")
+//     console.log(req.headers)
+//     // if(req.headers.token/)
+//     authToken(req, res, next)
+//     // req.user
+//     console.log(req.user)
+//     res.render()
+//     res.json({})
+// })
+
+
+app.get("/profile/:username", (req, res, next)=>{
+    console.log(req.params.username)
+    ///connect to db and get data about the intneded username 
+
+    /// check if the current user is the same of the intended user (username)
+    /// then allow changes (send true value in a ???)
+
+    let userData /// to be set with cookie; userData, currentUserData 
+
+    // res.render("profile.ejs", {sameUser: false, userData: userData})
+
+})
+
+///editing profile route
+
+const port = 4000 || process.env.PORT
 app.listen(port, ()=>console.log(`listening on port ${port}`))
 

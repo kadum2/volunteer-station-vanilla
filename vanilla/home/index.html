@@ -55,6 +55,7 @@
             height: 3rem;
             width: 3rem;
             background: url("./anders-jilden-Sc5RKXLBjGg-unsplash.jpg");
+            /* background: url("anders-jilden-Sc5RKXLBjGg-unsplash.jpg"); */
             background-size: cover;
             border-radius: 50%;
         }
@@ -119,19 +120,80 @@
             background: hsl(145, 74%, 29%);
         }
     </style>
+    <!-- new styles to try -->
+    <style>
+        button {
+            padding: .3rem;
+            background: rgb(125, 241, 160);
+            border: 2px solid rgb(15, 32, 23);
+            border-radius: .3rem;
+            cursor: pointer;
+            transition: .2s linear;
+        }
+
+        button:hover {
+            background: rgb(76, 202, 114);
+        }
+
+        #auth {
+            height: 100%;
+            width: 100%;
+            background: red;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #relatedAccounts {
+            display: flex;
+            flex-direction: column;
+            width: 4vw;
+            gap: 1rem;
+            padding: 2rem;
+        }
+
+        #loginPanel,
+        #registerPanel {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            background: rgb(241, 241, 241);
+            border-radius: 1.4rem;
+            box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
+            padding: 1rem;
+        }
+
+        #loginPanel input,
+        #registerPanel input,
+        b {
+            font-size: 1.4rem;
+        }
+    </style>
 </head>
 
 <body>
 
     <!-- header -->
     <header>
-        <div id="something">something</div>
+        <div id="something"><button id="profile-btn">go to profile</button></div>
+
         <input type="text" id="searchbar"></input>
-        <div class="account">
-            <h4>accountName</h4>
-            <div class="accountImg"></div>
+
+        <div id="auth">
+
+            <!-- account template -->
+            <!-- <div class="account">
+                <h4>accountName</h4>
+                <div class="accountImg"></div>
+            </div> -->
+            <!-- default dom -->
+
         </div>
     </header>
+    <!-- main filter bar -->
     <div id="mainFilter">
         <button>prop1; time</button>
         <select>
@@ -184,6 +246,32 @@
             </div>
         </div>
         <div id="relatedAccounts">
+            <!-- or the login state -->
+
+            <div id="loginPanel">
+                <b>login</b>
+                <input id="login-em" type="email" placeholder="email">
+                <input id="login-pw" type="text" placeholder="password">
+                <button id="login">login</button>
+            </div>
+            <div id="registerPanel">
+                <b>register</b>
+                <input id="register-em" type="email" placeholder="email">
+                <input id="register-pw" type="text" placeholder="password">
+                <button id="user-register">user register</button>
+                <button id="org-register">org register</button>
+            </div>
+
+            <!-- <div id="registerPanel">
+                <h2 style="display: inline;">register</h3>
+                    <div class="form">
+                        <input type="email" placeholder="email" style="margin: 0;">
+                        <input type="text" placeholder="password">
+                        <button id="register">submit</button>
+                    </div>
+
+            </div> -->
+
 
         </div>
     </div>
@@ -191,19 +279,10 @@
 
     <!-- footer -->
     <footer>
-
-        the public dir home page
-
-        <!-- <% container.forEach((e)=>{ %>
-        <li> <%= e %> </li>
-        <% }) %> -->
     </footer>
 
-    <script src="./home.js">
-        // console.log(container)
-        console.log("helloo")
-    </script>
 
+    <script src="./index.js"></script>
 </body>
 
 </html>
