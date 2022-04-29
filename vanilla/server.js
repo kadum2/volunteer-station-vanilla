@@ -29,37 +29,6 @@ app.use("/profile", express.static("./profile"))
 
 //cookie temaplate; token, currentUserData, userData
 
-
-
-////registering routes;
-// app.post("/regUser", (req, res)=>{
-//     console.log(".....post regUser........")
-//     console.log(req.body)
-
-//     ////call mongodb
-//     mongodb.connect(process.env.MONGOKEY, async (err, client)=>{
-//         let dbb = client.db()
-
-//         let dbusers = await dbb.collection("users").find({}).toArray()
-//         console.log(dbusers)
-
-//         ///check if user exist
-//         if(await dbb.collection("users").findOne({em: req.body.em})){
-//             console.log("exist")
-
-//             res.json(req.body)
-//         }else{
-//             console.log("doesnt exist")
-//             dbb.collection("users").insertOne(req.body)
-
-//             res.json(req.body)  ////sent the stored db one???
-//         }
-//         // dbb.collection("users").insertOne(req.body)
-//         })
-// })
-
-
-
 ////registering routes; encrypt
 
 
