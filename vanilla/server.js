@@ -16,21 +16,15 @@ app.use(express.json())
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
-////sending pages; 
-///setting public dirs
+////sending pages; setting public dirs
 // app.use(express.static("public"))
-// app.use("/home",express.static("./home"))
-// app.use("/profile",express.static("./profile"))
-
-///setting pages; 
 app.use("/home", express.static("./home"))
-app.use("/profile", express.static("./profile"))
+// app.use("/profile", express.static("./profile"))
 
 
 //cookie temaplate; token, currentUserData, userData
 
 ////registering routes; encrypt
-
 
 app.post("/regUser", async (req, res)=>{
     console.log(".....post regUser........")
@@ -58,7 +52,8 @@ try{
         let token = jwt.sign(user.em, process.env.TOKEN)
 
         ///send data and token
-        res.json({user: {em: user.em, name: user.name}, token: token})
+        res.cookie("token", token)
+        res.json({user: {em: user.em, name: user.name}})
         // res.status(201).send(user)
         ///or 
         }
@@ -84,7 +79,8 @@ app.post("/loginUser", async (req, res)=>{
                 let token = jwt.sign(found.em, process.env.TOKEN)
 
                 ///send data and token
-                res.json({user: {em: found.em, name: found.name}, token: token})
+                res.cookie("token", token)
+                res.json({user: {em: found.em, name: found.name}})
 
             }else{
                 console.log("not correct cred")
@@ -148,20 +144,65 @@ function authToken(req, res, next){
 // })
 
 
-app.get("/profile/:username", (req, res, next)=>{
+///custom profile page 
+///send profile template 
+app.get("/profile/:username", async (req, res)=>{
     console.log(req.params.username)
+    // express.static("./profile")
+    mongodb.connect(process.env.MONGOKEY, async (err, client)=>{
+        let dbb = client.db()
+        let found = await dbb.collection("users").findOne({userName: req.params.username})
+        console.log(found)
+        // console.log(found.userName)
+        // let currentProfile = {userName: found.userName, name: found.name, avatar: found.avatar, bio: found.bio}
+        // let currentProfile =  JSON.stringify({userName: found.userName, name: found.name, avatar: found.avatar, bio: found.bio}) 
+
+        console.log(".....current Profile .......")
+        // console.log(currentProfile)
+
+        // res.sendFile(path.join(__dirname, "profile", "index.html"))
+        res.cookie("userName", found.userName)
+        res.cookie("name", found.name)
+        res.cookie("avatar", found.avatar)
+        res.cookie("bio", found.bio)
+
+
+
+        // res.cookie("notcurrentProfileInlineObject" , {"naem" :found.userName, "somename": found.name})
+        // res.cookie("userName", found.userName, "name", found.name)
+        // res.cookie("token", "token")
+        // res.cookie("currentProfile", currentProfile)
+        res.sendFile(path.join(__dirname, "profile", "index.html"))
+
+        // console.log("will send the file")
+        // res.sendfile("./profile/index.html")
+
+        
+    })
+    
+
+    
+    // res.sendfile('./profile/index.html')
     ///connect to db and get data about the intneded username 
 
     /// check if the current user is the same of the intended user (username)
     /// then allow changes (send true value in a ???)
 
-    let userData /// to be set with cookie; userData, currentUserData 
+    // let userData /// to be set with cookie; userData, currentUserData 
 
     // res.render("profile.ejs", {sameUser: false, userData: userData})
 
 })
 
 ///editing profile route
+
+
+
+////////test code 
+///mongodb init
+// mongodb.connect(process.env.MONGOKEY, async (err, client)=>{
+//     let dbb = client.db()
+// })
 
 const port = 4000 || process.env.PORT
 app.listen(port, ()=>console.log(`listening on port ${port}`))

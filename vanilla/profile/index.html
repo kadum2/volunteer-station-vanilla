@@ -76,7 +76,7 @@
             /* background: url("anders-jilden-Sc5RKXLBjGg-unsplash.jpg"); */
             /* background: url("./anders-jilden-Sc5RKXLBjGg-unsplash.jpg"); */
             /* background: url("../public/cedric-vt-IuJc2qh2TcA-unsplash.jpg"); */
-            background: url("./anders-jilden-Sc5RKXLBjGg-unsplash.jpg");
+            /* background: url("./anders-jilden-Sc5RKXLBjGg-unsplash.jpg"); */
             background-size: cover;
         }
 
@@ -135,6 +135,35 @@
         hello from profile ejs
     </footer>
 
+
+    <script>
+        window.onload = () => {
+
+
+            // console.log(document.cookie.replaceAll("%20", " ").replaceAll("%2", " "))
+            // console.log(encodeURI(document.cookie).replaceAll("%20", "
+            // ").replaceAll("%2520", " ").replaceAll("%252"," "))
+
+            // console.log(document.cookie.replaceAll("%20", " ").replaceAll("%2", " ").split('; ').reduce((prev,
+            //     current) => {
+            //     const [name, ...value] = current.split('=');
+            //     prev[name] = value.join('=');
+            //     return prev;
+            // }, {}))
+
+
+            ////to read cookies; 
+            let cookies = document.cookie.replaceAll("%20", " ").replaceAll("%2", " ").split('; ').reduce((prev,
+                current) => {
+                const [name, ...value] = current.split('=');
+                prev[name] = value.join('=');
+                return prev;
+            }, {})
+
+            console.log(cookies)
+
+        }
+    </script>
 
 </body>
 
