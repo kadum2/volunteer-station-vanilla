@@ -111,12 +111,13 @@
     </header>
     <div class="one">
         <div id="avatar">
-            <div id="avimg"></div>
+            <img id="avimg"></img>
         </div>
         <div id="info">
-            <h1>name</h1>
-            <h3>bio</h3>
-            <h5>skills;
+            <h1 id="userName">userName</h1>
+            <h2 id="name">name</h2>
+            <h3 id="bio">bio</h3>
+            <h5 id="skills">skills;
                 <ul>
                     <li>first skill</li>
                     <li>second skill</li>
@@ -137,6 +138,13 @@
 
 
     <script>
+        let userName = document.querySelector("#userName")
+        let name = document.querySelector("#name")
+        let bio = document.querySelector("#bio")
+        let ava = document.querySelector("#avimg")
+
+
+
         window.onload = () => {
 
 
@@ -153,7 +161,7 @@
 
 
             ////to read cookies; 
-            let cookies = document.cookie.replaceAll("%20", " ").replaceAll("%2", " ").split('; ').reduce((prev,
+            let cookies = document.cookie.replaceAll("%20", " ").replaceAll("%2F", "/").split('; ').reduce((prev,
                 current) => {
                 const [name, ...value] = current.split('=');
                 prev[name] = value.join('=');
@@ -161,6 +169,16 @@
             }, {})
 
             console.log(cookies)
+
+            userName.textContent = cookies.userName
+            name.textContent = cookies.name
+            bio.textContent = cookies.bio
+            let img = cookies.avatar
+            console.log(img)
+
+            ava.src = "../home/" + img
+
+
 
         }
     </script>

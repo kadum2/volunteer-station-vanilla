@@ -63,7 +63,6 @@ try{
 }
 })
 
-
 ////login
 
 app.post("/loginUser", async (req, res)=>{
@@ -126,7 +125,6 @@ function authToken(req, res, next){
     //     next()
     // })
 
-
 }
 
 
@@ -180,7 +178,6 @@ app.get("/profile/:username", async (req, res)=>{
         
     })
     
-
     
     // res.sendfile('./profile/index.html')
     ///connect to db and get data about the intneded username 
