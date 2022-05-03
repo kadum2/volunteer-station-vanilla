@@ -30,7 +30,7 @@
 
     #cUserTemplate {
         height: 2rem;
-        width: 2rem;
+        /* width: 2rem; */
         background: red;
         display: flex;
         flex-direction: row;
@@ -187,6 +187,7 @@
     </div>
 
     <footer></footer>
+    <a href="http://localhost:4000/profile/alio">to the username</a>
 
     <script>
         /////dom elements to select 
@@ -359,6 +360,8 @@
                 readCookies()
                 let cUser = document.createElement("div")
                 cUser.classList.add("userObject")
+                cUser.addEventListener("click", () => location.href =
+                    `http://localhost:4000/profile/${cookies.cUserName}`)
                 let cAv = document.createElement("img")
                 cAv.src = cookies.cAvatar
                 let cP = document.createElement("p")
@@ -370,6 +373,12 @@
                 logoutBtn.id = "logoutBtn"
                 logoutBtn.textContent = "logout"
                 logoutBtn.addEventListener("click", () => {
+                    ///have to edit the real cookies
+
+                    document.cookie.replace("cUserName=" + cookies.cUserName, "")
+                    document.cookie.replace("cUser=" + cookies.cUser, "")
+                    document.cookie.replace("cAvatar=" + cookies.cAvatar, "")
+
                     cookies.cUserName = undefined
                     cookies.cUser = undefined
                     cookies.cAvatar = undefined
@@ -394,9 +403,12 @@
                 }
 
             }
-
         }
 
+        window.onclick = () => {
+            console.log(encodeURI(document.cookie))
+            console.log(document.cookie)
+        }
 
         //main profile data (onload) 
 
