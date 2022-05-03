@@ -28,10 +28,36 @@
         font-size: 2rem;
     }
 
-    #userState {
+    #cUserTemplate {
         height: 2rem;
         width: 2rem;
         background: red;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .userObject {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        gap: 1rem;
+        cursor: pointer;
+
+    }
+
+    .userObject img {
+        height: 3rem;
+        width: 3rem;
+        border-radius: 50%;
+    }
+
+    #logoutBtn {
+        padding: 1rem;
+        background: red;
+
     }
 
     /*  */
@@ -43,14 +69,6 @@
         display: flex;
         flex-direction: row;
         justify-content: start;
-        align-items: center;
-    }
-
-    #pAvatar {
-        height: 100%;
-        width: 100%;
-        display: flex;
-        justify-content: center;
         align-items: center;
     }
 
@@ -128,9 +146,14 @@
 
     <header>
         <a href="">home; volunteer station</a>
-        <div id="userStatt">
+        <div id="cUserTemplate">
             <!-- logout -->
-            <!-- userObject -->
+
+            <!-- current userObject -->
+            <!-- <div class="userObject">
+                <img src="" alt="">
+                <p id="userName"></p>
+            </div> -->
         </div>
     </header>
     <div id="userInfo">
@@ -177,28 +200,29 @@
         //auth
         let auth = document.querySelector("#auth")
 
-        let cookies = document.cookie.replaceAll("%20", " ").replaceAll("%2F", "/").split('; ').reduce((prev,
-            current) => {
-            const [name, ...value] = current.split('=');
-            prev[name] = value.join('=');
-            return prev;
-        }, {})
+
+
+        ////data containers 
+        let cookies
+
+        function readCookies() {
+            cookies = document.cookie.replaceAll("%20", " ").replaceAll("%2F", "/").split('; ').reduce((prev,
+                current) => {
+                const [name, ...value] = current.split('=');
+                prev[name] = value.join('=');
+                return prev;
+            }, {})
+        }
+        readCookies()
+
 
         console.log(cookies)
 
         ///////features 
 
+        function checkAccout() {
 
-        //main profile data (onload) 
-
-        window.onload = () => {
             console.log(cookies)
-            ////insert basic info;
-
-            pUserName.textContent = cookies.pUserName
-            pName.textContent = cookies.pName
-            pBio.textContent = cookies.pBio
-            pAvImg.style.background = `url(../home/${cookies.pAvImg})`
 
 
 
@@ -211,15 +235,19 @@
             } else {
                 console.log("profile is org") ///org case 
                 ////get made conts 
-
             }
 
-            /// /user type; no account, account; user; owner, not owner, org; owner, not owner
+
+
+            ////current user type; no account, account; user; owner, not owner, org; owner, not owner
             ///not account; register and login
             if (!cookies.cUserName) {
+
+                console.log("no user; should generate the auth")
                 auth.innerHTML = `            
                 <div id="registerPanel">
                     <b>register</b>
+                    <input id="register-userName" type="text" placeholder="username">
                     <input id="register-em" type="email" placeholder="email">
                     <input id="register-pw" type="text" placeholder="password">
                     <button id="regBtn">user register</button>
@@ -235,6 +263,7 @@
                 let register = document.querySelector("#registerPanel")
                 let registerEm = document.querySelector("#register-em")
                 let registerPw = document.querySelector("#register-pw")
+                let regiseterUn = document.querySelector("#register-userName")
                 let regBtn = document.querySelector("#regBtn")
 
                 ////login
@@ -246,16 +275,18 @@
                 // register.addEventListener("click", () =>
                 // console.log("register clicked"))
                 regBtn.addEventListener("click", async () => {
+                    console.log(regiseterUn.value)
                     console.log(registerEm.value)
                     console.log(registerPw.value)
 
                     ///check if exist
-                    if (registerEm && registerPw) {
+                    if (registerEm && registerPw && regiseterUn) {
 
                         ///make the object data to be send 
                         let newUser = {
                             em: registerEm.value,
-                            pw: registerPw.value
+                            pw: registerPw.value,
+                            userName: regiseterUn.value
                         }
 
                         ////send and recieve data
@@ -268,12 +299,16 @@
                         })
                         let pd = await d.json()
                         console.log(pd)
-                        ///deploy the received data; may use a function
-                        auth.innerHTML = `em: ${pd.em}, pw${pd.pw}`
+                        /// deploy the received data; may use a function; make user object
+                        // auth.innerHTML = `em: ${pd.em}, pw${pd.pw}`
 
                         ///empty the values
+                        regiseterUn.value = ""
                         registerEm.value = ""
                         registerPw.value = ""
+                        readCookies()
+                        checkAccout()
+
                     }
                 })
 
@@ -301,17 +336,54 @@
                         })
                         let pd = await d.json()
                         console.log(pd)
+
                         ///deploy the received data; may use a function
-                        auth.innerHTML = `em: ${pd.em}, pw${pd.pw}`
+                        // auth.innerHTML = `em: ${pd.em}, pw${pd.pw}`
 
                         ///empty the values
                         loginEm.value = ""
                         loginPw.value = ""
+
+
+                        readCookies()
+                        checkAccout()
+
                     }
                 })
 
 
             } else { //account; 
+
+
+                /////deploy the data; make the cUser object
+                readCookies()
+                let cUser = document.createElement("div")
+                cUser.classList.add("userObject")
+                let cAv = document.createElement("img")
+                cAv.src = cookies.cAvatar
+                let cP = document.createElement("p")
+                cP.textContent = cookies.cUserName
+                cUser.append(cAv, cP)
+
+                ///create logout button
+                let logoutBtn = document.createElement("button")
+                logoutBtn.id = "logoutBtn"
+                logoutBtn.textContent = "logout"
+                logoutBtn.addEventListener("click", () => {
+                    cookies.cUserName = undefined
+                    cookies.cUser = undefined
+                    cookies.cAvatar = undefined
+                    console.log("logout")
+
+                    document.querySelector("#cUserTemplate").innerHTML = ""
+                    checkAccout()
+                })
+
+                document.querySelector("#cUserTemplate").append(cUser, logoutBtn)
+                auth.innerHTML = ""
+
+
+
                 if (cookies.pUserName == cookies.cUserName) { //owner; edit option
                     ///user; isUser true
                     ///org; isUser false
@@ -322,6 +394,20 @@
                 }
 
             }
+
+        }
+
+
+        //main profile data (onload) 
+
+        window.onload = () => {
+            checkAccout()
+            ////insert basic info;
+
+            pUserName.textContent = cookies.pUserName
+            pName.textContent = cookies.pName
+            pBio.textContent = cookies.pBio
+            pAvImg.style.background = `url(../home/${cookies.pAvImg})`
 
         }
 

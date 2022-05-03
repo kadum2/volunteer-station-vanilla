@@ -67,28 +67,56 @@ try{
     ////call mongodb
     mongodb.connect(process.env.MONGOKEY, async (err, client)=>{
         let dbb = client.db()
+        ///check if used email
         if(await dbb.collection("users").findOne({em: req.body.em})){
+
             console.log(await dbb.collection("users").findOne({em: req.body.em}))
             console.log("user does exist")
             res.json({status: 'user does exist'})
-        }else{
+        }else{ ///not used email
+
             console.log("user doestn exist; register a new one")
+
+            ///check if used username; 
+            if(await dbb.collection("users").findOne({userName: req.body.userName})){
+                res.json({status: "error; username used"})
+            }else{
 
     ///encrypt the pw; 
     const hashedPassword = await bcrypt.hash(req.body.pw, 10)
-    const user = {em: req.body.em, pw: hashedPassword}
-    let newUser = await dbb.collection("users").insertOne(user) ///to get the id in db
+    const user = {em: req.body.em, pw: hashedPassword, userName: req.body.userName, avatar: "../home/imgs/anders-jilden-Sc5RKXLBjGg-unsplash.jpg", bio: "...", name: req.body.userName, conts: [], isUser: true}
+    // let newUser = await dbb.collection("users").insertOne(user) ///to get the id in db
+    await dbb.collection("users").insertOne(user) ///to get the id in db
+
+    // let newUser = await dbb.collection("users").findOne({em: req.body.em}) ////may use the sent one ??
 
         ////jwt; make token
-        let token = jwt.sign(user.em, process.env.TOKEN)
+        let token = jwt.sign(user.userName, process.env.TOKEN)
 
         ///send data and token
+        res.cookie("Cuser", user)
+
+        res.cookie("cUserName", user.userName)
+        res.cookie("cName", user.name)
+        res.cookie("cAvatar", user.avatar)
+        res.cookie("isUser", user.isUser)
+
         res.cookie("token", token)
-        res.json({user: {em: user.em, name: user.name}})
+        res.json("created user")
+
+        // remove 
+        // res.json({user: {em: user.em, name: user.name}})
         // res.status(201).send(user)
         ///or 
+
+
+            }
+
+
         }
         })
+
+
 }catch{
     res.status(500).send()
 }
@@ -104,22 +132,27 @@ app.post("/loginUser", async (req, res)=>{
         if(found){
             if(await bcrypt.compare(req.body.pw, found.pw)){
                 console.log("correct cred; login")
+                console.log(found)
                 // res.send(found)
                 ////jwt; make token
-                let token = jwt.sign(found.em, process.env.TOKEN)
+                let token = jwt.sign(found.userName, process.env.TOKEN)
 
                 ///send data and token
+                res.cookie("cUserName", user.userName)
+                res.cookie("cName", user.name)
+                res.cookie("cAvatar", user.avatar)
+                res.cookie("isUser", user.isUser)
+        
                 res.cookie("token", token)
-                res.json({user: {em: found.em, name: found.name}})
+                res.json({status: "correct login cred"})
 
             }else{
                 console.log("not correct cred")
-                res.json("r u hacker")
+                res.json("not correct creds")
             }
         }else{
             res.status(402).send("no user found")
         }
-
     })
 })
 
