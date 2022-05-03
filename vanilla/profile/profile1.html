@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    body {
+        height: 100vh;
+        box-sizing: border-box;
+        margin: 0%;
+    }
+
+    header {
+        height: 4vh;
+        background: hsl(145, 74%, 29%);
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        padding: 2rem;
+    }
+
+    a {
+        all: unset;
+        font-size: 2rem;
+    }
+
+    #userState {
+        height: 2rem;
+        width: 2rem;
+        background: red;
+    }
+
+    /*  */
+    #userInfo {
+        margin-top: 1rem;
+        height: 40vh;
+        width: 60vw;
+        /* background: red; */
+        display: flex;
+        flex-direction: row;
+        justify-content: start;
+        align-items: center;
+    }
+
+    #pAvatar {
+        height: 100%;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    #pAvatar {
+        height: 100%;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+
+    #pAvImg {
+        height: 40vh;
+        width: 40vh;
+        border-radius: 50%;
+        background-size: cover;
+    }
+
+    #info {
+        height: 100%;
+        width: 100%;
+        /* background: green; */
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    #auth {
+        background: blue;
+        position: absolute;
+        top: 6vh;
+        right: 3vw;
+    }
+
+    #loginPanel,
+    #registerPanel {
+        margin: 1rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 1rem;
+        background: rgb(241, 241, 241);
+        border-radius: 1.4rem;
+        box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
+        padding: 1rem;
+    }
+
+    #loginPanel input,
+    #registerPanel input,
+    b {
+        font-size: 1.4rem;
+    }
+
+    /* posts */
+    #posts {
+        height: 2rem;
+        background: blue;
+    }
+
+    footer {
+        height: 20vh;
+        width: 100%;
+        background: hsl(145, 74%, 29%);
+        /* justify-self: end; */
+        /* align-self: flex-end; */
+        position: absolute;
+        bottom: 0;
+    }
+</style>
+
+<body>
+
+    <header>
+        <a href="">home; volunteer station</a>
+        <div id="userStatt">
+            <!-- logout -->
+            <!-- userObject -->
+        </div>
+    </header>
+    <div id="userInfo">
+        <div id="pAvatar">
+            <img id="pAvImg"></img>
+        </div>
+
+        <div id="info">
+            <h1 id="pUserName">user Name</h1>
+            <h2 id="pName">name</h2>
+            <h3 id="pBio">bio</h3>
+            <!-- <h5 id="pSkills">skills;
+                <ul>
+                    <li>first skill</li>
+                    <li>second skill</li>
+                </ul>
+                available time;
+                <ul>
+                    <li>???</li>
+                </ul>
+            </h5> -->
+        </div>
+
+        <div id="auth">
+
+        </div>
+    </div>
+
+    <div id="posts">
+
+    </div>
+
+    <footer></footer>
+
+    <script>
+        /////dom elements to select 
+        ///basic info; all cases; 
+        let pUserName = document.querySelector("#pUserName")
+        let pName = document.querySelector("#pName")
+        let pBio = document.querySelector("#pBio")
+        let pAvImg = document.querySelector("#pAvImg")
+
+
+        //auth
+        let auth = document.querySelector("#auth")
+
+        let cookies = document.cookie.replaceAll("%20", " ").replaceAll("%2F", "/").split('; ').reduce((prev,
+            current) => {
+            const [name, ...value] = current.split('=');
+            prev[name] = value.join('=');
+            return prev;
+        }, {})
+
+        console.log(cookies)
+
+        ///////features 
+
+
+        //main profile data (onload) 
+
+        window.onload = () => {
+            console.log(cookies)
+            ////insert basic info;
+
+            pUserName.textContent = cookies.pUserName
+            pName.textContent = cookies.pName
+            pBio.textContent = cookies.pBio
+            pAvImg.style.background = `url(../home/${cookies.pAvImg})`
+
+
+
+
+            //profile type; user case, org case
+            if (cookies.pIsUser) {
+                console.log("profile is user") ///user case
+                ///get the conts
+                /// conts dom, make post object, insert cookie data; insert posts objects into the posts dom container
+            } else {
+                console.log("profile is org") ///org case 
+                ////get made conts 
+
+            }
+
+            /// /user type; no account, account; user; owner, not owner, org; owner, not owner
+            ///not account; register and login
+            if (!cookies.cUserName) {
+                auth.innerHTML = `            
+                <div id="registerPanel">
+                    <b>register</b>
+                    <input id="register-em" type="email" placeholder="email">
+                    <input id="register-pw" type="text" placeholder="password">
+                    <button id="regBtn">user register</button>
+                </div>
+                <div id="loginPanel">
+                    <b>login</b>
+                    <input id="login-em" type="email" placeholder="email">
+                    <input id="login-pw" type="text" placeholder="password">
+                    <button id="loginBtn">login</button>
+                </div>`
+
+                ////register
+                let register = document.querySelector("#registerPanel")
+                let registerEm = document.querySelector("#register-em")
+                let registerPw = document.querySelector("#register-pw")
+                let regBtn = document.querySelector("#regBtn")
+
+                ////login
+                let login = document.querySelector("#loginPanel")
+                let loginEm = document.querySelector("#login-em")
+                let loginPw = document.querySelector("#login-pw")
+                let loginBtn = document.querySelector("#loginBtn")
+
+                // register.addEventListener("click", () =>
+                // console.log("register clicked"))
+                regBtn.addEventListener("click", async () => {
+                    console.log(registerEm.value)
+                    console.log(registerPw.value)
+
+                    ///check if exist
+                    if (registerEm && registerPw) {
+
+                        ///make the object data to be send 
+                        let newUser = {
+                            em: registerEm.value,
+                            pw: registerPw.value
+                        }
+
+                        ////send and recieve data
+                        let d = await fetch("/regUser", {
+                            method: "POST",
+                            headers: {
+                                "content-type": "application/json"
+                            },
+                            body: JSON.stringify(newUser)
+                        })
+                        let pd = await d.json()
+                        console.log(pd)
+                        ///deploy the received data; may use a function
+                        auth.innerHTML = `em: ${pd.em}, pw${pd.pw}`
+
+                        ///empty the values
+                        registerEm.value = ""
+                        registerPw.value = ""
+                    }
+                })
+
+                ///login 
+                loginBtn.addEventListener("click", async () => {
+                    console.log(loginEm.value)
+                    console.log(loginPw.value)
+
+                    ///check if exist
+                    if (loginEm && loginPw) {
+
+                        ///make the object data to be send 
+                        let newUser = {
+                            em: loginEm.value,
+                            pw: loginPw.value
+                        }
+
+                        ////send and recieve data
+                        let d = await fetch("/regUser", {
+                            method: "POST",
+                            headers: {
+                                "content-type": "application/json"
+                            },
+                            body: JSON.stringify(newUser)
+                        })
+                        let pd = await d.json()
+                        console.log(pd)
+                        ///deploy the received data; may use a function
+                        auth.innerHTML = `em: ${pd.em}, pw${pd.pw}`
+
+                        ///empty the values
+                        loginEm.value = ""
+                        loginPw.value = ""
+                    }
+                })
+
+
+            } else { //account; 
+                if (cookies.pUserName == cookies.cUserName) { //owner; edit option
+                    ///user; isUser true
+                    ///org; isUser false
+
+                } else { //not owner; follow option
+                    ///user; isUser true
+                    ///org; isUser false
+                }
+
+            }
+
+        }
+
+
+        ////test code 
+    </script>
+</body>
+
+</html>

@@ -62,7 +62,6 @@
         #avatar {
             height: 100%;
             width: 100%;
-            /* background: blueviolet; */
             display: flex;
             justify-content: center;
             align-items: center;
@@ -71,12 +70,7 @@
         #avimg {
             height: 40vh;
             width: 40vh;
-            /* background: blue; */
             border-radius: 50%;
-            /* background: url("anders-jilden-Sc5RKXLBjGg-unsplash.jpg"); */
-            /* background: url("./anders-jilden-Sc5RKXLBjGg-unsplash.jpg"); */
-            /* background: url("../public/cedric-vt-IuJc2qh2TcA-unsplash.jpg"); */
-            /* background: url("./anders-jilden-Sc5RKXLBjGg-unsplash.jpg"); */
             background-size: cover;
         }
 
@@ -89,6 +83,33 @@
             justify-content: center;
             align-items: center;
         }
+
+        #auth {
+            background: blue;
+            position: absolute;
+            top: 6vh;
+            right: 3vw;
+        }
+
+        #loginPanel,
+        #registerPanel {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            background: rgb(241, 241, 241);
+            border-radius: 1.4rem;
+            box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
+            padding: 1rem;
+        }
+
+        #loginPanel input,
+        #registerPanel input,
+        b {
+            font-size: 1.4rem;
+        }
+
 
         footer {
             height: 20vh;
@@ -107,7 +128,7 @@
     <header>
         <!-- <div id="auth"></div> -->
         <h1 id="homelogo"><a href="home">home (volunteer station)</a></h1>
-        <button id="logout">logout</button>
+        <!-- <button id="logout">logout</button> -->
     </header>
     <div class="one">
         <div id="avatar">
@@ -129,6 +150,25 @@
             </h5>
         </div>
 
+        <!-- auth -->
+        <div id="auth">
+
+            <!-- <div id="loginPanel">
+                <b>login</b>
+                <input id="login-em" type="email" placeholder="email">
+                <input id="login-pw" type="text" placeholder="password">
+                <button id="login">login</button>
+            </div>
+            <div id="registerPanel">
+                <b>register</b>
+                <input id="register-em" type="email" placeholder="email">
+                <input id="register-pw" type="text" placeholder="password">
+                <button id="user-register">user register</button>
+                <button id="org-register">org register</button>
+            </div> -->
+
+        </div>
+
 
     </div>
 
@@ -143,42 +183,68 @@
         let bio = document.querySelector("#bio")
         let ava = document.querySelector("#avimg")
 
+        ///templates; 
+        let auth = document.querySelector("#auth")
+        let header = document.querySelector("header")
+
+        ////to read cookies; 
+        let cookies = document.cookie.replaceAll("%20", " ").replaceAll("%2F", "/").split('; ').reduce((prev,
+            current) => {
+            const [name, ...value] = current.split('=');
+            prev[name] = value.join('=');
+            return prev;
+        }, {})
+
+
+        function checkUser() {
+            // auth
+            if (cookies.cuserName) {
+                header.innerHTML = ` <button id="logout">logout</button>`
+                ////allow to follow 
+                if (cookies.puserName == cookies.cuserName) {
+
+                }
+
+            } else {
+                auth.innerHTML = `<div id="loginPanel">
+                <b>login</b>
+                <input id="login-em" type="email" placeholder="email">
+                <input id="login-pw" type="text" placeholder="password">
+                <button id="login">login</button>
+            </div>
+            <div id="registerPanel">
+                <b>register</b>
+                <input id="register-em" type="email" placeholder="email">
+                <input id="register-pw" type="text" placeholder="password">
+                <button id="user-register">user register</button>
+            </div>`
+
+
+                let register = document.querySelector("#registerPanel")
+                let registerEm = document.querySelector("#register-em")
+                let registerPw = document.querySelector("#register-pw")
+                let regBtn = document.querySelector("#user-register")
+
+                register.addEventListener("click", () => console.log("register clicked"))
+            }
+        }
 
 
         window.onload = () => {
 
+            checkUser()
 
-            // console.log(document.cookie.replaceAll("%20", " ").replaceAll("%2", " "))
-            // console.log(encodeURI(document.cookie).replaceAll("%20", "
-            // ").replaceAll("%2520", " ").replaceAll("%252"," "))
-
-            // console.log(document.cookie.replaceAll("%20", " ").replaceAll("%2", " ").split('; ').reduce((prev,
-            //     current) => {
-            //     const [name, ...value] = current.split('=');
-            //     prev[name] = value.join('=');
-            //     return prev;
-            // }, {}))
-
-
-            ////to read cookies; 
-            let cookies = document.cookie.replaceAll("%20", " ").replaceAll("%2F", "/").split('; ').reduce((prev,
-                current) => {
-                const [name, ...value] = current.split('=');
-                prev[name] = value.join('=');
-                return prev;
-            }, {})
+            ////////////////////
 
             console.log(cookies)
 
-            userName.textContent = cookies.userName
-            name.textContent = cookies.name
-            bio.textContent = cookies.bio
-            let img = cookies.avatar
-            console.log(img)
+            userName.textContent = cookies.puserName
+            name.textContent = cookies.pname
+            bio.textContent = cookies.pbio
+            let pimg = cookies.pavatar
+            console.log(pimg)
 
-            ava.src = "../home/" + img
-
-
+            ava.src = "../home/" + pimg
 
         }
     </script>

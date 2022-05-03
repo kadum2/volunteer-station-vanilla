@@ -22,7 +22,38 @@ app.use("/home", express.static("./home"))
 // app.use("/profile", express.static("./profile"))
 
 
-//cookie temaplate; token, currentUserData, userData
+// cookie temaplate; token; username, cUser, pUser; (username, name, bio, avimg, skills
+// isUser and following, conts posts)
+
+
+
+
+
+
+
+///custom profile page; send profile template, wanted user data (puser)
+    // other choice; express.static("./profile")
+app.get("/profile/:username", async (req, res)=>{
+    console.log(".....profile/:username/...........")
+    console.log(req.params.username)
+
+    mongodb.connect(process.env.MONGOKEY, async (err, client)=>{
+        let dbb = client.db()
+        let found = await dbb.collection("users").findOne({userName: req.params.username})
+
+        console.log(".....current Profile .......")
+        console.log(found)
+
+        res.cookie("pUserName", found.userName)
+        res.cookie("pName", found.name)
+        res.cookie("pAvImg", found.avatar)
+        res.cookie("pBio", found.bio)
+        res.sendFile(path.join(__dirname, "profile", "profile1.html"))
+    })
+})
+
+
+
 
 ////registering routes; encrypt
 
@@ -128,68 +159,6 @@ function authToken(req, res, next){
 }
 
 
-////profile route; page and auth token
-// app.post("/profile", (req, res, next)=>{
-
-//     console.log("....profile.....")
-//     console.log(req.headers)
-//     // if(req.headers.token/)
-//     authToken(req, res, next)
-//     // req.user
-//     console.log(req.user)
-//     res.render()
-//     res.json({})
-// })
-
-
-///custom profile page 
-///send profile template 
-app.get("/profile/:username", async (req, res)=>{
-    console.log(req.params.username)
-    // express.static("./profile")
-    mongodb.connect(process.env.MONGOKEY, async (err, client)=>{
-        let dbb = client.db()
-        let found = await dbb.collection("users").findOne({userName: req.params.username})
-        console.log(found)
-        // console.log(found.userName)
-        // let currentProfile = {userName: found.userName, name: found.name, avatar: found.avatar, bio: found.bio}
-        // let currentProfile =  JSON.stringify({userName: found.userName, name: found.name, avatar: found.avatar, bio: found.bio}) 
-
-        console.log(".....current Profile .......")
-        // console.log(currentProfile)
-
-        // res.sendFile(path.join(__dirname, "profile", "index.html"))
-        res.cookie("userName", found.userName)
-        res.cookie("name", found.name)
-        res.cookie("avatar", found.avatar)
-        res.cookie("bio", found.bio)
-
-
-
-        // res.cookie("notcurrentProfileInlineObject" , {"naem" :found.userName, "somename": found.name})
-        // res.cookie("userName", found.userName, "name", found.name)
-        // res.cookie("token", "token")
-        // res.cookie("currentProfile", currentProfile)
-        res.sendFile(path.join(__dirname, "profile", "index.html"))
-
-        // console.log("will send the file")
-        // res.sendfile("./profile/index.html")
-
-        
-    })
-    
-    
-    // res.sendfile('./profile/index.html')
-    ///connect to db and get data about the intneded username 
-
-    /// check if the current user is the same of the intended user (username)
-    /// then allow changes (send true value in a ???)
-
-    // let userData /// to be set with cookie; userData, currentUserData 
-
-    // res.render("profile.ejs", {sameUser: false, userData: userData})
-
-})
 
 ///editing profile route
 
