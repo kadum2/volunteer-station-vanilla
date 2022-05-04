@@ -103,24 +103,31 @@ app.get("/profileObjects", async (req, res)=>{
         Object.entries(found.following).forEach( async(e)=>{
             ////users
             let d = await dbb.collection("users").findOne({userName: e[1]})
-            followingObjects.push({userNmae: d.userName, name: d.name, avatar: d.avatar,isUser: d.isUser })
-
-            ////orgs
-            // let dOrg = await dbb.collection("orgs").find({userName: e[1]})
-            // if(dOrg)followingObjects.push({userNmae: d.userName, name: d.name, avatar: d.avatar })
-
-
+            followingObjects.push({userName: d.userName, name: d.name, avatar: d.avatar,isUser: d.isUser })
             // console.log(followingObjects)
-            if(followingObjects.length == Object.entries(found.following).length){
+
+            
+            // if(followingObjects.length == Object.entries(found.following).length){
+            //     console.log("will send the following object")
+            //     res.json(followingObjects)
+            // }
+            if(followingObjects.length + contsObjects.length== Object.entries(found.following).length + Object.entries(found.conts).length){
                 console.log("will send the following object")
-                res.json(followingObjects)
+                res.json({followingObjects, contsObjects})
             }
+
         })
         Object.entries(found.conts).forEach(async (e)=>{
             /// /conts is an array of objects that do; {orgName: --, postIndex:--, contType: , contValue: --}
             ///e.orgUserName, e.postIndex, contType(tag)
             let cont = await dbb.collection("orgs").findOne({orgName: e.orgName })
             contsObjects.push({post: cont[e.contIndex], contType: e.contType, contValue: e.contValue})
+
+
+            if(followingObjects.length + contsObjects.length== Object.entries(found.following).length + Object.entries(found.conts).length){
+                console.log("will send the following object")
+                res.json({followingObjects, contsObjects})
+            }
 
         })
 
