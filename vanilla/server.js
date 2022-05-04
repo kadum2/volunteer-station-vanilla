@@ -62,7 +62,6 @@ app.post("/regUser", async (req, res)=>{
     console.log(req.body)
 
 try{
-
     ///check if exist in db; by em
     ////call mongodb
     mongodb.connect(process.env.MONGOKEY, async (err, client)=>{
@@ -84,7 +83,7 @@ try{
 
     ///encrypt the pw; 
     const hashedPassword = await bcrypt.hash(req.body.pw, 10)
-    const user = {em: req.body.em, pw: hashedPassword, userName: req.body.userName, avatar: "../home/imgs/anders-jilden-Sc5RKXLBjGg-unsplash.jpg", bio: "...", name: req.body.userName, conts: [], isUser: true}
+    const user = {em: req.body.em, pw: hashedPassword, userName: req.body.userName, avatar: "../home/imgs/anders-jilden-Sc5RKXLBjGg-unsplash.jpg", bio: "...", name: req.body.userName, conts: [], isUser: true, followings:[]}
     // let newUser = await dbb.collection("users").insertOne(user) ///to get the id in db
     await dbb.collection("users").insertOne(user) ///to get the id in db
 
@@ -94,6 +93,7 @@ try{
         let token = jwt.sign(user.userName, process.env.TOKEN)
 
         ///send data and token
+        ///cookies 
         res.cookie("Cuser", user)
 
         res.cookie("cUserName", user.userName)
@@ -102,7 +102,10 @@ try{
         res.cookie("isUser", user.isUser)
 
         res.cookie("token", token)
-        res.json("created user")
+
+
+        ///localstorage; then save it at the client
+        res.json({status: "created user", token: token, cUser: {userNmae: user.userName, name: user.name, avatar: user.avatar, isUser: user.isUser}})
 
         // remove 
         // res.json({user: {em: user.em, name: user.name}})
@@ -128,23 +131,25 @@ app.post("/loginUser", async (req, res)=>{
     mongodb.connect(process.env.MONGOKEY, async (err, client)=>{
         let dbb = client.db()
         ///check if exist
-        let found = await dbb.collection("users").findOne({em: req.body.em})
-        if(found){
-            if(await bcrypt.compare(req.body.pw, found.pw)){
+        let user = await dbb.collection("users").findOne({em: req.body.em})
+        if(user){
+            if(await bcrypt.compare(req.body.pw, user.pw)){
                 console.log("correct cred; login")
-                console.log(found)
-                // res.send(found)
+                console.log(user)
+                // res.send(user)
                 ////jwt; make token
-                let token = jwt.sign(found.userName, process.env.TOKEN)
+                let token = jwt.sign(user.userName, process.env.TOKEN)
 
                 ///send data and token
-                res.cookie("cUserName", user.userName)
-                res.cookie("cName", user.name)
-                res.cookie("cAvatar", user.avatar)
-                res.cookie("isUser", user.isUser)
+                // res.cookie("cUserName", user.userName)
+                // res.cookie("cName", user.name)
+                // res.cookie("cAvatar", user.avatar)
+                // res.cookie("isUser", user.isUser)
         
                 res.cookie("token", token)
-                res.json({status: "correct login cred"})
+
+                ///user localstorage
+                res.json({status: "correct login cred", token: token, cUser: {userNmae: user.userName, name: user.name, avatar: user.avatar, isUser: user.isUser}})
 
             }else{
                 console.log("not correct cred")

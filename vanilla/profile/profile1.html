@@ -242,7 +242,8 @@
 
             ////current user type; no account, account; user; owner, not owner, org; owner, not owner
             ///not account; register and login
-            if (!cookies.cUserName) {
+            if (localStorage.getItem("cUser") == undefined) {
+
 
                 console.log("no user; should generate the auth")
                 auth.innerHTML = `            
@@ -300,6 +301,12 @@
                         })
                         let pd = await d.json()
                         console.log(pd)
+
+                        ////set data to localstorage
+                        localStorage.setItem("token", pd.token)
+                        localStorage.setItem("cUser", JSON.stringify(pd.cUser))
+                        // localStorage.setCookie()
+
                         /// deploy the received data; may use a function; make user object
                         // auth.innerHTML = `em: ${pd.em}, pw${pd.pw}`
 
@@ -328,7 +335,7 @@
                         }
 
                         ////send and recieve data
-                        let d = await fetch("/regUser", {
+                        let d = await fetch("/loginUser", {
                             method: "POST",
                             headers: {
                                 "content-type": "application/json"
@@ -337,6 +344,10 @@
                         })
                         let pd = await d.json()
                         console.log(pd)
+
+                        ///set localstorage data 
+                        localStorage.setItem("token", pd.token)
+                        localStorage.setItem("cUser", JSON.stringify(pd.cUser))
 
                         ///deploy the received data; may use a function
                         // auth.innerHTML = `em: ${pd.em}, pw${pd.pw}`
@@ -355,17 +366,20 @@
 
             } else { //account; 
 
+                console.log(".....account.....")
+                console.log(JSON.parse(localStorage.getItem("cUser")))
+                let cUserJson = JSON.parse(localStorage.getItem("cUser"))
 
                 /////deploy the data; make the cUser object
                 readCookies()
                 let cUser = document.createElement("div")
                 cUser.classList.add("userObject")
                 cUser.addEventListener("click", () => location.href =
-                    `http://localhost:4000/profile/${cookies.cUserName}`)
+                    `http://localhost:4000/profile/${cUserJson.userName}`)
                 let cAv = document.createElement("img")
-                cAv.src = cookies.cAvatar
+                cAv.src = "../home/" + cUserJson.avatar
                 let cP = document.createElement("p")
-                cP.textContent = cookies.cUserName
+                cP.textContent = cUserJson.name
                 cUser.append(cAv, cP)
 
                 ///create logout button
@@ -374,14 +388,29 @@
                 logoutBtn.textContent = "logout"
                 logoutBtn.addEventListener("click", () => {
                     ///have to edit the real cookies
+                    ///+ '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;'
 
-                    document.cookie.replace("cUserName=" + cookies.cUserName, "")
-                    document.cookie.replace("cUser=" + cookies.cUser, "")
-                    document.cookie.replace("cAvatar=" + cookies.cAvatar, "")
+                    // document.cookie = "cUserName=" + cookies.cUserName +
+                    //     '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;'
+                    // document.cookie = "cUser=" + cookies.cUser + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;'
+                    // document.cookie = "cAvatar=" + cookies.cAvatar + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;'
 
-                    cookies.cUserName = undefined
-                    cookies.cUser = undefined
-                    cookies.cAvatar = undefined
+                    // setCookie("cUserName=" + cookies.cUserName, 0)
+
+
+                    // document.cookies.remove("cUserName=" + cookies.cUserName)
+                    // browser.cookies.remove("cUser=" + cookies.cUser)
+                    // browser.cookies.remove("cAvatar=" + cookies.cAvatar)
+
+                    // document.cookie.replace("cUserName=" + cookies.cUserName, "")
+                    // document.cookie.replace("cUser=" + cookies.cUser, "")
+                    // document.cookie.replace("cAvatar=" + cookies.cAvatar, "")
+
+                    // cookies.cUserName = undefined
+                    // cookies.cUser = undefined
+                    // cookies.cAvatar = undefined
+                    localStorage.clear()
+
                     console.log("logout")
 
                     document.querySelector("#cUserTemplate").innerHTML = ""
@@ -393,8 +422,13 @@
 
 
 
-                if (cookies.pUserName == cookies.cUserName) { //owner; edit option
+                if (cookies.pUserName == localStorage.getItem("cUser").userName) { //owner; edit option
                     ///user; isUser true
+                    if (localStorage.getItem("cUser").isUser) {
+
+                    } else {
+
+                    }
                     ///org; isUser false
 
                 } else { //not owner; follow option

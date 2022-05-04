@@ -225,7 +225,40 @@
                 let registerPw = document.querySelector("#register-pw")
                 let regBtn = document.querySelector("#user-register")
 
-                register.addEventListener("click", () => console.log("register clicked"))
+                // register.addEventListener("click", () =>
+                // console.log("register clicked"))
+                regBtn.addEventListener("click", async () => {
+                    console.log(registerEm.value)
+                    console.log(registerPw.value)
+
+                    ///check if exist
+                    if (registerEm && registerPw) {
+
+                        ///make the object data to be send 
+                        let newUser = {
+                            em: registerEm.value,
+                            pw: registerPw.value
+                        }
+
+                        ////send and recieve data
+                        let d = await fetch("/regUser", {
+                            method: "POST",
+                            headers: {
+                                "content-type": "application/json"
+                            },
+                            body: JSON.stringify(newUser)
+                        })
+                        let pd = await d.json()
+                        console.log(pd)
+                        ///deploy the received data; may use a function
+                        auth.innerHTML = `em: ${pd.em}, pw${pd.pw}`
+
+                        ///empty the values
+                        registerEm.value = ""
+                        registerPw.value = ""
+                    }
+                })
+
             }
         }
 
