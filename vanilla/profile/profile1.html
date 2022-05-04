@@ -505,7 +505,7 @@
 
         //main profile data (onload) 
 
-        window.onload = () => {
+        window.onload = async () => {
             ////insert basic info;
 
             pUserName.textContent = cookies.pUserName
@@ -514,6 +514,12 @@
             pAvImg.style.background = `url(../home/${cookies.pAvImg})`
 
             checkAccout()
+
+            ////get the additional profile info; following, posts 
+            let d = await fetch("/profileObjects")
+            let pd = await d.json()
+
+            console.log(pd)
 
         }
 

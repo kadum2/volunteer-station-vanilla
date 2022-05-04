@@ -4,6 +4,8 @@ const app = express()
 const path = require("path");
 const { json } = require("express");
 let cookieParser = require("cookie-parser")
+app.use(cookieParser());
+
 const env = require("dotenv")
 env.config()
 let bcrypt = require("bcrypt")
@@ -24,6 +26,14 @@ app.use("/home", express.static("./home"))
 
 // cookie temaplate; token; username, cUser, pUser; (username, name, bio, avimg, skills
 // isUser and following, conts posts)
+
+////////main features to implements 
+////send and display followings (usernames)
+///make follow 
+///show folloing; get follow list, get the users at that following list 
+///make org account 
+///make the post 
+///make the shared elements for the both cases 
 
 
 
@@ -50,9 +60,21 @@ app.get("/profile/:username", async (req, res)=>{
         res.cookie("pName", found.name)
         res.cookie("pAvImg", found.avatar)
         res.cookie("pBio", found.bio)
+        res.cookie("pFollowing", found.following)
+
+
+        console.log(".......then to send account objects.......")
+        // console.log(followingObjects)
 
         // express.static(path.join(__dirname, "profile", "profile1.html"))
         // res.sendStatus(202)
+        // let obj = {headers: {
+        //     'x-timestamp': Date.now(),
+        //     'x-sent': true,
+        //     'name': 'MattDionis',
+        //     'origin':'stackoverflow' 
+        // }, followingObjects}
+    
         res.sendFile(path.join(__dirname, "profile", "profile1.html"))
 
         }else{
@@ -63,8 +85,55 @@ app.get("/profile/:username", async (req, res)=>{
     })
 })
 
-////registering routes; encrypt
 
+/// //get additional data about the profile account; (that cant be set with
+/// cookies); following, posts 
+app.get("/profileObjects", async (req, res)=>{
+    console.log(".....get profile objects....")
+    console.log(req.cookies)
+
+    mongodb.connect(process.env.MONGOKEY, async (err, client)=>{
+        let dbb = client.db()
+        let found = await dbb.collection("users").findOne({userName: req.cookies.pUserName})
+
+
+        ///send followings account object 
+        let followingObjects = []
+        let contsObjects = []
+        Object.entries(found.following).forEach( async(e)=>{
+            ////users
+            let d = await dbb.collection("users").findOne({userName: e[1]})
+            followingObjects.push({userNmae: d.userName, name: d.name, avatar: d.avatar,isUser: d.isUser })
+
+            ////orgs
+            // let dOrg = await dbb.collection("orgs").find({userName: e[1]})
+            // if(dOrg)followingObjects.push({userNmae: d.userName, name: d.name, avatar: d.avatar })
+
+
+            // console.log(followingObjects)
+            if(followingObjects.length == Object.entries(found.following).length){
+                console.log("will send the following object")
+                res.json(followingObjects)
+            }
+        })
+        Object.entries(found.conts).forEach(async (e)=>{
+            /// /conts is an array of objects that do; {orgName: --, postIndex:--, contType: , contValue: --}
+            ///e.orgUserName, e.postIndex, contType(tag)
+            let cont = await dbb.collection("orgs").findOne({orgName: e.orgName })
+            contsObjects.push({post: cont[e.contIndex], contType: e.contType, contValue: e.contValue})
+
+        })
+
+    })
+
+
+
+
+
+})
+
+
+////registering routes; encrypt
 app.post("/regUser", async (req, res)=>{
     console.log(".....post regUser........")
     console.log(req.body)
@@ -91,7 +160,7 @@ try{
 
     ///encrypt the pw; 
     const hashedPassword = await bcrypt.hash(req.body.pw, 10)
-    const user = {em: req.body.em, pw: hashedPassword, userName: req.body.userName, avatar: "../home/imgs/anders-jilden-Sc5RKXLBjGg-unsplash.jpg", bio: "...", name: req.body.userName, conts: [], isUser: true, followings:[]}
+    const user = {em: req.body.em, pw: hashedPassword, userName: req.body.userName, avatar: "../home/imgs/anders-jilden-Sc5RKXLBjGg-unsplash.jpg", bio: "...", name: req.body.userName, conts: [], isUser: true, followings:[], skills:[]}
     // let newUser = await dbb.collection("users").insertOne(user) ///to get the id in db
     await dbb.collection("users").insertOne(user) ///to get the id in db
 
@@ -134,7 +203,6 @@ try{
 })
 
 ////login
-
 app.post("/loginUser", async (req, res)=>{
     mongodb.connect(process.env.MONGOKEY, async (err, client)=>{
         let dbb = client.db()
@@ -170,10 +238,8 @@ app.post("/loginUser", async (req, res)=>{
 })
 
 
-
 ////authenticate token middleware; 
 ///may make it a function to be used at the middle of routes function 
-
 function authToken(req, res, next){
     const authHeader = req.headers["authorization"]
     console.log(authHeader)
@@ -205,8 +271,9 @@ function authToken(req, res, next){
 }
 
 
+
 /////////editing profile route
-///authenticate the token 
+///authenticate the token, update data on the db
 app.post("/editProfile", (req, res)=>{
     console.log(req.body)
     console.log(req.body.editedData.newName)
@@ -223,17 +290,14 @@ app.post("/editProfile", (req, res)=>{
         let dbb = client.db()
         let found = await dbb.collection("users").findOne({userName: req.tokenData})
         console.log(found)
-        let found2 = await dbb.collection("users").findOneAndUpdate({ userName : req.tokenData },{ $set: { name : req.body.editedData.newName,bio: req.body.editedData.newBio } })
+        let found2 = await dbb.collection("users").findOneAndUpdate({ userName : req.tokenData },{ $set: { name : req.body.editedData.newName,bio: req.body.editedData.newBio, skills: req.body.editedData.skills } })
+        
+        res.json({newName: req.body.editedData.newName, newBio: req.body.editedData.newBio, skills: req.body.editedData.skills })
         console.log(found2)
     })
 
 
 })
-
-
-
-
-
 
 
 
