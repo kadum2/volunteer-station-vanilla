@@ -64,12 +64,14 @@
     #userInfo {
         margin-top: 1rem;
         height: 40vh;
-        width: 60vw;
+        /* width: 60vw; */
         /* background: red; */
         display: flex;
         flex-direction: row;
-        justify-content: start;
+        /* justify-content: space-evenly; */
         align-items: center;
+        gap: 3rem;
+        /* background-color: red; */
     }
 
     #pAvatar {
@@ -96,6 +98,15 @@
         flex-direction: column;
         justify-content: center;
         align-items: center;
+    }
+
+    #editing {
+        background: blue;
+    }
+
+    #editing * {
+        margin: .3rem;
+        font-size: 1.4rem;
     }
 
     #auth {
@@ -165,6 +176,7 @@
             <h1 id="pUserName">user Name</h1>
             <h2 id="pName">name</h2>
             <h3 id="pBio">bio</h3>
+            <div id="skills"></div>
             <!-- <h5 id="pSkills">skills;
                 <ul>
                     <li>first skill</li>
@@ -177,14 +189,23 @@
             </h5> -->
         </div>
 
-        <div id="auth">
-
+        <div id="editing">
+            <!-- <input type="text" placeholder="new name">
+            <input type="text" placeholder="new bio">
+            <select name="skills" id="skills">
+                <option value="select skill">select skill</option>
+                <option value="skill1">skill1</option>
+                <option value="skill2">skill2</option>
+                <option value="skill3">skill3</option>
+            </select>
+            <input type="button" value="+"> -->
         </div>
+
+        <div id="posts"></div>
+
+        <div id="auth"></div>
     </div>
 
-    <div id="posts">
-
-    </div>
 
     <footer></footer>
     <a href="http://localhost:4000/profile/alio">to the username</a>
@@ -224,9 +245,6 @@
         function checkAccout() {
 
             console.log(cookies)
-
-
-
 
             //profile type; user case, org case
             if (cookies.pIsUser) {
@@ -282,7 +300,7 @@
                     console.log(registerPw.value)
 
                     ///check if exist
-                    if (registerEm && registerPw && regiseterUn) {
+                    if (registerEm.value && registerPw.value && regiseterUn.value) {
 
                         ///make the object data to be send 
                         let newUser = {
@@ -326,7 +344,7 @@
                     console.log(loginPw.value)
 
                     ///check if exist
-                    if (loginEm && loginPw) {
+                    if (loginEm.value && loginPw.value) {
 
                         ///make the object data to be send 
                         let newUser = {
@@ -387,28 +405,6 @@
                 logoutBtn.id = "logoutBtn"
                 logoutBtn.textContent = "logout"
                 logoutBtn.addEventListener("click", () => {
-                    ///have to edit the real cookies
-                    ///+ '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;'
-
-                    // document.cookie = "cUserName=" + cookies.cUserName +
-                    //     '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;'
-                    // document.cookie = "cUser=" + cookies.cUser + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;'
-                    // document.cookie = "cAvatar=" + cookies.cAvatar + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;'
-
-                    // setCookie("cUserName=" + cookies.cUserName, 0)
-
-
-                    // document.cookies.remove("cUserName=" + cookies.cUserName)
-                    // browser.cookies.remove("cUser=" + cookies.cUser)
-                    // browser.cookies.remove("cAvatar=" + cookies.cAvatar)
-
-                    // document.cookie.replace("cUserName=" + cookies.cUserName, "")
-                    // document.cookie.replace("cUser=" + cookies.cUser, "")
-                    // document.cookie.replace("cAvatar=" + cookies.cAvatar, "")
-
-                    // cookies.cUserName = undefined
-                    // cookies.cUser = undefined
-                    // cookies.cAvatar = undefined
                     localStorage.clear()
 
                     console.log("logout")
@@ -420,11 +416,78 @@
                 document.querySelector("#cUserTemplate").append(cUser, logoutBtn)
                 auth.innerHTML = ""
 
-
-
-                if (cookies.pUserName == localStorage.getItem("cUser").userName) { //owner; edit option
+                if (cookies.pUserName == cUserJson.userName) { //owner; edit option
                     ///user; isUser true
-                    if (localStorage.getItem("cUser").isUser) {
+                    if (cUserJson.isUser) {
+                        ///display editing ??; 
+                        pUserName.innerHTML += "<small> you </small>"
+                        let skillCounter = 1
+                        let editingTemplate = `
+                            <input type="text" placeholder="new name" id="newName">
+                            <input type="text" placeholder="new bio" id="newBio">
+                            <div id="skillsCont">
+                                <select name="skill1" id="skill1" class="skill">
+                                    <option value="select skill">select skill 1</option>
+                                    <option value="skill1">skill1</option>
+                                    <option value="skill2">skill2</option>
+                                    <option value="skill3">skill3</option>
+                                </select>
+                            </div>
+                            <input type="button" value="+" id="addMoreSkill">
+                            <button id="sendEditBtn">send edit </button>
+                            `
+
+                        let editing = document.querySelector("#editing")
+                        editing.innerHTML += editingTemplate
+                        let skillscont = document.querySelector("#skillsCont")
+                        // skills.style.background("red")
+                        let addMoreSkill = document.querySelector("#addMoreSkill")
+                        addMoreSkill.addEventListener("click", () => {
+                            console.log("clicked")
+                            console.log(skillCounter)
+                            let addMore = `
+                            <select name="skills" id="skill${skillCounter++}" class="skill">
+                                <option value="selectskill">select skill${skillCounter}</option>
+                                <option value="skill1">skill1</option>
+                                <option value="skill2">skill2</option>
+                                <option value="skill3">skill3</option>
+                            </select>`
+                            skillscont.innerHTML += addMore
+                        })
+
+                        let sendEditBtn = document.querySelector("#sendEditBtn")
+                        sendEditBtn.addEventListener("click", async () => {
+                            console.log("clicked on sending edit btn")
+                            ////check if not empty 
+                            if (document.querySelector("#newName").value && document.querySelector(
+                                    "#newBio").value && [...document.querySelectorAll(".skill")].map(e => e
+                                    .value)) {
+
+                                console.log([...document.querySelectorAll(".skill")].map(e => e.value))
+                                let editedData = {
+                                    newName: document.querySelector("#newName").value,
+                                    newBio: document.querySelector("#newBio").value,
+                                    skills: [...document.querySelectorAll(".skill")].map(e => e.value)
+                                }
+                                let d = await fetch("/editProfile", {
+                                    method: "POST",
+                                    headers: {
+                                        'Accept': 'application/json',
+                                        'Content-Type': 'application/json'
+                                    },
+                                    body: JSON.stringify({
+                                        editedData,
+                                        token: localStorage.getItem("token")
+                                    })
+                                })
+                            }
+
+                            ////empty the values 
+                            document.querySelector("#newName").value
+                            document.querySelector("#newBio").value
+                            // let skillArray = [...document.querySelectorAll(".skill")]
+                            // skillArray.forEach(e => e.value = "")
+                        })
 
                     } else {
 
@@ -432,6 +495,7 @@
                     ///org; isUser false
 
                 } else { //not owner; follow option
+                    console.log("not the same user")
                     ///user; isUser true
                     ///org; isUser false
                 }
@@ -439,15 +503,9 @@
             }
         }
 
-        window.onclick = () => {
-            console.log(encodeURI(document.cookie))
-            console.log(document.cookie)
-        }
-
         //main profile data (onload) 
 
         window.onload = () => {
-            checkAccout()
             ////insert basic info;
 
             pUserName.textContent = cookies.pUserName
@@ -455,11 +513,15 @@
             pBio.textContent = cookies.pBio
             pAvImg.style.background = `url(../home/${cookies.pAvImg})`
 
+            checkAccout()
+
         }
 
 
         ////test code 
     </script>
+
+    <script src="./profile1.js"></script>
 </body>
 
 </html>

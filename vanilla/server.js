@@ -41,6 +41,8 @@ app.get("/profile/:username", async (req, res)=>{
         let dbb = client.db()
         let found = await dbb.collection("users").findOne({userName: req.params.username})
 
+        
+        if(found){
         console.log(".....current Profile .......")
         console.log(found)
 
@@ -48,12 +50,18 @@ app.get("/profile/:username", async (req, res)=>{
         res.cookie("pName", found.name)
         res.cookie("pAvImg", found.avatar)
         res.cookie("pBio", found.bio)
+
+        // express.static(path.join(__dirname, "profile", "profile1.html"))
+        // res.sendStatus(202)
         res.sendFile(path.join(__dirname, "profile", "profile1.html"))
+
+        }else{
+            // res.send(`the page ${req.params.username} doesnt exist and ${found} is what found`)
+            res.send(found)
+        }
+
     })
 })
-
-
-
 
 ////registering routes; encrypt
 
@@ -149,7 +157,7 @@ app.post("/loginUser", async (req, res)=>{
                 res.cookie("token", token)
 
                 ///user localstorage
-                res.json({status: "correct login cred", token: token, cUser: {userNmae: user.userName, name: user.name, avatar: user.avatar, isUser: user.isUser}})
+                res.json({status: "correct login cred", token: token, cUser: {userName: user.userName, name: user.name, avatar: user.avatar, isUser: user.isUser}})
 
             }else{
                 console.log("not correct cred")
@@ -178,7 +186,7 @@ function authToken(req, res, next){
     // if(token == undefined)console.log("no token")
 
     if(token != "undefined" ){
-        console.log('not undefined')
+        console.log('defined')
 
     jwt.verify(token, process.env.TOKEN, (err, data)=>{
         if(err) return res.sendStatus(401)
@@ -197,8 +205,36 @@ function authToken(req, res, next){
 }
 
 
+/////////editing profile route
+///authenticate the token 
+app.post("/editProfile", (req, res)=>{
+    console.log(req.body)
+    console.log(req.body.editedData.newName)
+    ///validate
+    jwt.verify(req.body.token, process.env.TOKEN, (err, data)=>{
+        if(err) return res.sendStatus(401)
+        req.tokenData = data
+        console.log(data)
+        // next()
+    })
 
-///editing profile route
+    ///// connect to db
+    mongodb.connect(process.env.MONGOKEY, async (err, client)=>{
+        let dbb = client.db()
+        let found = await dbb.collection("users").findOne({userName: req.tokenData})
+        console.log(found)
+        let found2 = await dbb.collection("users").findOneAndUpdate({ userName : req.tokenData },{ $set: { name : req.body.editedData.newName,bio: req.body.editedData.newBio } })
+        console.log(found2)
+    })
+
+
+})
+
+
+
+
+
+
 
 
 
