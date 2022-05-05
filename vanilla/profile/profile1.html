@@ -210,6 +210,9 @@
         </div>
 
         <div id="info">
+            <!-- follow btn -->
+            <!-- <button id="followBtn">follow</button> -->
+
             <h1 id="pUserName">user Name</h1>
             <h2 id="pName">name</h2>
             <h3 id="pBio">bio</h3>
@@ -268,9 +271,13 @@
         let pBio = document.querySelector("#pBio")
         let pAvImg = document.querySelector("#pAvImg")
 
+        // let followBtn = document.querySelector("#followBtn")
 
-        //auth
+        //templates
         let auth = document.querySelector("#auth")
+        let editing = document.querySelector("#editing")
+        let info = document.querySelector("#info")
+
 
 
 
@@ -431,7 +438,6 @@
                     }
                 })
 
-
             } else { //account; 
 
                 console.log(".....account.....")
@@ -447,7 +453,7 @@
                 let cAv = document.createElement("img")
                 cAv.src = "../home/" + cUserJson.avatar
                 let cP = document.createElement("p")
-                cP.textContent = cUserJson.name
+                cP.textContent = cUserJson.userName
                 cUser.append(cAv, cP)
 
                 ///create logout button
@@ -460,6 +466,7 @@
                     console.log("logout")
 
                     document.querySelector("#cUserTemplate").innerHTML = ""
+                    editing.innerHTML = ""
                     checkAccout()
                 })
 
@@ -470,7 +477,7 @@
                     ///user; isUser true
                     if (cUserJson.isUser) {
                         ///display editing ??; 
-                        pUserName.innerHTML += "<small> you </small>"
+                        pUserName.innerHTML += "<small> (you) </small>"
                         let skillCounter = 1
                         let editingTemplate = `
                             <input type="text" placeholder="new name" id="newName">
@@ -487,7 +494,6 @@
                             <button id="sendEditBtn">send edit </button>
                             `
 
-                        let editing = document.querySelector("#editing")
                         editing.innerHTML += editingTemplate
                         let skillscont = document.querySelector("#skillsCont")
                         // skills.style.background("red")
@@ -563,31 +569,97 @@
             pBio.textContent = cookies.pBio
             pAvImg.style.background = `url(${cookies.pAvImg})`
 
+            console.log("checking accounts")
             checkAccout()
+            console.log("after checking account")
 
             ////get the additional profile info; following, posts 
             let d = await fetch("/profileObjects")
+            console.log(d)
             let pd = await d.json()
 
             console.log(pd)
+            console.log(pd.followingObjects)
             console.log(typeof pd.followingObjects)
-            Object.entries(pd.followingObjects).forEach(e => {
+            console.log(Object.values(pd.followingObjects))
 
-                console.log(e[1])
+            let followingUsernames = []
+
+
+            // Object.entries(pd.followingObjects).forEach(e => {
+
+            //     console.log(e[1])
+            //     let userObject = document.createElement("div")
+            //     userObject.classList.add("userObject")
+            //     userObject.addEventListener("click", () => {
+            //         location.href = `http://localhost:4000/profile/${e[1].userName}`
+            //     })
+
+            //     userObject.innerHTML = `
+            //         <img src="${e[1].avatar}" alt="">
+            //         <h2>${e[1].userName}</h2>
+            //         <h4>${e[1].name}</h4>`
+
+            //     document.querySelector("#following").append(userObject)
+
+            // })
+
+            pd.followingObjects.forEach(e => {
+
+                /////add followings objects 
+                // console.log(e)
                 let userObject = document.createElement("div")
                 userObject.classList.add("userObject")
                 userObject.addEventListener("click", () => {
-                    location.href = `http://localhost:4000/profile/${e[1].userName}`
+                    location.href = `http://localhost:4000/profile/${e.userName}`
                 })
 
                 userObject.innerHTML = `
-                    <img src="${e[1].avatar}" alt="">
-                    <h2>${e[1].userName}</h2>
-                    <h4>${e[1].name}</h4>`
+                <img src="${e.avatar}" alt="">
+                <h2>${e.userName}</h2>
+                <h4>${e.name}</h4>`
 
                 document.querySelector("#following").append(userObject)
 
+                /////check if follow or not to add the follow btn
+                followingUsernames.push(e.userName)
+                if (followingUsernames.length == pd.followingObjects.length) {
+                    console.log(followingUsernames)
+                    // console.log(Object.values(followingUsernames).includes(cookies.pUserName))
+                    if (!Object.values(followingUsernames).includes(cookies.pUserName))
+                        displayFollowOption()
+                }
+
             })
+        }
+
+        function displayFollowOption() {
+            console.log("will display follow btn")
+
+            let followOptions = {
+                // following: JSON.parse(localStorage.getItem("cUser")).userName,
+                following: localStorage.getItem("token"),
+                followed: cookies.pUserName
+            }
+
+            console.log(followOptions)
+            let followBtn = document.createElement("button")
+            followBtn.textContent = "follow"
+
+            followBtn.addEventListener("click", () => {
+                let d = fetch("/addFollow", {
+                    method: "POST",
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(followOptions)
+                    // body: cookies.pUserName
+                })
+            })
+
+            // info.append()
+            info.insertBefore(followBtn, info.firstElementChild)
 
 
         }

@@ -61,19 +61,10 @@ app.get("/profile/:username", async (req, res)=>{
         res.cookie("pAvImg", found.avatar)
         res.cookie("pBio", found.bio)
         res.cookie("pFollowing", found.following)
+        res.cookie("isUser", found.isUser)
 
 
         console.log(".......then to send account objects.......")
-        // console.log(followingObjects)
-
-        // express.static(path.join(__dirname, "profile", "profile1.html"))
-        // res.sendStatus(202)
-        // let obj = {headers: {
-        //     'x-timestamp': Date.now(),
-        //     'x-sent': true,
-        //     'name': 'MattDionis',
-        //     'origin':'stackoverflow' 
-        // }, followingObjects}
     
         res.sendFile(path.join(__dirname, "profile", "profile1.html"))
 
@@ -87,7 +78,8 @@ app.get("/profile/:username", async (req, res)=>{
 
 
 /// //get additional data about the profile account; (that cant be set with
-/// cookies); following, posts 
+/// cookies); following, posts, may make two routes for follow objects and for
+/// post objects to prevent some intercepting errors or so ...
 app.get("/profileObjects", async (req, res)=>{
     console.log(".....get profile objects....")
     console.log(req.cookies)
@@ -100,44 +92,47 @@ app.get("/profileObjects", async (req, res)=>{
         ///send followings account object 
         let followingObjects = []
         let contsObjects = []
-        Object.entries(found.following).forEach( async(e)=>{
-            ////users
-            let d = await dbb.collection("users").findOne({userName: e[1]})
-            followingObjects.push({userName: d.userName, name: d.name, avatar: d.avatar,isUser: d.isUser })
-            // console.log(followingObjects)
-
-            
-            // if(followingObjects.length == Object.entries(found.following).length){
-            //     console.log("will send the following object")
-            //     res.json(followingObjects)
-            // }
-            if(followingObjects.length + contsObjects.length== Object.entries(found.following).length + Object.entries(found.conts).length){
-                console.log("will send the following object")
-                res.json({followingObjects, contsObjects})
-            }
-
-        })
-        Object.entries(found.conts).forEach(async (e)=>{
-            /// /conts is an array of objects that do; {orgName: --, postIndex:--, contType: , contValue: --}
-            ///e.orgUserName, e.postIndex, contType(tag)
-            let cont = await dbb.collection("orgs").findOne({orgName: e.orgName })
-            contsObjects.push({post: cont[e.contIndex], contType: e.contType, contValue: e.contValue})
+        // if(found.following != null && found.following != undefined){
 
 
-            if(followingObjects.length + contsObjects.length== Object.entries(found.following).length + Object.entries(found.conts).length){
-                console.log("will send the following object")
-                res.json({followingObjects, contsObjects})
-            }
+            Object.entries(found.following).forEach( async(e)=>{
+                ////users
+                let d = await dbb.collection("users").findOne({userName: e[1]})
+                followingObjects.push({userName: d.userName, name: d.name, avatar: d.avatar,isUser: d.isUser })
+                // console.log(followingObjects)
+    
+                
+                // if(followingObjects.length == Object.entries(found.following).length){
+                //     console.log("will send the following object")
+                //     res.json(followingObjects)
+                // }
+                if(followingObjects.length + contsObjects.length== Object.entries(found.following).length + Object.entries(found.conts).length){
+                    console.log("will send the following object")
+                    res.json({followingObjects, contsObjects})
+                }
+    
+            })
+            Object.entries(found.conts).forEach(async (e)=>{
+                /// /conts is an array of objects that do; {orgName: --, postIndex:--, contType: , contValue: --}
+                ///e.orgUserName, e.postIndex, contType(tag)
+                let cont = await dbb.collection("orgs").findOne({orgName: e.orgName })
+                contsObjects.push({post: cont[e.contIndex], contType: e.contType, contValue: e.contValue})
+    
+    
+                if(followingObjects.length + contsObjects.length== Object.entries(found.following).length + Object.entries(found.conts).length){
+                    console.log("will send the following object")
+                    res.json({followingObjects, contsObjects})
+                }
+    
+            })
+    
+        }
 
-        })
+    // }
+    )
 
-    })
-
-
-
-
-
-})
+}
+)
 
 
 ////registering routes; encrypt
@@ -306,6 +301,31 @@ app.post("/editProfile", (req, res)=>{
 
 })
 
+
+///////following; add follow
+app.post("/addFollow", (req, res)=>{
+    console.log(".....add follow.......")
+    console.log(req.body)
+
+    ////decode jwt 
+    jwt.verify(req.body.following, process.env.TOKEN, (err, data)=>{
+        if(err) return res.sendStatus(401)
+        req.tokenData = data
+        console.log(data)
+    })
+
+    console.log(req.tokenData)
+    mongodb.connect(process.env.MONGOKEY, async (err, client)=>{
+        let dbb = client.db()
+        // let found = await dbb.collection("users").findOne({userName: req.tokenData})
+        let found = await dbb.collection("users").updateOne({userName: req.tokenData}, {$push: {following: req.body.followed}})
+
+        console.log("pushed")
+        
+})
+
+
+})
 
 
 
