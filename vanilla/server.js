@@ -162,7 +162,7 @@ try{
 
     ///encrypt the pw; 
     const hashedPassword = await bcrypt.hash(req.body.pw, 10)
-    const user = {em: req.body.em, pw: hashedPassword, userName: req.body.userName, avatar: "../home/imgs/anders-jilden-Sc5RKXLBjGg-unsplash.jpg", bio: "...", name: req.body.userName, conts: [], isUser: true, followings:[], skills:[]}
+    const user = {em: req.body.em, pw: hashedPassword, userName: req.body.userName, avatar: "../home/imgs/anders-jilden-Sc5RKXLBjGg-unsplash.jpg", bio: "...", name: req.body.userName, conts: [], isUser: true, following:[], skills:[]}
     // let newUser = await dbb.collection("users").insertOne(user) ///to get the id in db
     await dbb.collection("users").insertOne(user) ///to get the id in db
 
@@ -172,16 +172,6 @@ try{
         let token = jwt.sign(user.userName, process.env.TOKEN)
 
         ///send data and token
-        ///cookies 
-        res.cookie("Cuser", user)
-
-        res.cookie("cUserName", user.userName)
-        res.cookie("cName", user.name)
-        res.cookie("cAvatar", user.avatar)
-        res.cookie("isUser", user.isUser)
-
-        res.cookie("token", token)
-
 
         ///localstorage; then save it at the client
         res.json({status: "created user", token: token, cUser: {userNmae: user.userName, name: user.name, avatar: user.avatar, isUser: user.isUser}})
@@ -239,8 +229,27 @@ app.post("/loginUser", async (req, res)=>{
     })
 })
 
+app.post("/cUserFollowing", async(req, res)=>{
 
-////authenticate token middleware; 
+    console.log("......current user following......")
+    console.log(req.body)
+
+jwt.verify(req.body.token, process.env.TOKEN, (err, data)=>{
+    if(err) return res.sendStatus(401)
+    req.tokenData = data
+})
+
+mongodb.connect(process.env.MONGOKEY, async (err, client)=>{
+    let dbb = client.db()
+    let found = await dbb.collection("users").findOne({userName: req.tokenData})
+    console.log(found)
+    res.json({following: found.following})
+})
+
+
+})
+
+////authenticate token middleware; useless
 ///may make it a function to be used at the middle of routes function 
 function authToken(req, res, next){
     const authHeader = req.headers["authorization"]
@@ -302,8 +311,9 @@ app.post("/editProfile", (req, res)=>{
 })
 
 
-///////following; add follow
-app.post("/addFollow", (req, res)=>{
+///////following; 
+////follow
+app.post("/follow", (req, res)=>{
     console.log(".....add follow.......")
     console.log(req.body)
 
@@ -311,7 +321,6 @@ app.post("/addFollow", (req, res)=>{
     jwt.verify(req.body.following, process.env.TOKEN, (err, data)=>{
         if(err) return res.sendStatus(401)
         req.tokenData = data
-        console.log(data)
     })
 
     console.log(req.tokenData)
@@ -327,9 +336,39 @@ app.post("/addFollow", (req, res)=>{
 
 })
 
+///unfollow
+app.post("/unfollow", (req, res)=>{
+    console.log(".....remove follow.......")
+    console.log(req.body)
+
+    ////decode jwt 
+    jwt.verify(req.body.following, process.env.TOKEN, (err, data)=>{
+        if(err) return res.sendStatus(401)
+        req.tokenData = data
+    })
+
+    console.log(req.tokenData)
+    mongodb.connect(process.env.MONGOKEY, async (err, client)=>{
+        let dbb = client.db()
+        // let found = await dbb.collection("users").findOne({userName: req.tokenData})
+        let found = await dbb.collection("users").updateOne({userName: req.tokenData}, {$pull:{following: req.body.followed}})
+
+        console.log("pushed")
+        
+})
+
+})
 
 
 ////////test code 
+
+///verify token; 
+// jwt.verify(req.body, process.env.TOKEN, (err, data)=>{
+//     if(err) return res.sendStatus(401)
+//     req.tokenData = data
+// })
+
+
 ///mongodb init
 // mongodb.connect(process.env.MONGOKEY, async (err, client)=>{
 //     let dbb = client.db()

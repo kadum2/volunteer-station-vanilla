@@ -299,26 +299,25 @@
 
         ///////features 
 
-        function checkAccout() {
+        async function checkAccout() {
 
             console.log(cookies)
 
-            //profile type; user case, org case
-            if (cookies.pIsUser) {
-                console.log("profile is user") ///user case
+            ////check profile
+            if (cookies.pIsUser) { //user case
+                console.log("profile is user")
                 ///get the conts
                 /// conts dom, make post object, insert cookie data; insert posts objects into the posts dom container
-            } else {
-                console.log("profile is org") ///org case 
+            } else { ///org case 
+                console.log("profile is org")
                 ////get made conts 
             }
 
 
 
-            ////current user type; no account, account; user; owner, not owner, org; owner, not owner
+            ///////////current user type; no account, account; user; owner, not owner, org; owner, not owner
             ///not account; register and login
-            if (localStorage.getItem("cUser") == undefined) {
-
+            if (localStorage.getItem("cUser") == undefined) { ////no account 
 
                 console.log("no user; should generate the auth")
                 auth.innerHTML = `            
@@ -441,8 +440,10 @@
             } else { //account; 
 
                 console.log(".....account.....")
-                console.log(JSON.parse(localStorage.getItem("cUser")))
+                // console.log(JSON.parse(localStorage.getItem("cUser")))
                 let cUserJson = JSON.parse(localStorage.getItem("cUser"))
+
+                // console.log(cUserJson.following)
 
                 /////deploy the data; make the cUser object
                 readCookies()
@@ -455,6 +456,30 @@
                 let cP = document.createElement("p")
                 cP.textContent = cUserJson.userName
                 cUser.append(cAv, cP)
+
+
+                ////get the following users; to check if can follow the profile user 
+                console.log(localStorage.getItem("token"))
+                let d = await fetch("/cUserFollowing", {
+                    method: "POST",
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        token: localStorage.getItem("token")
+                    })
+                    // body: localStorage.getItem("token")
+                    // body: JSON.stringify("hi")
+                })
+                let pd = await d.json()
+                console.log(pd)
+                if (pd.following.includes(cookies.pUserName)) {
+                    displayUnfollowBtn()
+                } else {
+                    displayFollowBtn()
+                }
+
 
                 ///create logout button
                 let logoutBtn = document.createElement("button")
@@ -516,14 +541,16 @@
                             console.log("clicked on sending edit btn")
                             ////check if not empty 
                             if (document.querySelector("#newName").value && document.querySelector(
-                                    "#newBio").value && [...document.querySelectorAll(".skill")].map(e => e
+                                    "#newBio").value && [...document.querySelectorAll(".skill")].map(
+                                    e => e
                                     .value)) {
 
                                 console.log([...document.querySelectorAll(".skill")].map(e => e.value))
                                 let editedData = {
                                     newName: document.querySelector("#newName").value,
                                     newBio: document.querySelector("#newBio").value,
-                                    skills: [...document.querySelectorAll(".skill")].map(e => e.value)
+                                    skills: [...document.querySelectorAll(".skill")].map(e => e
+                                        .value)
                                 }
                                 let d = await fetch("/editProfile", {
                                     method: "POST",
@@ -622,18 +649,20 @@
                 document.querySelector("#following").append(userObject)
 
                 /////check if follow or not to add the follow btn
-                followingUsernames.push(e.userName)
-                if (followingUsernames.length == pd.followingObjects.length) {
-                    console.log(followingUsernames)
-                    // console.log(Object.values(followingUsernames).includes(cookies.pUserName))
-                    if (!Object.values(followingUsernames).includes(cookies.pUserName))
-                        displayFollowOption()
-                }
+                // followingUsernames.push(e.userName)
+                // if (followingUsernames.length == pd.followingObjects.length) {
+                //     console.log(followingUsernames)
+                //     // console.log(Object.values(followingUsernames).includes(cookies.pUserName))
+                //     if (!Object.values(followingUsernames).includes(cookies.pUserName)) {
+                //         displayFollowOption()
+
+                //     }
+                // }
 
             })
         }
 
-        function displayFollowOption() {
+        function displayFollowBtn() {
             console.log("will display follow btn")
 
             let followOptions = {
@@ -647,7 +676,7 @@
             followBtn.textContent = "follow"
 
             followBtn.addEventListener("click", () => {
-                let d = fetch("/addFollow", {
+                let d = fetch("/follow", {
                     method: "POST",
                     headers: {
                         'Accept': 'application/json',
@@ -664,6 +693,35 @@
 
         }
 
+        function displayUnfollowBtn() {
+            console.log("will display unfollow btn")
+
+            let unfollowOptions = {
+                // following: JSON.parse(localStorage.getItem("cUser")).userName,
+                following: localStorage.getItem("token"),
+                followed: cookies.pUserName
+            }
+
+            console.log(unfollowOptions)
+            let unfollow = document.createElement("button")
+            unfollow.textContent = "unfollow"
+
+            unfollow.addEventListener("click", () => {
+                let d = fetch("/unfollow", {
+                    method: "POST",
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(unfollowOptions)
+                    // body: cookies.pUserName
+                })
+            })
+
+            // info.append()
+            info.insertBefore(unfollow, info.firstElementChild)
+
+        }
 
         ////test code 
     </script>
