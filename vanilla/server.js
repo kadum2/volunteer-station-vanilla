@@ -371,7 +371,7 @@ app.get("/mode", (req, res)=>{
 let orgAvImg
 
 let orgAvatarStoring = multer.diskStorage({
-    destination: "./orgAvImgs",
+    destination: "./public/orgAvImgs",
     filename: async (req, file, cb)=>{
         console.log(file)
 
@@ -381,16 +381,54 @@ let orgAvatarStoring = multer.diskStorage({
 })
 const orgAvatarImg = multer({storage: orgAvatarStoring})
 
-///two routes; img route; /regOrgInfo, info route; /regOrgInfo
+//two routes; img route; /regOrgInfo, info route; /regOrgInfo  //one route; info and img route
+// app.post("/regOrg", orgAvatarImg.any() ,(req, res)=>{
 
-////one route; info and img route
-app.post("/regOrg", orgAvatarImg.any() ,(req, res)=>{
+//     console.log(".......regOrg.........")
+//     console.log(req.body)
 
-    console.log(".......regOrg.........")
+//     if(req.body.userName){
+//         mongodb.connect(process.env.MONGOKEY, async (err, client)=>{
+//         let dbb = client.db()
+
+//         ////encrypt pw 
+
+//         ///check if used email
+//         if(await dbb.collection("orgs").findOne({em: req.body.em})){
+
+//             console.log(await dbb.collection("orgs").findOne({em: req.body.em}))
+//             console.log("user does exist")
+//             res.json({status: 'user does exist'})
+//         }else{ ///not used email
+
+//             console.log("user doestn exist; register a new one")
+
+//             ///check if used username; 
+//             if(await dbb.collection("orgs").findOne({userName: req.body.userName})){
+//                 res.json({status: "error; username used"})
+//             }else{
+
+//             ///encrypt the pw; 
+//             const hashed = await bcrypt.hash(req.body.pw, 10)
+//             const user = {userName: req.body.userName, name: req.body.name, pw: hashed, em: req.body.em, locationsOfService: req.body.locationsOfService, following: [], followers: [], avatar: orgAvImg, members: req.body.members}
+//             await dbb.collection("orgs").insertOne(user) ///to get the id in db
+
+//             }}
+// })
+
+// }
+
+// })
+
+
+app.post("/regOrg", orgAvatarImg.any(), (req, res)=>{
+    console.log(".......reqOrgAll.............")
+    req.body.locationsOfService = req.body.locationsOfService.split(",")
+    req.body.members = req.body.members.split(",")
     console.log(req.body)
 
-    if(req.body.userName){
-        mongodb.connect(process.env.MONGOKEY, async (err, client)=>{
+    ////mongodb
+    mongodb.connect(process.env.MONGOKEY, async (err, client)=>{
         let dbb = client.db()
 
         ////encrypt pw 
@@ -412,15 +450,23 @@ app.post("/regOrg", orgAvatarImg.any() ,(req, res)=>{
 
             ///encrypt the pw; 
             const hashed = await bcrypt.hash(req.body.pw, 10)
-            const user = {userName: req.body.userName, name: req.body.name, pw: hashed, em: req.body.em, locationsOfService: req.body.locations, following: [], followers: [], avatar: orgAvImg, members: req.body.members}
+            const user = {userName: req.body.userName, name: req.body.name, pw: hashed, em: req.body.em, locationsOfService: req.body.locationsOfService, following: [], followers: [], avatar: orgAvImg, members: req.body.members}
             await dbb.collection("orgs").insertOne(user) ///to get the id in db
 
             }}
-})}
+})
 
 })
 
 
+app.post("/editProfilefd",orgAvatarImg.any(), (req, res)=>{
+    console.log(".....editProfilefd....")
+    console.log(req.body)
+    const obj = JSON.parse(JSON.stringify(req.body)); // req.body = [Object: null prototype] { title: 'product' }
+
+console.log(obj); // { title: 'product' }
+
+})
 
 ////////test code 
 

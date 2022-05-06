@@ -48,9 +48,11 @@
             <button id="regOrgBtn">register org</button>
     </div>
     <div>
-        <textarea name="bio" id="bio" cols="30" rows="10"></textarea>
-        <textarea name="locationsOfService" id="locationsOfService" cols="30" rows="10"></textarea>
-        <textarea name="members" id="members" cols="30" rows="10"></textarea>
+        <textarea name="bio" id="bio" cols="30" rows="10" placeholder="have to insert ',' between each item"></textarea>
+        <textarea name="locationsOfService" id="locationsOfService" cols="30" rows="10"
+            placeholder="have to insert ',' between each item"></textarea>
+        <textarea name="members" id="members" cols="30" rows="10"
+            placeholder="have to insert ',' between each item"></textarea>
     </div>
 
     <script>
@@ -84,15 +86,15 @@
                 let locationsOfService = locationsOfServ.value.split(",")
                 let members = memb.value.split(",")
 
-                let orgInfo = {
-                    userName: userName.value,
-                    name: name.value,
-                    bio: bio.value,
-                    em: em.value,
-                    pw: pw.value,
-                    locationsOfService: locationsOfService,
-                    members: members
-                }
+                // let orgInfo = {
+                //     userName: userName.value,
+                //     name: name.value,
+                //     bio: bio.value,
+                //     em: em.value,
+                //     pw: pw.value,
+                //     locationsOfService: locationsOfService,
+                //     members: members
+                // }
 
                 console.log(locationsOfService)
                 console.log(members)
@@ -100,24 +102,19 @@
 
                 let fd = new FormData()
                 fd.append("img", img.files[0])
+                fd.append("userName", userName.value)
+                fd.append("name", name.value)
+                fd.append("bio", bio.value)
+                fd.append("em", em.value)
+                fd.append("pw", pw.value)
+                fd.append("locationsOfService", locationsOfService)
+                fd.append("members", members)
 
                 //send data; 
-                // /send img
                 fetch("/regOrg", {
                     method: "POST",
                     body: fd
                 })
-                ////send info
-                fetch("/regOrg", {
-                    method: "POST",
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(orgInfo)
-
-                })
-
             }
         })
     </script>

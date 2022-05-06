@@ -440,10 +440,7 @@
             } else { //account; 
 
                 console.log(".....account.....")
-                // console.log(JSON.parse(localStorage.getItem("cUser")))
                 let cUserJson = JSON.parse(localStorage.getItem("cUser"))
-
-                // console.log(cUserJson.following)
 
                 /////deploy the data; make the cUser object
                 readCookies()
@@ -469,8 +466,6 @@
                     body: JSON.stringify({
                         token: localStorage.getItem("token")
                     })
-                    // body: localStorage.getItem("token")
-                    // body: JSON.stringify("hi")
                 })
                 let pd = await d.json()
                 console.log(pd)
@@ -507,6 +502,10 @@
                         let editingTemplate = `
                             <input type="text" placeholder="new name" id="newName">
                             <input type="text" placeholder="new bio" id="newBio">
+
+                            <label to="newAvImg">change img</label>
+                            <input type="file" id="newAvImg">
+                            
                             <div id="skillsCont">
                                 <select name="skill1" id="skill1" class="skill">
                                     <option value="select skill">select skill 1</option>
@@ -552,17 +551,29 @@
                                     skills: [...document.querySelectorAll(".skill")].map(e => e
                                         .value)
                                 }
-                                let d = await fetch("/editProfile", {
+
+                                let fd = new FormData()
+                                let avImg = document.querySelector("#newAvImg").files[0]
+                                fd.append("img", avImg)
+                                fd.append("token", localStorage.getItem("token"))
+                                fd.append("new name", "newName")
+
+                                // let d = await fetch("/editProfileq", {
+                                //     method: "POST",
+                                //     headers: {
+                                //         'Accept': 'application/json',
+                                //         'Content-Type': 'application/json'
+                                //     },
+                                //     body: JSON.stringify({
+                                //         editedData,
+                                //         token: localStorage.getItem("token")
+                                //     })
+                                // })
+                                let d = await fetch("/editProfilefd", {
                                     method: "POST",
-                                    headers: {
-                                        'Accept': 'application/json',
-                                        'Content-Type': 'application/json'
-                                    },
-                                    body: JSON.stringify({
-                                        editedData,
-                                        token: localStorage.getItem("token")
-                                    })
+                                    body: fd
                                 })
+
                             }
 
                             ////empty the values 
