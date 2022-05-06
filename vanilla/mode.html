@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    body {
+        /* background: red; */
+        height: 100vh;
+        margin: 0;
+        box-sizing: border-box;
+
+    }
+
+    body,
+    #regOrg,
+    div {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    #regOrg,
+    div {
+        flex-direction: column;
+        /* font-size: 2rem; */
+    }
+
+    input {
+        font-size: 1.4rem;
+    }
+</style>
+
+<body>
+    <div id="regOrg">
+        <h1>register organization</h2>
+            <input type="text" placeholder="userName" id="userName">
+            <input type="text" placeholder="name" id="name">
+
+            <input type="text" placeholder="em" id="em">
+            <input type="text" placeholder="pw" id="pw">
+            <!-- <input type="text" placeholder="bio" id="bio"> -->
+            <input type="file" placeholder="avatar" id="img">
+            <button id="regOrgBtn">register org</button>
+    </div>
+    <div>
+        <textarea name="bio" id="bio" cols="30" rows="10"></textarea>
+        <textarea name="locationsOfService" id="locationsOfService" cols="30" rows="10"></textarea>
+        <textarea name="members" id="members" cols="30" rows="10"></textarea>
+    </div>
+
+    <script>
+        console.log("mode")
+
+        ////main DOM element to deal with
+        let regOrg = document.querySelector("#regOrg")
+        let userName = document.querySelector("#userName")
+        let name = document.querySelector("#name")
+        let bio = document.querySelector("#bio")
+        let em = document.querySelector("#em")
+        let pw = document.querySelector("#pw")
+
+        let locationsOfServ = document.querySelector("#locationsOfService")
+        let memb = document.querySelector("#members")
+
+        let img = document.querySelector("#img")
+        let regOrgBtn = document.querySelector("#regOrgBtn")
+
+
+        regOrgBtn.addEventListener("click", async () => {
+
+
+            console.log("clicking on the regOrg")
+            console.log(img.files[0])
+
+            if (img.files[0] && userName.value && name.value && em.value, pw.value && bio.value) {
+
+
+                ////set the info; 
+                let locationsOfService = locationsOfServ.value.split(",")
+                let members = memb.value.split(",")
+
+                let orgInfo = {
+                    userName: userName.value,
+                    name: name.value,
+                    bio: bio.value,
+                    em: em.value,
+                    pw: pw.value,
+                    locationsOfService: locationsOfService,
+                    members: members
+                }
+
+                console.log(locationsOfService)
+                console.log(members)
+                console.log(orgInfo)
+
+                let fd = new FormData()
+                fd.append("img", img.files[0])
+
+                //send data; 
+                // /send img
+                fetch("/regOrg", {
+                    method: "POST",
+                    body: fd
+                })
+                ////send info
+                fetch("/regOrg", {
+                    method: "POST",
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(orgInfo)
+
+                })
+
+            }
+        })
+    </script>
+</body>
+
+</html>

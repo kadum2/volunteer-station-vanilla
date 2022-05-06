@@ -6,6 +6,9 @@ const { json } = require("express");
 let cookieParser = require("cookie-parser")
 app.use(cookieParser());
 
+const multer = require("multer")
+
+
 const env = require("dotenv")
 env.config()
 let bcrypt = require("bcrypt")
@@ -24,6 +27,10 @@ app.use("/home", express.static("./home"))
 // app.use("/profile", express.static("./profile"))
 
 
+////setting saving org account avatar imgs
+// const upload = multer({dest:'avImgs/'});
+
+
 // cookie temaplate; token; username, cUser, pUser; (username, name, bio, avimg, skills
 // isUser and following, conts posts)
 
@@ -31,13 +38,10 @@ app.use("/home", express.static("./home"))
 ////send and display followings (usernames)
 ///make follow 
 ///show folloing; get follow list, get the users at that following list 
+
 ///make org account 
 ///make the post 
 ///make the shared elements for the both cases 
-
-
-
-
 
 
 
@@ -88,20 +92,17 @@ app.get("/profileObjects", async (req, res)=>{
         let dbb = client.db()
         let found = await dbb.collection("users").findOne({userName: req.cookies.pUserName})
 
-
         ///send followings account object 
         let followingObjects = []
         let contsObjects = []
         // if(found.following != null && found.following != undefined){
 
 
-            Object.entries(found.following).forEach( async(e)=>{
+            found.following.forEach( async(e)=>{
                 ////users
-                let d = await dbb.collection("users").findOne({userName: e[1]})
+                let d = await dbb.collection("users").findOne({userName: e})
                 followingObjects.push({userName: d.userName, name: d.name, avatar: d.avatar,isUser: d.isUser })
-                // console.log(followingObjects)
-    
-                
+
                 // if(followingObjects.length == Object.entries(found.following).length){
                 //     console.log("will send the following object")
                 //     res.json(followingObjects)
@@ -112,7 +113,7 @@ app.get("/profileObjects", async (req, res)=>{
                 }
     
             })
-            Object.entries(found.conts).forEach(async (e)=>{
+            found.conts.forEach(async (e)=>{
                 /// /conts is an array of objects that do; {orgName: --, postIndex:--, contType: , contValue: --}
                 ///e.orgUserName, e.postIndex, contType(tag)
                 let cont = await dbb.collection("orgs").findOne({orgName: e.orgName })
@@ -281,8 +282,6 @@ function authToken(req, res, next){
 
 }
 
-
-
 /////////editing profile route
 ///authenticate the token, update data on the db
 app.post("/editProfile", (req, res)=>{
@@ -353,14 +352,82 @@ app.post("/unfollow", (req, res)=>{
         // let found = await dbb.collection("users").findOne({userName: req.tokenData})
         let found = await dbb.collection("users").updateOne({userName: req.tokenData}, {$pull:{following: req.body.followed}})
 
-        console.log("pushed")
+        console.log("removed")
         
 })
 
 })
 
+/////mode; register orgs; 
+app.get("/mode", (req, res)=>{
+    res.sendfile("./mode.html")
+})
+
+
+///////register org
+
+
+//////multer stuff
+let orgAvImg
+
+let orgAvatarStoring = multer.diskStorage({
+    destination: "./orgAvImgs",
+    filename: async (req, file, cb)=>{
+        console.log(file)
+
+        orgAvImg = await new Date().toISOString().replace(/:/g, '-') +file.originalname.replaceAll(" ", "")
+        cb(null, orgAvImg)
+    }
+})
+const orgAvatarImg = multer({storage: orgAvatarStoring})
+
+///two routes; img route; /regOrgInfo, info route; /regOrgInfo
+
+////one route; info and img route
+app.post("/regOrg", orgAvatarImg.any() ,(req, res)=>{
+
+    console.log(".......regOrg.........")
+    console.log(req.body)
+
+    if(req.body.userName){
+        mongodb.connect(process.env.MONGOKEY, async (err, client)=>{
+        let dbb = client.db()
+
+        ////encrypt pw 
+
+        ///check if used email
+        if(await dbb.collection("orgs").findOne({em: req.body.em})){
+
+            console.log(await dbb.collection("orgs").findOne({em: req.body.em}))
+            console.log("user does exist")
+            res.json({status: 'user does exist'})
+        }else{ ///not used email
+
+            console.log("user doestn exist; register a new one")
+
+            ///check if used username; 
+            if(await dbb.collection("orgs").findOne({userName: req.body.userName})){
+                res.json({status: "error; username used"})
+            }else{
+
+            ///encrypt the pw; 
+            const hashed = await bcrypt.hash(req.body.pw, 10)
+            const user = {userName: req.body.userName, name: req.body.name, pw: hashed, em: req.body.em, locationsOfService: req.body.locations, following: [], followers: [], avatar: orgAvImg, members: req.body.members}
+            await dbb.collection("orgs").insertOne(user) ///to get the id in db
+
+            }}
+})}
+
+})
+
+
 
 ////////test code 
+
+///mongodb init
+// mongodb.connect(process.env.MONGOKEY, async (err, client)=>{
+//     let dbb = client.db()
+// })
 
 ///verify token; 
 // jwt.verify(req.body, process.env.TOKEN, (err, data)=>{
@@ -368,11 +435,9 @@ app.post("/unfollow", (req, res)=>{
 //     req.tokenData = data
 // })
 
+////encrypt and decrypt pw; 
 
-///mongodb init
-// mongodb.connect(process.env.MONGOKEY, async (err, client)=>{
-//     let dbb = client.db()
-// })
+
 
 const port = 4000 || process.env.PORT
 app.listen(port, ()=>console.log(`listening on port ${port}`))
