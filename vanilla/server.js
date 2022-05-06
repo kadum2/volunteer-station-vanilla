@@ -309,6 +309,59 @@ app.post("/editProfile", (req, res)=>{
 
 })
 
+let userAvImg
+
+let userAvatarStoring = multer.diskStorage({
+    destination: "./public/userAvImgs",
+    filename: async (req, file, cb)=>{
+        console.log(file)
+
+        userAvImg = await new Date().toISOString().replace(/:/g, '-') +file.originalname.replaceAll(" ", "")
+        cb(null, userAvImg)
+    }
+})
+const userAvatarImg = multer({storage: userAvatarStoring})
+
+app.post("/editProfilefd",userAvatarImg.any(), (req, res)=>{
+    console.log(".....editProfilefd....")
+    req.body.skills = req.body.skills.split(",") ////make skills an array 
+    console.log(req.body)
+
+    /////jwt
+    jwt.verify(req.body.token, process.env.TOKEN, (err, data)=>{
+        if(err) return res.sendStatus(401)
+        req.tokenData = data
+        console.log(data)
+        // next()
+    })
+
+    ///// connect to db
+    mongodb.connect(process.env.MONGOKEY, async (err, client)=>{
+        let dbb = client.db()
+        // let found = await dbb.collection("users").findOne({userName: req.tokenData})
+        // console.log(found)
+        // let found2 = await dbb.collection("users").findOneAndUpdate({ userName : req.tokenData },{ $set: { name : req.body.editedData.newName,bio: req.body.editedData.newBio, skills: req.body.editedData.skills } })
+        if(req.body.newName) await dbb.collection("users").findOneAndUpdate({userName: req.tokenData}, {$set: {name: req.body.newName}})
+        if(req.body.newBio) await dbb.collection("users").findOneAndUpdate({userName: req.tokenData}, {$set: {bio: req.body.newBio}})
+        if(req.body.av) await dbb.collection("users").findOneAndUpdate({userName: req.tokenData}, {$set: {avatar: req.body.av}})
+
+        ///skills deploying
+        // if(req.body.skills)req.body.skills.forEach(e=>await dbb.collection("users").findOneAndUpdate({userName: req.tokenData}, {$set: {name: req.body.newName}}))
+
+        if(req.body.skills)await dbb.collection("users").findOneAndUpdate({userName: req.tokenData}, {$push: {skills: req.body.skills}})
+        ///   { $push: { scores: { $each: [ 90, 92, 85 ] } } }
+        // if(req.body.newName) await dbb.collection("users").findOneAndUpdate({userName: req.tokenData}, {$set: {name: req.body.newName}})
+
+        res.json({newName: req.body.newName, newBio: req.body.newBio, skills: req.body.skills, newAvatar: userAvImg })
+        // console.log(found2)
+    })
+
+
+    // const obj = JSON.parse(JSON.stringify(req.body));
+    // console.log(obj); 
+
+})
+
 
 ///////following; 
 ////follow
@@ -362,11 +415,7 @@ app.post("/unfollow", (req, res)=>{
 app.get("/mode", (req, res)=>{
     res.sendfile("./mode.html")
 })
-
-
 ///////register org
-
-
 //////multer stuff
 let orgAvImg
 
@@ -459,14 +508,8 @@ app.post("/regOrg", orgAvatarImg.any(), (req, res)=>{
 })
 
 
-app.post("/editProfilefd",orgAvatarImg.any(), (req, res)=>{
-    console.log(".....editProfilefd....")
-    console.log(req.body)
-    const obj = JSON.parse(JSON.stringify(req.body)); // req.body = [Object: null prototype] { title: 'product' }
 
-console.log(obj); // { title: 'product' }
 
-})
 
 ////////test code 
 

@@ -75,30 +75,13 @@
 
         regOrgBtn.addEventListener("click", async () => {
 
-
             console.log("clicking on the regOrg")
-            console.log(img.files[0])
 
             if (img.files[0] && userName.value && name.value && em.value, pw.value && bio.value) {
-
 
                 ////set the info; 
                 let locationsOfService = locationsOfServ.value.split(",")
                 let members = memb.value.split(",")
-
-                // let orgInfo = {
-                //     userName: userName.value,
-                //     name: name.value,
-                //     bio: bio.value,
-                //     em: em.value,
-                //     pw: pw.value,
-                //     locationsOfService: locationsOfService,
-                //     members: members
-                // }
-
-                console.log(locationsOfService)
-                console.log(members)
-                console.log(orgInfo)
 
                 let fd = new FormData()
                 fd.append("img", img.files[0])

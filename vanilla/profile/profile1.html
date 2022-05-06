@@ -538,43 +538,52 @@
                         let sendEditBtn = document.querySelector("#sendEditBtn")
                         sendEditBtn.addEventListener("click", async () => {
                             console.log("clicked on sending edit btn")
-                            ////check if not empty 
-                            if (document.querySelector("#newName").value && document.querySelector(
-                                    "#newBio").value && [...document.querySelectorAll(".skill")].map(
-                                    e => e
-                                    .value)) {
+                            ////check if not empty; one by one
+                            // if (document.querySelector("#newName").value && document.querySelector(
+                            //         "#newBio").value && [...document.querySelectorAll(".skill")].map(
+                            //         e => e
+                            //         .value)) {
 
-                                console.log([...document.querySelectorAll(".skill")].map(e => e.value))
-                                let editedData = {
-                                    newName: document.querySelector("#newName").value,
-                                    newBio: document.querySelector("#newBio").value,
-                                    skills: [...document.querySelectorAll(".skill")].map(e => e
-                                        .value)
-                                }
-
-                                let fd = new FormData()
-                                let avImg = document.querySelector("#newAvImg").files[0]
-                                fd.append("img", avImg)
-                                fd.append("token", localStorage.getItem("token"))
-                                fd.append("new name", "newName")
-
-                                // let d = await fetch("/editProfileq", {
-                                //     method: "POST",
-                                //     headers: {
-                                //         'Accept': 'application/json',
-                                //         'Content-Type': 'application/json'
-                                //     },
-                                //     body: JSON.stringify({
-                                //         editedData,
-                                //         token: localStorage.getItem("token")
-                                //     })
-                                // })
-                                let d = await fetch("/editProfilefd", {
-                                    method: "POST",
-                                    body: fd
-                                })
-
+                            // console.log([...document.querySelectorAll(".skill")].map(e => e.value))
+                            let editedData = {
+                                newName: document.querySelector("#newName").value,
+                                newBio: document.querySelector("#newBio").value,
+                                skills: [...document.querySelectorAll(".skill")].map(e => e
+                                    .value)
                             }
+
+                            let fd = new FormData()
+                            let avImg = document.querySelector("#newAvImg").files[0]
+
+                            if (document.querySelector("#newName").value) fd.append("newName", document
+                                .querySelector("#newName").value)
+                            if (document.querySelector("#newBio").value) fd.append("newBio", document
+                                .querySelector("#newBio").value)
+                            // if([...document.querySelectorAll(".skill")].map(e => e.value))[...document.querySelectorAll(".skill")].forEach(e => fd.append("skill", e.value))
+                            if ([...document.querySelectorAll(".skill")].map(e => e.value)) fd.append(
+                                "skills", [...document.querySelectorAll(".skill")].map(e => e.value)
+                            )
+                            if (avImg) fd.append("av", avImg)
+                            fd.append("token", localStorage.getItem("token"))
+                            // fd.append("new name", "newName")
+
+                            // let d = await fetch("/editProfileq", {
+                            //     method: "POST",
+                            //     headers: {
+                            //         'Accept': 'application/json',
+                            //         'Content-Type': 'application/json'
+                            //     },
+                            //     body: JSON.stringify({
+                            //         editedData,
+                            //         token: localStorage.getItem("token")
+                            //     })
+                            // })
+                            let d = await fetch("/editProfilefd", {
+                                method: "POST",
+                                body: fd
+                            })
+
+                            // }
 
                             ////empty the values 
                             document.querySelector("#newName").value
