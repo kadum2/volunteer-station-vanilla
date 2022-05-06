@@ -47,15 +47,53 @@ app.use("/home", express.static("./home"))
 
 ///custom profile page; send profile template, wanted user data (puser)
     // other choice; express.static("./profile")
-app.get("/profile/:username", async (req, res)=>{
-    console.log(".....profile/:username/...........")
+// app.get("/profile/:username", async (req, res)=>{
+//     console.log(".....profile/:username/...........")
+//     console.log(req.params.username)
+
+//     mongodb.connect(process.env.MONGOKEY, async (err, client)=>{
+//         let dbb = client.db()
+//         let found = await dbb.collection("users").findOne({userName: req.params.username})
+
+        
+//         if(found){
+//         console.log(".....current Profile .......")
+//         console.log(found)
+
+//         res.cookie("pUserName", found.userName)
+//         res.cookie("pName", found.name)
+//         res.cookie("pAvImg", found.avatar)
+//         res.cookie("pBio", found.bio)
+//         res.cookie("pFollowing", found.following)
+//         res.cookie("isUser", found.isUser)
+
+//         console.log(".......then to send account objects.......")
+
+//         res.sendFile(path.join(__dirname, "profile", "index.html"))
+
+//         }else{
+//             // res.send(`the page ${req.params.username} doesnt exist and ${found} is what found`)
+//             res.send(found)
+//         }
+
+//     })
+// })
+
+////set profile folder to be public method; 
+// app.use("/profile/:username", express.static(path.join(__dirname, "profile")))
+app.use("/profile/:username", express.static("profile"))
+
+/////send the profile data; 
+app.get("/profileData/:username", (req, res)=>{
+
+    console.log("..........profile Data ........")
     console.log(req.params.username)
 
+    ////check db if exist
     mongodb.connect(process.env.MONGOKEY, async (err, client)=>{
         let dbb = client.db()
         let found = await dbb.collection("users").findOne({userName: req.params.username})
 
-        
         if(found){
         console.log(".....current Profile .......")
         console.log(found)
@@ -66,19 +104,18 @@ app.get("/profile/:username", async (req, res)=>{
         res.cookie("pBio", found.bio)
         res.cookie("pFollowing", found.following)
         res.cookie("isUser", found.isUser)
-
-
         console.log(".......then to send account objects.......")
-    
-        res.sendFile(path.join(__dirname, "profile", "profile1.html"))
-
+        res.sendStatus(204)
         }else{
-            // res.send(`the page ${req.params.username} doesnt exist and ${found} is what found`)
-            res.send(found)
+            res.sendStatus(400)
         }
-
     })
 })
+
+
+
+
+
 
 
 /// //get additional data about the profile account; (that cant be set with
@@ -182,14 +219,9 @@ try{
         // res.status(201).send(user)
         ///or 
 
-
             }
-
-
         }
         })
-
-
 }catch{
     res.status(500).send()
 }
@@ -250,40 +282,10 @@ mongodb.connect(process.env.MONGOKEY, async (err, client)=>{
 
 })
 
-////authenticate token middleware; useless
-///may make it a function to be used at the middle of routes function 
-function authToken(req, res, next){
-    const authHeader = req.headers["authorization"]
-    console.log(authHeader)
-    // const token = authHeader && authHeader.split(" ")[1]
-    const token = authHeader.split(" ")[1]
 
-    console.log(token)
-    ///check if exist
-    // if(token == null)return res.status(401).send("no token sent")
-    // if(token == undefined)console.log("no token")
 
-    if(token != "undefined" ){
-        console.log('defined')
-
-    jwt.verify(token, process.env.TOKEN, (err, data)=>{
-        if(err) return res.sendStatus(401)
-        req.user = data
-        console.log(data)
-        next()
-    })
-    }else{return res.status(401).send("no token sent")}
-    ///verify
-    // jwt.verify(token, env.process.TOKEN, (err, data)=>{
-    //     if(err) return res.sendStatus(401)
-    //     req.user = data
-    //     next()
-    // })
-
-}
-
-/////////editing profile route
-///authenticate the token, update data on the db
+/////////editing profile route; no need for it; delete
+///authenticate the token, update data on the db; 
 app.post("/editProfile", (req, res)=>{
     console.log(req.body)
     console.log(req.body.editedData.newName)
@@ -310,7 +312,6 @@ app.post("/editProfile", (req, res)=>{
 })
 
 let userAvImg
-
 let userAvatarStoring = multer.diskStorage({
     destination: "./public/userAvImgs",
     filename: async (req, file, cb)=>{
@@ -332,36 +333,21 @@ app.post("/editProfilefd",userAvatarImg.any(), (req, res)=>{
         if(err) return res.sendStatus(401)
         req.tokenData = data
         console.log(data)
-        // next()
     })
 
     ///// connect to db
     mongodb.connect(process.env.MONGOKEY, async (err, client)=>{
         let dbb = client.db()
-        // let found = await dbb.collection("users").findOne({userName: req.tokenData})
-        // console.log(found)
-        // let found2 = await dbb.collection("users").findOneAndUpdate({ userName : req.tokenData },{ $set: { name : req.body.editedData.newName,bio: req.body.editedData.newBio, skills: req.body.editedData.skills } })
         if(req.body.newName) await dbb.collection("users").findOneAndUpdate({userName: req.tokenData}, {$set: {name: req.body.newName}})
         if(req.body.newBio) await dbb.collection("users").findOneAndUpdate({userName: req.tokenData}, {$set: {bio: req.body.newBio}})
         if(req.body.av) await dbb.collection("users").findOneAndUpdate({userName: req.tokenData}, {$set: {avatar: req.body.av}})
 
         ///skills deploying
-        // if(req.body.skills)req.body.skills.forEach(e=>await dbb.collection("users").findOneAndUpdate({userName: req.tokenData}, {$set: {name: req.body.newName}}))
-
         if(req.body.skills)await dbb.collection("users").findOneAndUpdate({userName: req.tokenData}, {$push: {skills: req.body.skills}})
-        ///   { $push: { scores: { $each: [ 90, 92, 85 ] } } }
-        // if(req.body.newName) await dbb.collection("users").findOneAndUpdate({userName: req.tokenData}, {$set: {name: req.body.newName}})
 
         res.json({newName: req.body.newName, newBio: req.body.newBio, skills: req.body.skills, newAvatar: userAvImg })
-        // console.log(found2)
     })
-
-
-    // const obj = JSON.parse(JSON.stringify(req.body));
-    // console.log(obj); 
-
 })
-
 
 ///////following; 
 ////follow
@@ -509,7 +495,37 @@ app.post("/regOrg", orgAvatarImg.any(), (req, res)=>{
 
 
 
+////authenticate token middleware; useless
+///may make it a function to be used at the middle of routes function 
+function authToken(req, res, next){
+    const authHeader = req.headers["authorization"]
+    console.log(authHeader)
+    // const token = authHeader && authHeader.split(" ")[1]
+    const token = authHeader.split(" ")[1]
 
+    console.log(token)
+    ///check if exist
+    // if(token == null)return res.status(401).send("no token sent")
+    // if(token == undefined)console.log("no token")
+
+    if(token != "undefined" ){
+        console.log('defined')
+
+    jwt.verify(token, process.env.TOKEN, (err, data)=>{
+        if(err) return res.sendStatus(401)
+        req.user = data
+        console.log(data)
+        next()
+    })
+    }else{return res.status(401).send("no token sent")}
+    ///verify
+    // jwt.verify(token, env.process.TOKEN, (err, data)=>{
+    //     if(err) return res.sendStatus(401)
+    //     req.user = data
+    //     next()
+    // })
+
+}
 
 ////////test code 
 
