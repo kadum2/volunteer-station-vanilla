@@ -8,9 +8,9 @@ app.use(cookieParser());
 
 const multer = require("multer")
 
-
 const env = require("dotenv")
 env.config()
+
 let bcrypt = require("bcrypt")
 const jwt = require("jsonwebtoken")
 let mongodb = require("mongodb").MongoClient  ///mongodb atlas
@@ -22,68 +22,12 @@ app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
 ////sending pages; setting public dirs
-// app.use(express.static("public"))
 app.use("/home", express.static("./home"))
-// app.use("/profile", express.static("./profile"))
-
-
-////setting saving org account avatar imgs
-// const upload = multer({dest:'avImgs/'});
-
-
-// cookie temaplate; token; username, cUser, pUser; (username, name, bio, avimg, skills
-// isUser and following, conts posts)
-
-////////main features to implements 
-////send and display followings (usernames)
-///make follow 
-///show folloing; get follow list, get the users at that following list 
-
-///make org account 
-///make the post 
-///make the shared elements for the both cases 
-
-
-
-///custom profile page; send profile template, wanted user data (puser)
-    // other choice; express.static("./profile")
-// app.get("/profile/:username", async (req, res)=>{
-//     console.log(".....profile/:username/...........")
-//     console.log(req.params.username)
-
-//     mongodb.connect(process.env.MONGOKEY, async (err, client)=>{
-//         let dbb = client.db()
-//         let found = await dbb.collection("users").findOne({userName: req.params.username})
-
-        
-//         if(found){
-//         console.log(".....current Profile .......")
-//         console.log(found)
-
-//         res.cookie("pUserName", found.userName)
-//         res.cookie("pName", found.name)
-//         res.cookie("pAvImg", found.avatar)
-//         res.cookie("pBio", found.bio)
-//         res.cookie("pFollowing", found.following)
-//         res.cookie("isUser", found.isUser)
-
-//         console.log(".......then to send account objects.......")
-
-//         res.sendFile(path.join(__dirname, "profile", "index.html"))
-
-//         }else{
-//             // res.send(`the page ${req.params.username} doesnt exist and ${found} is what found`)
-//             res.send(found)
-//         }
-
-//     })
-// })
-
-////set profile folder to be public method; 
-// app.use("/profile/:username", express.static(path.join(__dirname, "profile")))
 app.use("/profile/:username", express.static("profile"))
 
-/////send the profile data; 
+//////////routes 
+
+/////send the profile data; cookies; 
 app.get("/profileData/:username", (req, res)=>{
 
     console.log("..........profile Data ........")
@@ -112,15 +56,7 @@ app.get("/profileData/:username", (req, res)=>{
     })
 })
 
-
-
-
-
-
-
-/// //get additional data about the profile account; (that cant be set with
-/// cookies); following, posts, may make two routes for follow objects and for
-/// post objects to prevent some intercepting errors or so ...
+//////send profile complex data; objects; following, followers, conts (posts); 
 app.get("/profileObjects", async (req, res)=>{
     console.log(".....get profile objects....")
     console.log(req.cookies)
@@ -172,8 +108,7 @@ app.get("/profileObjects", async (req, res)=>{
 }
 )
 
-
-////registering routes; encrypt
+////registering user; encrypt; send data; 
 app.post("/regUser", async (req, res)=>{
     console.log(".....post regUser........")
     console.log(req.body)
@@ -227,29 +162,21 @@ try{
 }
 })
 
-////login
-app.post("/loginUser", async (req, res)=>{
+////login user and org???; 
+app.post("/login", async (req, res)=>{
     mongodb.connect(process.env.MONGOKEY, async (err, client)=>{
         let dbb = client.db()
         ///check if exist
         let user = await dbb.collection("users").findOne({em: req.body.em})
+        if(user == undefined) user = await dbb.collection("orgs").findOne({em: req.body.em})
         if(user){
             if(await bcrypt.compare(req.body.pw, user.pw)){
                 console.log("correct cred; login")
                 console.log(user)
-                // res.send(user)
-                ////jwt; make token
-                let token = jwt.sign(user.userName, process.env.TOKEN)
-
-                ///send data and token
-                // res.cookie("cUserName", user.userName)
-                // res.cookie("cName", user.name)
-                // res.cookie("cAvatar", user.avatar)
-                // res.cookie("isUser", user.isUser)
-        
+                let token = jwt.sign(user.userName, process.env.TOKEN)        
                 res.cookie("token", token)
 
-                ///user localstorage
+                ///localstorage
                 res.json({status: "correct login cred", token: token, cUser: {userName: user.userName, name: user.name, avatar: user.avatar, isUser: user.isUser}})
 
             }else{
@@ -485,7 +412,7 @@ app.post("/regOrg", orgAvatarImg.any(), (req, res)=>{
 
             ///encrypt the pw; 
             const hashed = await bcrypt.hash(req.body.pw, 10)
-            const user = {userName: req.body.userName, name: req.body.name, pw: hashed, em: req.body.em, locationsOfService: req.body.locationsOfService, following: [], followers: [], avatar: orgAvImg, members: req.body.members}
+            const user = {userName: req.body.userName, name: req.body.name, pw: hashed, em: req.body.em, locationsOfService: req.body.locationsOfService, following: [], followers: [], avatar: orgAvImg, members: req.body.members, isUser: false}
             await dbb.collection("orgs").insertOne(user) ///to get the id in db
 
             }}
@@ -527,6 +454,16 @@ function authToken(req, res, next){
 
 }
 
+
+
+app.get("/auth", (req, res)=>{
+    console.log("..........auth..........")
+    console.log(req.body)
+    console.log(req.headers)
+
+})
+
+
 ////////test code 
 
 ///mongodb init
@@ -541,8 +478,6 @@ function authToken(req, res, next){
 // })
 
 ////encrypt and decrypt pw; 
-
-
 
 const port = 4000 || process.env.PORT
 app.listen(port, ()=>console.log(`listening on port ${port}`))
