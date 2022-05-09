@@ -206,7 +206,7 @@ app.post("/login", async (req, res)=>{
                 res.cookie("token", token)
 
                 ///localstorage
-                res.json({status: "correct login cred", token: token, cUser: {userName: user.userName, name: user.name, avatar: user.avatar,following: found.following, isUser: user.isUser}})
+                res.json({status: "correct login cred", token: token, cUser: {userName: user.userName, name: user.name, avatar: user.avatar,following: user.following, isUser: user.isUser}})
 
             }else{
                 console.log("not correct cred")
@@ -306,6 +306,24 @@ app.post("/editProfilefd",userAvatarImg.any(), (req, res)=>{
 
         res.json({newName: req.body.newName, newBio: req.body.newBio, skills: req.body.skills, newAvatar: userAvImg })
     })
+})
+
+app.get("/cfollowing", async (req, res)=>{
+    console.log("......................")
+    console.log(req.headers.authorization)
+
+    jwt.verify(req.headers.authorization, process.env.TOKEN, (err, data)=>{
+        if(err) return res.sendStatus(401)
+        req.tokenData = data
+    })
+
+
+    mongodb.connect(process.env.MONGOKEY, async (err, client)=>{
+    let dbb = client.db()
+    let found = await dbb.collection("users").findOne({userName: req.tokenData})
+    res.json({following: found.following})
+})
+
 })
 
 ///////following; toggle method; 
@@ -487,6 +505,26 @@ app.post("/regOrg", orgAvatarImg.any(), (req, res)=>{
 
 
 
+
+
+
+
+
+////////test code 
+
+///mongodb init
+// mongodb.connect(process.env.MONGOKEY, async (err, client)=>{
+//     let dbb = client.db()
+// })
+
+///verify token; 
+// jwt.verify(req.body, process.env.TOKEN, (err, data)=>{
+//     if(err) return res.sendStatus(401)
+//     req.tokenData = data
+// })
+
+////encrypt and decrypt pw; 
+
 ////authenticate token middleware; useless
 ///may make it a function to be used at the middle of routes function 
 function authToken(req, res, next){
@@ -520,30 +558,12 @@ function authToken(req, res, next){
 }
 
 
-
 app.get("/auth", (req, res)=>{
     console.log("..........auth..........")
     console.log(req.body)
     console.log(req.headers)
 
 })
-
-
-////////test code 
-
-///mongodb init
-// mongodb.connect(process.env.MONGOKEY, async (err, client)=>{
-//     let dbb = client.db()
-// })
-
-///verify token; 
-// jwt.verify(req.body, process.env.TOKEN, (err, data)=>{
-//     if(err) return res.sendStatus(401)
-//     req.tokenData = data
-// })
-
-////encrypt and decrypt pw; 
-
 const port = 4000 || process.env.PORT
 app.listen(port, ()=>console.log(`listening on port ${port}`))
 

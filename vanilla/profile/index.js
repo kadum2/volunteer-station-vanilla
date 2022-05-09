@@ -1,5 +1,6 @@
 
         /////dom elements to select 
+
         ///basic info; all cases; 
         let pUserName = document.querySelector("#pUserName")
         let pName = document.querySelector("#pName")
@@ -28,10 +29,42 @@
 
 
 
-        
+
         ///////features 
 
             function insertProfileData(data){
+
+
+                pUserName.textContent = cookies.pUserName
+                pName.textContent = cookies.pName
+                pBio.textContent = cookies.pBio
+                pAvImg.style.background = `url(../${cookies.pAvImg})`
+    
+    
+                ////get the additional profile info; following, posts 
+    
+    
+                let followingUsernames = []
+    
+                data.followingObjects.forEach(e => {
+    
+                    /////add followings objects 
+                    let userObject = document.createElement("div")
+                    userObject.classList.add("userObject")
+                    userObject.addEventListener("click", () => {
+                        location.href = `http://localhost:4000/profile/${e.userName}`
+                    })
+    
+                    userObject.innerHTML = `
+                    <img src="${e.avatar}" alt="">
+                    <h2>${e.userName}</h2>
+                    <h4>${e.name}</h4>`
+    
+                    document.querySelector("#following").append(userObject)
+                })
+    
+
+
 
                 // let ?? = document 
                 if(cookies.isUser){ ///user case
@@ -67,33 +100,13 @@
 
                         // return pd ??
 
-            }
-            async function loging(em, pw){
-                        ///make the object data to be send 
-                        let newUser = {
-                            em: em,
-                            pw: pw
-                        }
+            } ////didnt work; undefined 
 
-                        ////send and recieve data
-                        let d = await fetch("/login", {
-                            method: "POST",
-                            headers: {
-                                "content-type": "application/json"
-                            },
-                            body: JSON.stringify(newUser)
-                        })
-                        let pd = await d.json()
-                        console.log(pd)
+            async function login(em, pw){
 
-                        ///set localstorage data 
-                        localStorage.setItem("token", pd.token)
-                        localStorage.setItem("cUser", JSON.stringify(pd.cUser))
+            } ////didnt work; undefined 
 
-                        // return pd ??
-            }
-
-            function regLoginPanels(){
+            async function regLoginPanels(){
                 console.log("no user; should generate the auth")
                 auth.innerHTML = `            
                 <div id="registerPanel">
@@ -129,7 +142,31 @@
                     ///check if exist
                     if (registerEm.value && registerPw.value && regiseterUn.value) {
 
-                    register(registerEm.value, registerPw, regiseterUn.value)
+                    // register(registerEm.value, registerPw, regiseterUn.value)
+                                            ///make the object data to be send 
+                                            let newUser = {
+                                                em: em,
+                                                pw: pw,
+                                                userName: userName
+                                            }
+                    
+                                            ////send and recieve data
+                                            let d = await fetch("/regUser", {
+                                                method: "POST",
+                                                headers: {
+                                                    "content-type": "application/json"
+                                                },
+                                                body: JSON.stringify(newUser)
+                                            })
+                                            let pd = await d.json()
+                                            console.log(pd)
+                    
+                                            ////set data to localstorage
+                                            localStorage.setItem("token", pd.token)
+                                            localStorage.setItem("cUser", JSON.stringify(pd.cUser))
+                    
+                                            // return pd ??
+                    
 
                         ///empty the values
                         regiseterUn.value = ""
@@ -144,8 +181,35 @@
 
                     ///check if exist
                     if (loginEm.value && loginPw.value) {
+                        console.log("......login......")
 
-                        login(loginEm.value, loginPw.value)
+                        // login(loginEm.value, loginPw.value)
+                        /////////login
+                        // console.log(".....login.......")
+
+                        ///make the object data to be send 
+                        let newUser = {
+                            em: loginEm.value,
+                            pw: loginPw.value
+                        }
+
+                        ////send and recieve data
+                        let d = await fetch("/login", {
+                            method: "POST",
+                            headers: {
+                                "content-type": "application/json"
+                            },
+                            body: JSON.stringify(newUser)
+                        })
+                        let pd = await d.json()
+                        console.log(pd)
+
+                        ///set localstorage data 
+                        localStorage.setItem("token", pd.token)
+                        localStorage.setItem("cUser", JSON.stringify(pd.cUser))
+
+                        // return pd ??
+
 
                         ///empty the values
                         loginEm.value = ""
@@ -339,7 +403,12 @@
             let follow = document.createElement("button")
             follow.textContent = followingStatus
 
-            follow.addEventListener("click", () => {
+            follow.addEventListener("click", async () => {
+            // follow.textContent = nextFollowingStatus
+
+            if(follow.textContent == "follow"){follow.textContent="unfollow"}else{follow.textContent="follow"}
+
+                console.log("clicked follow")
                 let d = await fetch("/follow", {
                     method: "POST",
                     headers: {
@@ -349,25 +418,36 @@
                     body: JSON.stringify(followOptions)
                     // body: cookies.pUserName
                 })
+                // console.log(nextFollowingStatus)
                 let pd = await d.json()
-                cUserJson
+                // cUserJson
+            // console.log(nextFollowingStatus)
+
             })
 
             // info.append()
             info.insertBefore(follow, info.firstElementChild)
-            follow.textContent = nextFollowingStatus
         }
 
         async function checkAccout() {
 
             console.log(cookies)
             cUserJson = JSON.parse(localStorage.getItem("cUser"))
+            // cUserJson = localStorage.getItem("cUser")
 
             ///////////current user type; no account, account; user; owner, not owner, org; owner, not owner
             ///not account; register and login
             if (cUserJson == undefined) { ////no account 
                 regLoginPanels()
             } else { //account; 
+                
+            ////get cuser following
+            let d = await fetch("/cfollowing", {headers: {"Authorization": localStorage.getItem("token")}})
+            let pd = await d.json()
+
+            console.log(pd.following)
+            localStorage.setItem("following", pd.following)
+
 
                 console.log(".....account.....")
 
@@ -396,14 +476,13 @@
 
                 } else { //not owner; follow option
                     console.log("not the same user")
-                    if (cUserJson.following.includes(cookies.pUserName)) {
+                    console.log(cUserJson.following)
+                    if (localStorage.getItem("following").includes(cookies.pUserName)) {
                         displayFollowingBtn("unfollow", "follow")
                     } else {
                         displayFollowingBtn("follow", "unfollow")
-
                     }    
                 }
-
             }
         }
 
@@ -415,57 +494,25 @@
             let dd = await fetch("/profileData/" + window.location.pathname.split("/")[2])
             let pdd = await dd.json()
 
+
+            // console.log(JSON.parse(localStorage.getItem("cUser")).following)
+            // let newcUser = JSON.parse(localStorage.getItem("cUser"))
+            // newcUser.following = pd.following
+            // localStorage.setItem("cUser", newcUser)
+            // console.log(newcUser)
+
             readCookies()
             insertProfileData(pdd)
-
-            pUserName.textContent = cookies.pUserName
-            pName.textContent = cookies.pName
-            pBio.textContent = cookies.pBio
-            pAvImg.style.background = `url(../${cookies.pAvImg})`
-
-            console.log("checking accounts")
             checkAccout()
-            console.log("after checking account")
-
-            ////get the additional profile info; following, posts 
-            let d = await fetch("/profileObjects")
-            console.log(d)
-            let pd = await d.json()
-
-            console.log(pd)
-            console.log(pd.followingObjects)
-            console.log(typeof pd.followingObjects)
-            console.log(Object.values(pd.followingObjects))
-
-            let followingUsernames = []
 
 
-
-            pd.followingObjects.forEach(e => {
-
-                /////add followings objects 
-                let userObject = document.createElement("div")
-                userObject.classList.add("userObject")
-                userObject.addEventListener("click", () => {
-                    location.href = `http://localhost:4000/profile/${e.userName}`
-                })
-
-                userObject.innerHTML = `
-                <img src="${e.avatar}" alt="">
-                <h2>${e.userName}</h2>
-                <h4>${e.name}</h4>`
-
-                document.querySelector("#following").append(userObject)
-            })
-
+        }
+        ////test code 
 
             ////trying to send auth header; 
             let au = fetch("/auth",{
                 headers: {"Authorization": "secret token"}
             })
-
-        }
-        ////test code 
 
 
 console.log("from profile folder")
