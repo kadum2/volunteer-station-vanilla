@@ -6,19 +6,14 @@
         let pBio = document.querySelector("#pBio")
         let pAvImg = document.querySelector("#pAvImg")
 
-        // let followBtn = document.querySelector("#followBtn")
-
         //templates
         let auth = document.querySelector("#auth")
         let editing = document.querySelector("#editing")
         let info = document.querySelector("#info")
 
-
-
-
         ////data containers 
+        /////puser
         let cookies
-
         function readCookies() {
             cookies = document.cookie.replaceAll("%20", " ").replaceAll("%2F", "/").split('; ').reduce((prev,
                 current) => {
@@ -27,30 +22,78 @@
                 return prev;
             }, {})
         }
-        console.log(cookies)
 
+        ////cuser
+        let cuser
+
+
+
+        
         ///////features 
 
-        async function checkAccout() {
+            function insertProfileData(data){
 
-            console.log(cookies)
+                // let ?? = document 
+                if(cookies.isUser){ ///user case
 
-            ////check profile
-            if (cookies.pIsUser) { //user case
-                console.log("profile is user")
-                ///get the conts
-                /// conts dom, make post object, insert cookie data; insert posts objects into the posts dom container
-            } else { ///org case 
-                console.log("profile is org")
-                ////get made conts 
+                }else{ ///org case 
+
+                }
+
             }
 
+            async function register(em, pw, userName){
+                        ///make the object data to be send 
+                        let newUser = {
+                            em: em,
+                            pw: pw,
+                            userName: userName
+                        }
 
+                        ////send and recieve data
+                        let d = await fetch("/regUser", {
+                            method: "POST",
+                            headers: {
+                                "content-type": "application/json"
+                            },
+                            body: JSON.stringify(newUser)
+                        })
+                        let pd = await d.json()
+                        console.log(pd)
 
-            ///////////current user type; no account, account; user; owner, not owner, org; owner, not owner
-            ///not account; register and login
-            if (localStorage.getItem("cUser") == undefined) { ////no account 
+                        ////set data to localstorage
+                        localStorage.setItem("token", pd.token)
+                        localStorage.setItem("cUser", JSON.stringify(pd.cUser))
 
+                        // return pd ??
+
+            }
+            async function loging(em, pw){
+                        ///make the object data to be send 
+                        let newUser = {
+                            em: em,
+                            pw: pw
+                        }
+
+                        ////send and recieve data
+                        let d = await fetch("/login", {
+                            method: "POST",
+                            headers: {
+                                "content-type": "application/json"
+                            },
+                            body: JSON.stringify(newUser)
+                        })
+                        let pd = await d.json()
+                        console.log(pd)
+
+                        ///set localstorage data 
+                        localStorage.setItem("token", pd.token)
+                        localStorage.setItem("cUser", JSON.stringify(pd.cUser))
+
+                        // return pd ??
+            }
+
+            function regLoginPanels(){
                 console.log("no user; should generate the auth")
                 auth.innerHTML = `            
                 <div id="registerPanel">
@@ -80,41 +123,13 @@
                 let loginPw = document.querySelector("#login-pw")
                 let loginBtn = document.querySelector("#loginBtn")
 
-                // register.addEventListener("click", () =>
-                // console.log("register clicked"))
+                ////register
                 regBtn.addEventListener("click", async () => {
-                    console.log(regiseterUn.value)
-                    console.log(registerEm.value)
-                    console.log(registerPw.value)
 
                     ///check if exist
                     if (registerEm.value && registerPw.value && regiseterUn.value) {
 
-                        ///make the object data to be send 
-                        let newUser = {
-                            em: registerEm.value,
-                            pw: registerPw.value,
-                            userName: regiseterUn.value
-                        }
-
-                        ////send and recieve data
-                        let d = await fetch("/regUser", {
-                            method: "POST",
-                            headers: {
-                                "content-type": "application/json"
-                            },
-                            body: JSON.stringify(newUser)
-                        })
-                        let pd = await d.json()
-                        console.log(pd)
-
-                        ////set data to localstorage
-                        localStorage.setItem("token", pd.token)
-                        localStorage.setItem("cUser", JSON.stringify(pd.cUser))
-                        // localStorage.setCookie()
-
-                        /// deploy the received data; may use a function; make user object
-                        // auth.innerHTML = `em: ${pd.em}, pw${pd.pw}`
+                    register(registerEm.value, registerPw, regiseterUn.value)
 
                         ///empty the values
                         regiseterUn.value = ""
@@ -122,46 +137,19 @@
                         registerPw.value = ""
                         readCookies()
                         checkAccout()
-
                     }
                 })
-
                 ///login 
                 loginBtn.addEventListener("click", async () => {
-                    console.log(loginEm.value)
-                    console.log(loginPw.value)
 
                     ///check if exist
                     if (loginEm.value && loginPw.value) {
 
-                        ///make the object data to be send 
-                        let newUser = {
-                            em: loginEm.value,
-                            pw: loginPw.value
-                        }
-
-                        ////send and recieve data
-                        let d = await fetch("/login", {
-                            method: "POST",
-                            headers: {
-                                "content-type": "application/json"
-                            },
-                            body: JSON.stringify(newUser)
-                        })
-                        let pd = await d.json()
-                        console.log(pd)
-
-                        ///set localstorage data 
-                        localStorage.setItem("token", pd.token)
-                        localStorage.setItem("cUser", JSON.stringify(pd.cUser))
-
-                        ///deploy the received data; may use a function
-                        // auth.innerHTML = `em: ${pd.em}, pw${pd.pw}`
+                        login(loginEm.value, loginPw.value)
 
                         ///empty the values
                         loginEm.value = ""
                         loginPw.value = ""
-
 
                         readCookies()
                         checkAccout()
@@ -169,74 +157,49 @@
                     }
                 })
 
-            } else { //account; 
+            }
 
-                console.log(".....account.....")
-                let cUserJson = JSON.parse(localStorage.getItem("cUser"))
-
-                /////deploy the data; make the cUser object
-                readCookies()
-                let cUser = document.createElement("div")
-                cUser.classList.add("userObject")
-                cUser.addEventListener("click", () => location.href =
+            function createUserObject(){
+                let cuser = document.createElement("div")
+                cuser.classList.add("userObject")
+                cuser.addEventListener("click", () => location.href =
                     `http://localhost:4000/profile/${cUserJson.userName}`)
                 let cAv = document.createElement("img")
                 cAv.src = "../home/" + cUserJson.avatar
                 let cP = document.createElement("p")
                 cP.textContent = cUserJson.userName
-                cUser.append(cAv, cP)
+                cuser.append(cAv, cP)
+                return cuser
+            }
 
-                ////get the following users; to check if can follow the profile user 
-                console.log(localStorage.getItem("token"))
-                let d = await fetch("/cUserFollowing", {
-                    method: "POST",
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        token: localStorage.getItem("token")
-                    })
-                })
-                let pd = await d.json()
-                console.log(pd)
-                if (pd.following.includes(cookies.pUserName)) {
-                    displayUnfollowBtn()
-                } else {
-                    displayFollowBtn()
-                }
-
-
-                ///create logout button
+            function createLogoutBtn(cUser){
                 let logoutBtn = document.createElement("button")
                 logoutBtn.id = "logoutBtn"
                 logoutBtn.textContent = "logout"
                 logoutBtn.addEventListener("click", () => {
                     localStorage.clear()
-
                     console.log("logout")
-
                     document.querySelector("#cUserTemplate").innerHTML = ""
                     editing.innerHTML = ""
                     checkAccout()
                 })
-
                 document.querySelector("#cUserTemplate").append(cUser, logoutBtn)
                 auth.innerHTML = ""
+            }
 
-                if (cookies.pUserName == cUserJson.userName) { //owner; edit option
-                    ///user; isUser true
-                    if (cUserJson.isUser) {
+            function displayBasicEditing(){
+                let basicEditingTemplate = `
+                <input type="text" placeholder="new name" id="newName">
+                <input type="text" placeholder="new bio" id="newBio">
+                <label to="newAvImg">change img</label>
+                <input type="file" id="newAvImg">`
+                editing.innerHTML += basicEditingTemplate
+            }
+
+            function displayUserEditing(){
                         ///display editing ??; 
-                        pUserName.innerHTML += "<small> (you) </small>"
                         let skillCounter = 1
-                        let editingTemplate = `
-                            <input type="text" placeholder="new name" id="newName">
-                            <input type="text" placeholder="new bio" id="newBio">
-
-                            <label to="newAvImg">change img</label>
-                            <input type="file" id="newAvImg">
-                            
+                        let userEditingTemplate = `
                             <div id="skillsCont">
                                 <select name="skill1" id="skill1" class="skill">
                                     <option value="select skill">select skill 1</option>
@@ -249,7 +212,7 @@
                             <button id="sendEditBtn">send edit </button>
                             `
 
-                        editing.innerHTML += editingTemplate
+                        editing.innerHTML += userEditingTemplate
                         let skillscont = document.querySelector("#skillsCont")
                         // skills.style.background("red")
                         let addMoreSkill = document.querySelector("#addMoreSkill")
@@ -270,14 +233,6 @@
                         sendEditBtn.addEventListener("click", async () => {
                             console.log("clicked on sending edit btn")
                             ////check if not empty; one by one
-
-                            let editedData = {
-                                newName: document.querySelector("#newName").value,
-                                newBio: document.querySelector("#newBio").value,
-                                skills: [...document.querySelectorAll(".skill")].map(e => e
-                                    .value)
-                            }
-
                             let fd = new FormData()
                             let avImg = document.querySelector("#newAvImg").files[0]
 
@@ -289,43 +244,179 @@
                                 "skills", [...document.querySelectorAll(".skill")].map(e => e.value)
                             )
                             if (avImg) fd.append("av", avImg)
-                            fd.append("token", localStorage.getItem("token"))
+                            // fd.append("token", localStorage.getItem("token"))
 
                             let d = await fetch("/editProfilefd", {
+                                headers: new Headers({"authorization": localStorage.getItem("token")}),
                                 method: "POST",
                                 body: fd
                             })
 
                             ////empty the values 
-                            document.querySelector("#newName").value
-                            document.querySelector("#newBio").value
+                            document.querySelector("#newName").value = ""
+                            document.querySelector("#newBio").value = ""
+                            document.avImg = null
                         })
 
+            }
+
+            function displayOrgEditing(){
+                
+            }
+
+            ////follow; change the method; toggle; to remove 
+        // function displayFollowBtn() {
+        //     console.log("will display follow btn")
+
+        //     let followOptions = {
+        //         // following: JSON.parse(localStorage.getItem("cUser")).userName,
+        //         following: localStorage.getItem("token"),
+        //         followed: cookies.pUserName
+        //     }
+
+        //     console.log(followOptions)
+        //     let followBtn = document.createElement("button")
+        //     followBtn.textContent = "follow"
+
+        //     followBtn.addEventListener("click", () => {
+        //         let d = fetch("/follow", {
+        //             method: "POST",
+        //             headers: {
+        //                 'Accept': 'application/json',
+        //                 'Content-Type': 'application/json'
+        //             },
+        //             body: JSON.stringify(followOptions)
+        //             // body: cookies.pUserName
+        //         })
+        //     })
+
+        //     // info.append()
+        //     info.insertBefore(followBtn, info.firstElementChild)
+
+
+        // }
+
+        // function displayUnfollowBtn() {
+        //     console.log("will display unfollow btn")
+
+        //     let unfollowOptions = {
+        //         // following: JSON.parse(localStorage.getItem("cUser")).userName,
+        //         following: localStorage.getItem("token"),
+        //         followed: cookies.pUserName
+        //     }
+
+        //     console.log(unfollowOptions)
+        //     let unfollow = document.createElement("button")
+        //     unfollow.textContent = "unfollow"
+
+        //     unfollow.addEventListener("click", () => {
+        //         let d = fetch("/unfollow", {
+        //             method: "POST",
+        //             headers: {
+        //                 'Accept': 'application/json',
+        //                 'Content-Type': 'application/json'
+        //             },
+        //             body: JSON.stringify(unfollowOptions)
+        //             // body: cookies.pUserName
+        //         })
+        //     })
+
+        //     // info.append()
+        //     info.insertBefore(unfollow, info.firstElementChild)
+
+        // }
+
+        function displayFollowingBtn(followingStatus, nextFollowingStatus) {
+            console.log("will display follow btn")
+
+            let followOptions = {
+                // following: JSON.parse(localStorage.getItem("cUser")).userName,
+                following: localStorage.getItem("token"),
+                followed: cookies.pUserName
+            }
+
+            console.log(followOptions)
+            let follow = document.createElement("button")
+            follow.textContent = followingStatus
+
+            follow.addEventListener("click", () => {
+                let d = await fetch("/follow", {
+                    method: "POST",
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(followOptions)
+                    // body: cookies.pUserName
+                })
+                let pd = await d.json()
+                cUserJson
+            })
+
+            // info.append()
+            info.insertBefore(follow, info.firstElementChild)
+            follow.textContent = nextFollowingStatus
+        }
+
+        async function checkAccout() {
+
+            console.log(cookies)
+            cUserJson = JSON.parse(localStorage.getItem("cUser"))
+
+            ///////////current user type; no account, account; user; owner, not owner, org; owner, not owner
+            ///not account; register and login
+            if (cUserJson == undefined) { ////no account 
+                regLoginPanels()
+            } else { //account; 
+
+                console.log(".....account.....")
+
+                /////deploy the data; make the cUser object
+                readCookies()
+                let cUser = createUserObject()
+
+                ///create logout button
+                createLogoutBtn(cUser)
+
+                ////puser and cuser relation 
+                if (cookies.pUserName == cUserJson.userName) { //owner; edit option
+                    pUserName.innerHTML += "<small> (you) </small>"
+
+                    ///display basic editing; 
+                    displayBasicEditing()
+
+                    ///user; isUser true
+                    if (cUserJson.isUser) {
+                        displayUserEditing()
                     } else {
+                    ///org; isUser false
+                    displayOrgEditing()
 
                     }
-                    ///org; isUser false
 
                 } else { //not owner; follow option
                     console.log("not the same user")
-                    ///user; isUser true
-                    ///org; isUser false
+                    if (cUserJson.following.includes(cookies.pUserName)) {
+                        displayFollowingBtn("unfollow", "follow")
+                    } else {
+                        displayFollowingBtn("follow", "unfollow")
+
+                    }    
                 }
 
             }
         }
 
+        
         //main profile data (onload) 
-
         window.onload = async () => {
 
-            console.log(window.location.pathname.split("/")[2])
-
             ////insert basic info;
-
             let dd = await fetch("/profileData/" + window.location.pathname.split("/")[2])
+            let pdd = await dd.json()
 
             readCookies()
+            insertProfileData(pdd)
 
             pUserName.textContent = cookies.pUserName
             pName.textContent = cookies.pName
@@ -349,28 +440,10 @@
             let followingUsernames = []
 
 
-            // Object.entries(pd.followingObjects).forEach(e => {
-
-            //     console.log(e[1])
-            //     let userObject = document.createElement("div")
-            //     userObject.classList.add("userObject")
-            //     userObject.addEventListener("click", () => {
-            //         location.href = `http://localhost:4000/profile/${e[1].userName}`
-            //     })
-
-            //     userObject.innerHTML = `
-            //         <img src="${e[1].avatar}" alt="">
-            //         <h2>${e[1].userName}</h2>
-            //         <h4>${e[1].name}</h4>`
-
-            //     document.querySelector("#following").append(userObject)
-
-            // })
 
             pd.followingObjects.forEach(e => {
 
                 /////add followings objects 
-                // console.log(e)
                 let userObject = document.createElement("div")
                 userObject.classList.add("userObject")
                 userObject.addEventListener("click", () => {
@@ -392,68 +465,6 @@
             })
 
         }
-
-        function displayFollowBtn() {
-            console.log("will display follow btn")
-
-            let followOptions = {
-                // following: JSON.parse(localStorage.getItem("cUser")).userName,
-                following: localStorage.getItem("token"),
-                followed: cookies.pUserName
-            }
-
-            console.log(followOptions)
-            let followBtn = document.createElement("button")
-            followBtn.textContent = "follow"
-
-            followBtn.addEventListener("click", () => {
-                let d = fetch("/follow", {
-                    method: "POST",
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(followOptions)
-                    // body: cookies.pUserName
-                })
-            })
-
-            // info.append()
-            info.insertBefore(followBtn, info.firstElementChild)
-
-
-        }
-
-        function displayUnfollowBtn() {
-            console.log("will display unfollow btn")
-
-            let unfollowOptions = {
-                // following: JSON.parse(localStorage.getItem("cUser")).userName,
-                following: localStorage.getItem("token"),
-                followed: cookies.pUserName
-            }
-
-            console.log(unfollowOptions)
-            let unfollow = document.createElement("button")
-            unfollow.textContent = "unfollow"
-
-            unfollow.addEventListener("click", () => {
-                let d = fetch("/unfollow", {
-                    method: "POST",
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(unfollowOptions)
-                    // body: cookies.pUserName
-                })
-            })
-
-            // info.append()
-            info.insertBefore(unfollow, info.firstElementChild)
-
-        }
-
         ////test code 
 
 

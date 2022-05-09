@@ -3,11 +3,10 @@ const express = require("express")
 const app = express()
 const path = require("path");
 const { json } = require("express");
+app.use(express.json())
 let cookieParser = require("cookie-parser")
 app.use(cookieParser());
-
 const multer = require("multer")
-
 const env = require("dotenv")
 env.config()
 
@@ -16,7 +15,6 @@ const jwt = require("jsonwebtoken")
 let mongodb = require("mongodb").MongoClient  ///mongodb atlas
 
 /////config
-app.use(express.json())
 // require("ejs")
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
@@ -25,13 +23,17 @@ app.set("views", path.join(__dirname, "views"));
 app.use("/home", express.static("./home"))
 app.use("/profile/:username", express.static("profile"))
 
+
+
+
 //////////routes 
 
-/////send the profile data; cookies; 
+///profile
+/////f1; basic profile info; cookies; 
 app.get("/profileData/:username", (req, res)=>{
 
-    console.log("..........profile Data ........")
-    console.log(req.params.username)
+    // console.log("..........profile Data ........")
+    // console.log(req.params.username)
 
     ////check db if exist
     mongodb.connect(process.env.MONGOKEY, async (err, client)=>{
@@ -39,8 +41,8 @@ app.get("/profileData/:username", (req, res)=>{
         let found = await dbb.collection("users").findOne({userName: req.params.username})
 
         if(found){
-        console.log(".....current Profile .......")
-        console.log(found)
+        // console.log(".....current Profile .......")
+        // console.log(found)
 
         res.cookie("pUserName", found.userName)
         res.cookie("pName", found.name)
@@ -48,65 +50,100 @@ app.get("/profileData/:username", (req, res)=>{
         res.cookie("pBio", found.bio)
         res.cookie("pFollowing", found.following)
         res.cookie("isUser", found.isUser)
-        console.log(".......then to send account objects.......")
-        res.sendStatus(204)
-        }else{
-            res.sendStatus(400)
+
+        if(found.isUser){ ///user case 
+            let followingObjects = []
+            let contsObjects = []
+
+            found.following.forEach( async(e)=>{
+                let d = await dbb.collection("users").findOne({userName: e})
+                followingObjects.push({userName: d.userName, name: d.name, avatar: d.avatar,isUser: d.isUser })
+                if(followingObjects.length + contsObjects.length== Object.entries(found.following).length + Object.entries(found.conts).length){
+                    console.log("will send the following object")
+                    res.json({followingObjects, contsObjects})
+                }
+            })
+            found.conts.forEach(async (e)=>{
+                let cont = await dbb.collection("orgs").findOne({orgName: e.orgName })
+                contsObjects.push({post: cont[e.contIndex], contType: e.contType, contValue: e.contValue})
+                if(followingObjects.length + contsObjects.length== Object.entries(found.following).length + Object.entries(found.conts).length){
+                    console.log("will send the following object")
+                    res.json({followingObjects, contsObjects})
+                }
+            })
+
+        }else{ ///org case 
+            let members = []
+
+            found.members.forEach( async(e)=>{
+                let d = await dbb.collection("users").findOne({userName: e})
+                members.push({userName: d.userName, name: d.name, avatar: d.avatar,isUser: d.isUser })
+                if(members.length == Object.entries(found.members).length ){
+                    console.log("will send the members objects")
+                    res.json({members, posts: found.posts})
+                }
+            })
+
+        }
+        }else{ ///not found the profile user 
+            res.sendStatus(404)
         }
     })
 })
 
-//////send profile complex data; objects; following, followers, conts (posts); 
-app.get("/profileObjects", async (req, res)=>{
-    console.log(".....get profile objects....")
-    console.log(req.cookies)
 
-    mongodb.connect(process.env.MONGOKEY, async (err, client)=>{
-        let dbb = client.db()
-        let found = await dbb.collection("users").findOne({userName: req.cookies.pUserName})
+///to remove and mix with first route 
+// //////send profile complex data; objects; following, followers, conts (posts); 
+// app.get("/profileObjects", async (req, res)=>{
+//     // console.log(".....get profile objects....")
+//     // console.log(req.cookies)
 
-        ///send followings account object 
-        let followingObjects = []
-        let contsObjects = []
-        // if(found.following != null && found.following != undefined){
+//     mongodb.connect(process.env.MONGOKEY, async (err, client)=>{
+//         let dbb = client.db()
+//         let found = await dbb.collection("users").findOne({userName: req.cookies.pUserName})
+
+//         ///send followings account object 
+//         let followingObjects = []
+//         let contsObjects = []
+//         // if(found.following != null && found.following != undefined){
 
 
-            found.following.forEach( async(e)=>{
-                ////users
-                let d = await dbb.collection("users").findOne({userName: e})
-                followingObjects.push({userName: d.userName, name: d.name, avatar: d.avatar,isUser: d.isUser })
+//             found.following.forEach( async(e)=>{
+//                 ////users
+//                 let d = await dbb.collection("users").findOne({userName: e})
+//                 followingObjects.push({userName: d.userName, name: d.name, avatar: d.avatar,isUser: d.isUser })
 
-                // if(followingObjects.length == Object.entries(found.following).length){
-                //     console.log("will send the following object")
-                //     res.json(followingObjects)
-                // }
-                if(followingObjects.length + contsObjects.length== Object.entries(found.following).length + Object.entries(found.conts).length){
-                    console.log("will send the following object")
-                    res.json({followingObjects, contsObjects})
-                }
+//                 // if(followingObjects.length == Object.entries(found.following).length){
+//                 //     console.log("will send the following object")
+//                 //     res.json(followingObjects)
+//                 // }
+//                 if(followingObjects.length + contsObjects.length== Object.entries(found.following).length + Object.entries(found.conts).length){
+//                     console.log("will send the following object")
+//                     res.json({followingObjects, contsObjects})
+//                 }
     
-            })
-            found.conts.forEach(async (e)=>{
-                /// /conts is an array of objects that do; {orgName: --, postIndex:--, contType: , contValue: --}
-                ///e.orgUserName, e.postIndex, contType(tag)
-                let cont = await dbb.collection("orgs").findOne({orgName: e.orgName })
-                contsObjects.push({post: cont[e.contIndex], contType: e.contType, contValue: e.contValue})
+//             })
+//             found.conts.forEach(async (e)=>{
+//                 /// /conts is an array of objects that do; {orgName: --, postIndex:--, contType: , contValue: --}
+//                 ///e.orgUserName, e.postIndex, contType(tag)
+//                 let cont = await dbb.collection("orgs").findOne({orgName: e.orgName })
+//                 contsObjects.push({post: cont[e.contIndex], contType: e.contType, contValue: e.contValue})
     
     
-                if(followingObjects.length + contsObjects.length== Object.entries(found.following).length + Object.entries(found.conts).length){
-                    console.log("will send the following object")
-                    res.json({followingObjects, contsObjects})
-                }
+//                 if(followingObjects.length + contsObjects.length== Object.entries(found.following).length + Object.entries(found.conts).length){
+//                     console.log("will send the following object")
+//                     res.json({followingObjects, contsObjects})
+//                 }
     
-            })
+//             })
     
-        }
+//         }
 
-    // }
-    )
+//     // }
+//     )
 
-}
-)
+// }
+// )
 
 ////registering user; encrypt; send data; 
 app.post("/regUser", async (req, res)=>{
@@ -135,7 +172,7 @@ try{
 
     ///encrypt the pw; 
     const hashedPassword = await bcrypt.hash(req.body.pw, 10)
-    const user = {em: req.body.em, pw: hashedPassword, userName: req.body.userName, avatar: "../home/imgs/anders-jilden-Sc5RKXLBjGg-unsplash.jpg", bio: "...", name: req.body.userName, conts: [], isUser: true, following:[], skills:[]}
+    const user = {em: req.body.em, pw: hashedPassword, userName: req.body.userName, avatar: "../home/imgs/anders-jilden-Sc5RKXLBjGg-unsplash.jpg", bio: "...", name: req.body.userName, conts: [], isUser: true, following:[], followers:[], skills:[]}
     // let newUser = await dbb.collection("users").insertOne(user) ///to get the id in db
     await dbb.collection("users").insertOne(user) ///to get the id in db
 
@@ -144,16 +181,8 @@ try{
         ////jwt; make token
         let token = jwt.sign(user.userName, process.env.TOKEN)
 
-        ///send data and token
-
-        ///localstorage; then save it at the client
-        res.json({status: "created user", token: token, cUser: {userNmae: user.userName, name: user.name, avatar: user.avatar, isUser: user.isUser}})
-
-        // remove 
-        // res.json({user: {em: user.em, name: user.name}})
-        // res.status(201).send(user)
-        ///or 
-
+        ///send data and token localstorage; then save it at the client
+        res.json({status: "created user", token: token, cUser: {userNmae: user.userName, name: user.name, avatar: user.avatar, following: found.following, isUser: user.isUser}})
             }
         }
         })
@@ -177,7 +206,7 @@ app.post("/login", async (req, res)=>{
                 res.cookie("token", token)
 
                 ///localstorage
-                res.json({status: "correct login cred", token: token, cUser: {userName: user.userName, name: user.name, avatar: user.avatar, isUser: user.isUser}})
+                res.json({status: "correct login cred", token: token, cUser: {userName: user.userName, name: user.name, avatar: user.avatar,following: found.following, isUser: user.isUser}})
 
             }else{
                 console.log("not correct cred")
@@ -189,30 +218,33 @@ app.post("/login", async (req, res)=>{
     })
 })
 
-app.post("/cUserFollowing", async(req, res)=>{
 
-    console.log("......current user following......")
-    console.log(req.body)
+// ////may mix it with the reg and login routes 
+// app.post("/cUserFollowing", async(req, res)=>{
 
-jwt.verify(req.body.token, process.env.TOKEN, (err, data)=>{
-    if(err) return res.sendStatus(401)
-    req.tokenData = data
-})
+//     console.log("......current user following......")
+//     console.log(req.body)
 
-mongodb.connect(process.env.MONGOKEY, async (err, client)=>{
-    let dbb = client.db()
-    let found = await dbb.collection("users").findOne({userName: req.tokenData})
-    console.log(found)
-    res.json({following: found.following})
-})
+// jwt.verify(req.body.token, process.env.TOKEN, (err, data)=>{
+//     if(err) return res.sendStatus(401)
+//     req.tokenData = data
+// })
+
+// mongodb.connect(process.env.MONGOKEY, async (err, client)=>{
+//     let dbb = client.db()
+//     let found = await dbb.collection("users").findOne({userName: req.tokenData})
+//     console.log(found)
+//     res.json({following: found.following})
+// })
 
 
-})
+// })
 
 
 
 /////////editing profile route; no need for it; delete
 ///authenticate the token, update data on the db; 
+
 app.post("/editProfile", (req, res)=>{
     console.log(req.body)
     console.log(req.body.editedData.newName)
@@ -276,10 +308,10 @@ app.post("/editProfilefd",userAvatarImg.any(), (req, res)=>{
     })
 })
 
-///////following; 
+///////following; toggle method; 
 ////follow
 app.post("/follow", (req, res)=>{
-    console.log(".....add follow.......")
+    console.log(".....follow.......")
     console.log(req.body)
 
     ////decode jwt 
@@ -287,44 +319,77 @@ app.post("/follow", (req, res)=>{
         if(err) return res.sendStatus(401)
         req.tokenData = data
     })
+        // if(!follow) 
+        // if(follow) {///remove it 
+
+        // }else{///add it 
+
+        // }
+
+        ////check if exist in the follow list to remove it
+        ////if not exist in the follow list to add it
 
     console.log(req.tokenData)
     mongodb.connect(process.env.MONGOKEY, async (err, client)=>{
         let dbb = client.db()
-        // let found = await dbb.collection("users").findOne({userName: req.tokenData})
-        let found = await dbb.collection("users").updateOne({userName: req.tokenData}, {$push: {following: req.body.followed}})
 
-        console.log("pushed")
-        
+        let follow = await dbb.collection("users").findOne({userName: req.tokenData})
+
+        if(follow){ ///user case
+        follow = follow.following.includes(req.body.followed)
+            if(follow){///if follow; remove it 
+                await dbb.collection("users").updateOne({userName: req.tokenData}, {$pull:{following: req.body.followed}})
+                /////remove from followed from the other side
+                await dbb.collection("users").updateOne({userName: req.body.followed}, {$pull:{followers: req.tokenData}})
+
+            }else{///add it 
+        await dbb.collection("users").updateOne({userName: req.tokenData}, {$push: {following: req.body.followed}})
+        ///add to followed to the other side 
+        await dbb.collection("users").updateOne({userName: req.body.followed}, {$push: {followers: req.tokenData}})
+            }
+        }else{ ///org case 
+            follow = await dbb.collection("orgs").findOne({userName: req.tokenData})
+            follow = follow.following.includes(req.body.followed)
+            if(follow){///if follow; remove it
+                await dbb.collection("orgs").updateOne({userName: req.tokenData}, {$pull:{following: req.body.followed}})
+                ///remove from followed from the other side 
+                await dbb.collection("orgs").updateOne({userName: req.body.followed}, {$pull:{followers: req.tokenData}})
+            }else{///add it 
+                await dbb.collection("orgs").updateOne({userName: req.tokenData}, {$push: {following: req.body.followed}})
+                ////add to followed to the other side 
+                await dbb.collection("orgs").updateOne({userName: req.body.followed}, {$push: {followers: req.tokenData}})
+            }
+        }
 })
 
 
 })
 
 ///unfollow
-app.post("/unfollow", (req, res)=>{
-    console.log(".....remove follow.......")
-    console.log(req.body)
+// app.post("/unfollow", (req, res)=>{
+//     console.log(".....remove follow.......")
+//     console.log(req.body)
 
-    ////decode jwt 
-    jwt.verify(req.body.following, process.env.TOKEN, (err, data)=>{
-        if(err) return res.sendStatus(401)
-        req.tokenData = data
-    })
+//     ////decode jwt 
+//     jwt.verify(req.body.following, process.env.TOKEN, (err, data)=>{
+//         if(err) return res.sendStatus(401)
+//         req.tokenData = data
+//     })
 
-    console.log(req.tokenData)
-    mongodb.connect(process.env.MONGOKEY, async (err, client)=>{
-        let dbb = client.db()
-        // let found = await dbb.collection("users").findOne({userName: req.tokenData})
-        let found = await dbb.collection("users").updateOne({userName: req.tokenData}, {$pull:{following: req.body.followed}})
+//     console.log(req.tokenData)
+//     mongodb.connect(process.env.MONGOKEY, async (err, client)=>{
+//         let dbb = client.db()
+//         // let found = await dbb.collection("users").findOne({userName: req.tokenData})
+//         let found = await dbb.collection("users").updateOne({userName: req.tokenData}, {$pull:{following: req.body.followed}})
 
-        console.log("removed")
+//         console.log("removed")
         
-})
+// })
 
-})
+// })
 
 /////mode; register orgs; 
+
 app.get("/mode", (req, res)=>{
     res.sendfile("./mode.html")
 })
@@ -412,7 +477,7 @@ app.post("/regOrg", orgAvatarImg.any(), (req, res)=>{
 
             ///encrypt the pw; 
             const hashed = await bcrypt.hash(req.body.pw, 10)
-            const user = {userName: req.body.userName, name: req.body.name, pw: hashed, em: req.body.em, locationsOfService: req.body.locationsOfService, following: [], followers: [], avatar: orgAvImg, members: req.body.members, isUser: false}
+            const user = {userName: req.body.userName, name: req.body.name, pw: hashed, em: req.body.em, locationsOfService: req.body.locationsOfService, following: [], followers: [], avatar: orgAvImg, members: req.body.members, posts: [], isUser: false}
             await dbb.collection("orgs").insertOne(user) ///to get the id in db
 
             }}
