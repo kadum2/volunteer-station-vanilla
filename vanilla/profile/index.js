@@ -55,8 +55,9 @@
                         location.href = `http://localhost:4000/profile/${e.userName}`
                     })
     
+                    console.log(e.avatar)
                     userObject.innerHTML = `
-                    <img src="${e.avatar}" alt="">
+                    <img src="../../${e.avatar}" alt="">
                     <h2>${e.userName}</h2>
                     <h4>${e.name}</h4>`
     
@@ -229,7 +230,11 @@
                 cuser.addEventListener("click", () => location.href =
                     `http://localhost:4000/profile/${cUserJson.userName}`)
                 let cAv = document.createElement("img")
-                cAv.src = "../home/" + cUserJson.avatar
+                if(cUserJson.isUser){
+                cAv.src = "../" + cUserJson.avatar
+                }else{
+                    cAv.src = "/orgAvImgs/" + cUserJson.avatar
+                }
                 let cP = document.createElement("p")
                 cP.textContent = cUserJson.userName
                 cuser.append(cAv, cP)
@@ -486,7 +491,7 @@
             }
         }
 
-        
+
         //main profile data (onload) 
         window.onload = async () => {
 
@@ -494,25 +499,17 @@
             let dd = await fetch("/profileData/" + window.location.pathname.split("/")[2])
             let pdd = await dd.json()
 
-
-            // console.log(JSON.parse(localStorage.getItem("cUser")).following)
-            // let newcUser = JSON.parse(localStorage.getItem("cUser"))
-            // newcUser.following = pd.following
-            // localStorage.setItem("cUser", newcUser)
-            // console.log(newcUser)
-
             readCookies()
             insertProfileData(pdd)
             checkAccout()
-
 
         }
         ////test code 
 
             ////trying to send auth header; 
-            let au = fetch("/auth",{
-                headers: {"Authorization": "secret token"}
-            })
+            // let au = fetch("/auth",{
+            //     headers: {"Authorization": "secret token"}
+            // })
 
 
 console.log("from profile folder")

@@ -36,6 +36,32 @@
 </style>
 
 <body>
+
+    <!--      validate       -->
+    <!-- <div class="ismode">
+        <input type="text" placeholder="" id="sw1">
+        <input type="text" placeholder="" id="sw2">
+        <button onclick="send()">send</button>
+    </div>
+
+
+    <script>
+        async function send() {
+            let d = await fetch('/mode', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    sw1: document.querySelector('#sw1').value,
+                    sw2: document.querySelector('#sw2').value
+                })
+            })
+        }
+    </script> -->
+
+
     <div id="regOrg">
         <h1>register organization</h2>
             <input type="text" placeholder="userName" id="userName">
@@ -48,12 +74,16 @@
             <button id="regOrgBtn">register org</button>
     </div>
     <div>
-        <textarea name="bio" id="bio" cols="30" rows="10" placeholder="have to insert ',' between each item"></textarea>
+        <textarea name="bio" id="bio" cols="30" rows="10"
+            placeholder="bio; have to insert ',' between each item"></textarea>
         <textarea name="locationsOfService" id="locationsOfService" cols="30" rows="10"
-            placeholder="have to insert ',' between each item"></textarea>
+            placeholder="locations of service; have to insert ',' between each item"></textarea>
         <textarea name="members" id="members" cols="30" rows="10"
-            placeholder="have to insert ',' between each item"></textarea>
+            placeholder="members; have to insert ',' between each item"></textarea>
+        <!-- <textarea name="bio" id="bio" cols="30" rows="10"></textarea> -->
     </div>
+
+
 
     <script>
         console.log("mode")
@@ -65,6 +95,7 @@
         let bio = document.querySelector("#bio")
         let em = document.querySelector("#em")
         let pw = document.querySelector("#pw")
+
 
         let locationsOfServ = document.querySelector("#locationsOfService")
         let memb = document.querySelector("#members")
@@ -107,7 +138,6 @@
                 bio.value = ""
                 locationsOfServ.value = ""
                 memb.value = ""
-
             }
         })
     </script>

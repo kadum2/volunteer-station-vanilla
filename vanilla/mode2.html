@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+
+    <input type="text" placeholder="" id="sw1">
+    <input type="text" placeholder="" id="sw2">
+    <button onclick="send()">send</button>
+
+    <script>
+        async function send() {
+            let d = await fetch('/mode', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    sw1: document.querySelector('#sw1').value,
+                    sw2: document.querySelector('#sw2').value
+                })
+            })
+
+            let pd = await d.json()
+
+            if (pd.status) {
+                fetch("/mode", {
+                    headers: {
+                        "Authorization": pd.token
+                    }
+                })
+
+            }
+        }
+    </script>
+
+</body>
+
+</html>

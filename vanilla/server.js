@@ -22,7 +22,7 @@ app.set("views", path.join(__dirname, "views"));
 ////sending pages; setting public dirs
 app.use("/home", express.static("./home"))
 app.use("/profile/:username", express.static("profile"))
-
+app.use(express.static("./public"))
 
 
 
@@ -202,8 +202,8 @@ app.post("/login", async (req, res)=>{
             if(await bcrypt.compare(req.body.pw, user.pw)){
                 console.log("correct cred; login")
                 console.log(user)
-                let token = jwt.sign(user.userName, process.env.TOKEN)        
-                res.cookie("token", token)
+                let token = jwt.sign(user.userName, process.env.TOKEN)
+                // res.cookie("token", token)
 
                 ///localstorage
                 res.json({status: "correct login cred", token: token, cUser: {userName: user.userName, name: user.name, avatar: user.avatar,following: user.following, isUser: user.isUser}})
@@ -321,6 +321,7 @@ app.get("/cfollowing", async (req, res)=>{
     mongodb.connect(process.env.MONGOKEY, async (err, client)=>{
     let dbb = client.db()
     let found = await dbb.collection("users").findOne({userName: req.tokenData})
+    if(!found)found = await dbb.collection("orgs").findOne({userName: req.tokenData})
     res.json({following: found.following})
 })
 
@@ -383,34 +384,61 @@ app.post("/follow", (req, res)=>{
 
 })
 
-///unfollow
-// app.post("/unfollow", (req, res)=>{
-//     console.log(".....remove follow.......")
+
+
+
+////mode; 
+// app.get("ismode", (req, res)=>{
+//     res.sendfile("./mode2.html")
+// })
+// app.post("ismode", (req, res)=>{
 //     console.log(req.body)
-
-//     ////decode jwt 
-//     jwt.verify(req.body.following, process.env.TOKEN, (err, data)=>{
-//         if(err) return res.sendStatus(401)
-//         req.tokenData = data
-//     })
-
-//     console.log(req.tokenData)
-//     mongodb.connect(process.env.MONGOKEY, async (err, client)=>{
-//         let dbb = client.db()
-//         // let found = await dbb.collection("users").findOne({userName: req.tokenData})
-//         let found = await dbb.collection("users").updateOne({userName: req.tokenData}, {$pull:{following: req.body.followed}})
-
-//         console.log("removed")
-        
-// })
+//     if(req.body.sw1 == "admin" && req.body.sw2 == "not admin"){
+//         console.log("jwt")
+//         let token = jwt.sign("true", process.env.TOKEN)
+//         res.json({status: true, token: token})
+//     }else{
+//         console.log("dont send mode")
+//         res.json({status: false})
+//     }
 
 // })
 
-/////mode; register orgs; 
+// app.get("/mode", (req, res)=>{
+
+//     if(req.headers.token){
+//         /////validate 
+//         jwt.verify(token, process.env.TOKEN, (err, data)=>{
+//             if(err) return res.sendStatus(401)
+//             req.user = data
+//             next()
+//         })
+    
+
+//     }else{
+//         res.redirect("/ismode")
+//     }
+// })
+
+// app.post("/mode", (req, res)=>{
+
+//     console.log(req.body)
+//     if(req.body.sw1 == "admin" && req.body.sw2 == "not admin"){
+//         console.log("send mode")
+//         // res.send("hi there")
+//         // res.sendfile('./mode.html')
+//         res.sendFile(path.join(__dirname, "mode.html"))
+//     }else{
+//         console.log("dont send mode")
+//     }
+// })
 
 app.get("/mode", (req, res)=>{
     res.sendfile("./mode.html")
 })
+
+
+
 ///////register org
 //////multer stuff
 let orgAvImg
@@ -476,8 +504,6 @@ app.post("/regOrg", orgAvatarImg.any(), (req, res)=>{
     mongodb.connect(process.env.MONGOKEY, async (err, client)=>{
         let dbb = client.db()
 
-        ////encrypt pw 
-
         ///check if used email
         if(await dbb.collection("orgs").findOne({em: req.body.em})){
 
@@ -495,16 +521,11 @@ app.post("/regOrg", orgAvatarImg.any(), (req, res)=>{
 
             ///encrypt the pw; 
             const hashed = await bcrypt.hash(req.body.pw, 10)
-            const user = {userName: req.body.userName, name: req.body.name, pw: hashed, em: req.body.em, locationsOfService: req.body.locationsOfService, following: [], followers: [], avatar: orgAvImg, members: req.body.members, posts: [], isUser: false}
+            const user = {userName: req.body.userName, name: req.body.name,bio: req.body.bio, pw: hashed, em: req.body.em, locationsOfService: req.body.locationsOfService, following: [], followers: [], avatar: orgAvImg, members: req.body.members, posts: [], isUser: false}
             await dbb.collection("orgs").insertOne(user) ///to get the id in db
-
             }}
 })
-
 })
-
-
-
 
 
 
