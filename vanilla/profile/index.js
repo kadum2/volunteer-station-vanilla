@@ -46,23 +46,23 @@
     
                 let followingUsernames = []
     
-                data.followingObjects.forEach(e => {
+                // data.followingObjects.forEach(e => {
     
-                    /////add followings objects 
-                    let userObject = document.createElement("div")
-                    userObject.classList.add("userObject")
-                    userObject.addEventListener("click", () => {
-                        location.href = `http://localhost:4000/profile/${e.userName}`
-                    })
+                //     /////add followings objects 
+                //     let userObject = document.createElement("div")
+                //     userObject.classList.add("userObject")
+                //     userObject.addEventListener("click", () => {
+                //         location.href = `http://localhost:4000/profile/${e.userName}`
+                //     })
     
-                    console.log(e.avatar)
-                    userObject.innerHTML = `
-                    <img src="../../${e.avatar}" alt="">
-                    <h2>${e.userName}</h2>
-                    <h4>${e.name}</h4>`
+                //     console.log(e.avatar)
+                //     userObject.innerHTML = `
+                //     <img src="../../${e.avatar}" alt="">
+                //     <h2>${e.userName}</h2>
+                //     <h4>${e.name}</h4>`
     
-                    document.querySelector("#following").append(userObject)
-                })
+                //     document.querySelector("#following").append(userObject)
+                // })
     
 
 
@@ -330,8 +330,115 @@
             }
 
             function displayOrgEditing(){
-                
-            }
+                let postMakingTemplate = `<div id="createPost">
+                <div class="post">
+                    <!-- first seciton -->
+                    <div class="postHeader flex">
+                        <div class="orgObject flex">
+                            <img alt="" class="orgObjectAv">
+                            <h3 class="orgObjectUserName">org userName</h3>
+                        </div>
+                    </div>
+                    <!-- second sectino -->
+                    <div class="currentState flex">
+                        <input type="file" multiple id="current-state-imgs" name="cStateImgs">
+                        <textarea name="info" id="current-state-info" cols="30" rows="10"
+                            placeholder="type the current state info "></textarea>
+                    </div>
+                    <!-- third section -->
+                    <div class="toDo flex">
+        
+                        <div class="maintags">
+                            <input type="text" placeholder="camp type" id="camp-type">
+                            <input type="text" placeholder="time state" id="time-state">
+                        </div>
+        
+                        <div class="todo-info flex">
+                            <input type="file" multiple id="todo-imgs" name="todoImgs">
+                            <textarea name="info" id="todo-info" cols="30" rows="10"
+                                placeholder="type what to do; steps"></textarea>
+                        </div>
+
+                        <div class="todotags">
+                            <input type="text" placeholder="location" id="location">
+                            <input type="text" name="" id="camp-time" placeholder="camp time">
+                        </div>
+                    </div>
+        
+                    <!-- fourth section -->
+                    <div class="requirements flex">
+                        <textarea name="skills" id="skills" cols="30" rows="10" placeholder="skills;number"></textarea>
+                        <textarea name="knowledge" id="knowledge" cols="30" rows="10" placeholder="knowledge;number"></textarea>
+                        <textarea name="tools" id="tools-materials" cols="30" rows="10" placeholder="tools;number"></textarea>
+                        <input type="text" name="" id="donation" placeholder="donation">
+                    </div>
+                    <!-- <div class="uploadDate">9.5.2021</div> -->
+                </div>
+        
+                <button id="postCamp">post camp</button>
+        
+            </div>
+        `
+        let div = document.createElement("div")
+        div.innerHTML = postMakingTemplate
+        document.body.insertBefore(div, document.querySelector("footer"))
+
+        let postBtn = document.querySelector("#postCamp")
+        postBtn.disabled = true
+
+            let post = document.querySelector(".post")
+            const inputFeilds = post.querySelectorAll("input, textarea");
+            console.log(inputFeilds)
+            inputFeilds.forEach(e=>e.addEventListener("change",()=>{
+                console.log("check if valid")
+            const validInputs = Array.from(inputFeilds).filter( input => input.value !== "");
+
+                console.log(validInputs.length)
+                console.log(inputFeilds.length)
+
+                if(validInputs.length == inputFeilds.length){postBtn.disabled = false}} ))
+
+
+        postBtn.addEventListener("click", async ()=>{
+            console.log("clicked make post btn")
+            
+
+            ////make the object 
+
+            let fd = new FormData()
+
+            fd.append("cStateInfo", document.querySelector("#current-state-info").value)
+            fd.append("campType", document.querySelector("#camp-type").value)
+            fd.append("timeState", document.querySelector("#time-state").value)
+            fd.append("location", document.querySelector("#location").value)
+            fd.append("campTime", document.querySelector("#camp-time").value)
+            fd.append("skills", document.querySelector("#skills").value)
+            fd.append("knowledge", document.querySelector("#knowledge").value)
+            fd.append("toolsMaterials", document.querySelector("#tools-materials").value)
+            fd.append("donation", document.querySelector("#donation").value)
+
+            for(let i of document.querySelector("#current-state-imgs").files){fd.append("cStateImgs", i)}
+            for(let i of document.querySelector("#todo-imgs").files){fd.append("todoImgs", i)}
+
+            // document.querySelector("#current-state-imgs").files.forEach(e=>fd.append("cStateImgs", e))
+            // document.querySelector("#todo-imgs").files.forEach(e=>fd.append("todoImgs", e))
+
+
+            ////send the object 
+            let d = await fetch("/makePost", {
+                headers: new Headers({"authorization": localStorage.getItem("token")}),
+                method: "POST",
+                body: fd
+            })
+
+
+
+            ////empty the values 
+        })
+
+
+
+        }
 
             ////follow; change the method; toggle; to remove 
         // function displayFollowBtn() {

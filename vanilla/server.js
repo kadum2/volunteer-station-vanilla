@@ -11,7 +11,8 @@ const env = require("dotenv")
 env.config()
 
 let bcrypt = require("bcrypt")
-const jwt = require("jsonwebtoken")
+const jwt = require("jsonwebtoken");
+const { posix } = require("path");
 let mongodb = require("mongodb").MongoClient  ///mongodb atlas
 
 /////config
@@ -39,6 +40,7 @@ app.get("/profileData/:username", (req, res)=>{
     mongodb.connect(process.env.MONGOKEY, async (err, client)=>{
         let dbb = client.db()
         let found = await dbb.collection("users").findOne({userName: req.params.username})
+        if(!found) found = await dbb.collection("orgs").findOne({userName: req.params.username})
 
         if(found){
         // console.log(".....current Profile .......")
@@ -75,6 +77,9 @@ app.get("/profileData/:username", (req, res)=>{
         }else{ ///org case 
             let members = []
 
+            console.log("........found members...........")
+            console.log(found.members)
+
             found.members.forEach( async(e)=>{
                 let d = await dbb.collection("users").findOne({userName: e})
                 members.push({userName: d.userName, name: d.name, avatar: d.avatar,isUser: d.isUser })
@@ -83,6 +88,9 @@ app.get("/profileData/:username", (req, res)=>{
                     res.json({members, posts: found.posts})
                 }
             })
+
+            console.log("org")
+            // res.json({})
 
         }
         }else{ ///not found the profile user 
@@ -317,14 +325,17 @@ app.get("/cfollowing", async (req, res)=>{
         req.tokenData = data
     })
 
+    console.log(req.tokenData)
 
     mongodb.connect(process.env.MONGOKEY, async (err, client)=>{
     let dbb = client.db()
     let found = await dbb.collection("users").findOne({userName: req.tokenData})
+
+    console.log("...........cfollowing ............   .......")
+
     if(!found)found = await dbb.collection("orgs").findOne({userName: req.tokenData})
     res.json({following: found.following})
 })
-
 })
 
 ///////following; toggle method; 
@@ -384,7 +395,36 @@ app.post("/follow", (req, res)=>{
 
 })
 
+/////storing post imgs
+///need to store the list of imgs
 
+let postImg
+let postImgsList
+let postImgStoring = multer.diskStorage({
+    destination: "./public/posts",
+    filename: async (req, file, cb)=>{
+        console.log(file)
+
+        postImg = await new Date().toISOString().replace(/:/g, '-') +file.originalname.replaceAll(" ", "")
+        postImgsList.push(postImg)
+        cb(null, postImg)
+    }
+})
+const postImgs = multer({storage: postImgStoring})
+
+let initImgsList = function(req, res, next){
+    postImgsList = []
+    next()
+}
+
+/////make post 
+app.post("/makePost", (req, res, next)=>{ postImgsList = [];next()}, postImgs.any(), (req, res)=>{
+    console.log("...........make post..............")
+    console.log(req.body)
+    console.log(postImg)
+    console.log(postImgsList)
+
+})
 
 
 ////mode; 
