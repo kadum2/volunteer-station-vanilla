@@ -6,215 +6,130 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <style>
-        body {
-            margin: 0%;
-            height: 100vh;
-            /* display: flex; */
-            position: relative;
-        }
 
-        * {
-            box-sizing: border-box;
-        }
-
-        /* header */
-        header {
-            height: 10%;
-            background: rgb(34, 206, 106);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0% 2rem;
-        }
-
-        #something {
-            width: 100%;
-
-        }
-
-        #searchbar {
-            height: 60%;
-            width: 40%;
-            background: white;
-            border-radius: .5rem;
-            border: none;
-            width: 100%;
-        }
-
-        .account {
-            width: 100%;
-            display: flex;
-            justify-content: end;
-            align-items: center;
-            gap: .4rem;
-        }
-
-        .accountImg {
-            display: inline;
-            height: 3rem;
-            width: 3rem;
-            background: url("./anders-jilden-Sc5RKXLBjGg-unsplash.jpg");
-            /* background: url("anders-jilden-Sc5RKXLBjGg-unsplash.jpg"); */
-            background-size: cover;
-            border-radius: 50%;
-        }
-
-        /* main filter */
-        #mainFilter {
-            height: 10vh;
-            background: rgb(155, 255, 185);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .selected {
-            background: rgb(66, 196, 105);
-            /* background: ; */
-        }
-
-        #conts {
-            display: flex;
-            flex-direction: row;
-            justify-content: center;
-            align-items: center;
-            height: 100%;
-        }
-
-        /* sub filter */
-        #subFilter {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            gap: 2rem;
-
-            height: 100%;
-
-            background: rgb(155, 255, 185);
-            flex-grow: .3;
-        }
-
-        /* cont */
-        #cont {
-            height: 100%;
-            background: rgb(190, 255, 210);
-            flex-grow: 2;
-        }
-
-        #relatedAccounts {
-            height: 100%;
-            flex-grow: .8;
-            background: rgb(114, 219, 146);
-        }
-
-        /* related accounts */
-
-
-        /* footer */
-        footer {
-            height: 20vh;
-            width: 100%;
-            background: hsl(145, 74%, 29%);
-        }
-    </style>
-    <!-- new styles to try -->
-    <style>
-        button {
-            padding: .3rem;
-            background: rgb(125, 241, 160);
-            border: 2px solid rgb(15, 32, 23);
-            border-radius: .3rem;
-            cursor: pointer;
-            transition: .2s linear;
-        }
-
-        button:hover {
-            background: rgb(76, 202, 114);
-        }
-
-        #auth {
-            height: 100%;
-            width: 100%;
-            background: red;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
-
-        #relatedAccounts {
-            display: flex;
-            flex-direction: column;
-            width: 4vw;
-            gap: 1rem;
-            padding: 2rem;
-        }
-
-        #loginPanel,
-        #registerPanel {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            gap: 1rem;
-            background: rgb(241, 241, 241);
-            border-radius: 1.4rem;
-            box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
-            padding: 1rem;
-        }
-
-        #loginPanel input,
-        #registerPanel input,
-        b {
-            font-size: 1.4rem;
-        }
-    </style>
+    <link rel="stylesheet" href="./style.css">
 </head>
 
 <body>
 
     <!-- header -->
     <header>
-        <div id="something"><button id="profile-btn">go to profile</button></div>
+        <div id="logo">logo</div>
 
         <input type="text" id="searchbar"></input>
 
-        <div id="auth">
-
-            <!-- account template -->
-            <!-- <div class="account">
-                <h4>accountName</h4>
-                <div class="accountImg"></div>
-            </div> -->
-            <!-- default dom -->
-
+        <div id="current-account">
+            <div class="account-object">
+                <img alt="" class="accountAv">
+                <h3 class="userName">the userName
+            </div>
+        </div>
         </div>
     </header>
     <!-- main filter bar -->
-    <div id="mainFilter">
-        <button>prop1; time</button>
-        <select>
-            <option value="">prop2; location</option>
-        </select>
-        <button>prop3; camp type</button>
-        <button>prop4; skill</button>
-        <button>prop5; knowledge</button>
-        <button>prop6; tools</button>
-    </div>
 
+    <!-- conts -->
     <div id="conts">
-        <div id="subFilter">
-            <button>soon</button>
-            <button>now</button>
-            <button>done</button>
-            <button>all the time</button>
-        </div>
-        <div id="cont">
 
-            <div class="post-pro">
+        <!-- <div id="sub-filter">
+        </div> -->
+        <div id="main-filter">
+            <select id="time-state">
+                <option value="">الحالة الزمنية</option>
+                <option value="now">الان</option>
+                <option value="soon">قريبا</option>
+                <option value="done">مكتملة</option>
+                <option value="all-the-time">طوال الوقت</option>
+            </select>
+            <select id="location">
+                <option value="">الموقع</option>
+            </select>
+
+            <!-- type -->
+            <select id="camp-type">
+                <option value="">نوع الحملة</option>
+                <option value="make">بناء</option>
+                <option value="maintain">تنظيف</option>
+            </select>
+            <select id="camp-prototype">
+                <option value="">خطة الحملة</option>
+                <option value="make-build">بناء</option>
+                <option value="maintain-clean">تنظيف</option>
+                <option value="make-grow">زراعة</option>
+            </select>
+
+            <select id="skill">
+                <option value="">المهارة</option>
+                <option value="?">?</option>
+                <option value="??">??</option>
+                <option value="???">???</option>
+            </select>
+            <select id="knowledge">
+                <option value="">المعرفة</option>
+            </select>
+            <select id="tools-materials">
+                <option value="">الادوات و المواد</option>
+            </select>
+        </div>
+
+        <div id="cont-cont">
+            <h1>writing writing writing</h1>
+
+            <div class="post">
+                <!-- first seciton -->
+                <div class="postHeader flex">
+                    <div class="orgObject flex">
+                        <img alt="" class="orgObjectAv">
+                        <h3 class="orgObjectUserName">org userName</h3>
+                    </div>
+                    <div class="startDate">start at; 9.5.2021</div>
+                </div>
+                <!-- second sectino -->
+                <div class="currentState flex">
+
+                    <div class="imgs flex">
+                        <img alt="">
+                        <img alt="">
+                        <img alt="">
+                        <img alt="">
+                    </div>
+                    <div class="info flex"></div>
+                </div>
+                <!-- third section -->
+                <div class="toDo flex">
+                    <div class="maintags">
+                        <span class="camp-type">camp type</span>
+                        <span class="time-state">time state</span>
+                    </div>
+
+                    <div class="todo-info flex">
+                        <div class="imgs3 flex">
+                            <img alt="">
+                            <img alt="">
+                            <img alt="">
+                            <img alt="">
+                        </div>
+                        <div class="info3 flex"></div>
+                    </div>
+
+                    <div class="todotags">
+                        <span class="location">location</span>
+                        <span class="time">camp time</span>
+                    </div>
+                </div>
+
+                <!-- fourth section -->
+                <div class="requirements flex">
+                    <p>skills; x/x</p>
+                    <p>knowledge; x/x</p>
+                    <p>tools; x/x</p>
+                    <h3>donation; </h3>
+                </div>
+                <div class="uploadDate">9.5.2021</div>
+            </div>
+
+            <div></div>
+            <!-- <div class="post-pro">
                 <div class="post-head">
                     <div class="post-head-acc">
                         <div class="post-head-acc-av"></div>
@@ -243,232 +158,16 @@
                         <h3 class="donation"></h3>
                     </div>
                 </div>
-            </div>
+            </div> -->
         </div>
         <div id="relatedAccounts">
             <!-- or the login state -->
-
-            <div id="loginPanel">
-                <b>login</b>
-                <input id="login-em" type="email" placeholder="email">
-                <input id="login-pw" type="text" placeholder="password">
-                <button id="login">login</button>
-            </div>
-            <div id="registerPanel">
-                <b>register</b>
-                <input id="register-em" type="email" placeholder="email">
-                <input id="register-pw" type="text" placeholder="password">
-                <button id="user-register">user register</button>
-                <button id="org-register">org register</button>
-            </div>
-
-            <!-- <div id="registerPanel">
-                <h2 style="display: inline;">register</h3>
-                    <div class="form">
-                        <input type="email" placeholder="email" style="margin: 0;">
-                        <input type="text" placeholder="password">
-                        <button id="register">submit</button>
-                    </div>
-            </div> -->
-
-
         </div>
     </div>
-
-
-
-    <!-- the new post template  -->
-
-
-
-    <style>
-        footer {
-            position: relative;
-        }
-
-        #createPost {
-            /* height: 80vh; */
-            background: red;
-            width: 80vw;
-            margin: auto auto;
-            padding-bottom: 4rem;
-        }
-
-        .post {
-            background: rgb(153, 153, 153);
-
-        }
-
-
-
-        .flex {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        /* first section; post header */
-        .currentState,
-        .toDo,
-        .requirements {
-            background-color: rgb(216, 216, 216);
-            height: 30vh;
-            margin: 2rem;
-            gap: 1rem;
-            /* padding: 1rem; */
-            box-sizing: border-box;
-        }
-
-        /* second section; current state */
-        .postHeader {
-            height: 4rem;
-            flex-direction: row;
-            justify-content: space-between;
-            padding: 0 2rem;
-            background-color: rgb(216, 216, 216);
-        }
-
-        .orgObject {
-            gap: 1rem;
-        }
-
-        .postHeader img {
-            background: url("/orgAvImgs/2022-05-09T16-38-53.430Zdcf96b9a-ba88-46cc-96ef-54d2e3f14507_rwc_0x303x1677x261x1677-Copy.png");
-            background-size: cover;
-            background-position: center center;
-            height: 2rem;
-            width: 2rem;
-        }
-
-        .currentState {
-            gap: 1rem;
-        }
-
-        .imgs {
-            /* all: unset; */
-            height: 80%;
-            width: 40%;
-            background: rgb(233, 77, 77);
-            box-sizing: border-box;
-        }
-
-        .info {
-            /* all: unset; */
-            background: rgb(79, 209, 79);
-            height: 80%;
-            width: 40%;
-        }
-
-        .todo-info {
-            height: 100%;
-            height: 3rem;
-            width: 100%;
-            width: 4rem;
-            background-color: red;
-        }
-
-        img {
-            all: unset;
-            background: url("/orgAvImgs/2022-05-09T16-38-53.430Zdcf96b9a-ba88-46cc-96ef-54d2e3f14507_rwc_0x303x1677x261x1677-Copy.png");
-            height: 100%;
-            width: 100%;
-            background-size: cover;
-            background-position: center center;
-        }
-
-        span {
-            padding: .5rem;
-            background: rgb(116, 235, 116);
-            border-radius: .4rem;
-        }
-
-        input {
-            font-size: 1.3rem;
-        }
-
-        /* third seciton; todo */
-        .toDo {
-            background-color: rgb(216, 216, 216);
-            flex-direction: column;
-            height: auto;
-            padding: 1rem;
-            /* height: 60vh; */
-        }
-
-
-        /* fourth section; requirements */
-        .requirements {
-            background-color: rgb(216, 216, 216);
-
-        }
-    </style>
-
-    <div id="createPost">
-        <div class="post">
-            <!-- first seciton -->
-            <div class="postHeader flex">
-                <div class="orgObject flex">
-                    <img alt="" class="orgObjectAv">
-                    <h3 class="orgObjectUserName">org userName</h3>
-                </div>
-                <div class="startDate">start at; 9.5.2021</div>
-            </div>
-            <!-- second sectino -->
-            <div class="currentState flex">
-
-                <div class="imgs flex">
-                    <img alt="">
-                    <img alt="">
-                    <img alt="">
-                    <img alt="">
-                </div>
-                <div class="info flex"></div>
-            </div>
-            <!-- third section -->
-            <div class="toDo flex">
-                <div class="maintags">
-                    <span class="camp-type">camp type</span>
-                    <span class="time-state">time state</span>
-                </div>
-
-                <div class="todo-info flex">
-                    <div class="imgs3 flex">
-                        <img alt="">
-                        <img alt="">
-                        <img alt="">
-                        <img alt="">
-                    </div>
-                    <div class="info3 flex"></div>
-                </div>
-
-                <div class="todotags">
-                    <span class="location">location</span>
-                    <span class="time">camp time</span>
-                </div>
-            </div>
-
-            <!-- fourth section -->
-            <div class="requirements flex">
-                <p>skills; x/x</p>
-                <p>knowledge; x/x</p>
-                <p>tools; x/x</p>
-                <h3>donation; </h3>
-            </div>
-            <div class="uploadDate">9.5.2021</div>
-        </div>
-
-        <button id="postCamp">post camp</button>
-
-    </div>
-
 
     <!-- footer -->
     <footer></footer>
-
-
     <script src="./index.js"></script>
-
-
 
 </body>
 

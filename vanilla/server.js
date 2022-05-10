@@ -405,7 +405,7 @@ let postcStateImgsList
 let postTodoImg
 let postTodoImgsList
 
-let postcStateImgStoring = multer.diskStorage({
+let postImgStoring = multer.diskStorage({
     
     destination: "./public/posts",
     // destination: (req, file, cb)=>{
@@ -430,7 +430,7 @@ let postcStateImgStoring = multer.diskStorage({
 
     }
 })
-const postcStateImgs = multer({storage: postcStateImgStoring})
+const postImgs = multer({storage: postImgStoring})
 
 /////get todo imgs; no need
 
@@ -448,7 +448,7 @@ const postTodoImgs = multer({storage: postTodoImgStoring})
 
 
 /////make post; not to insert imgs; but make specific routes 
-app.post("/makePost", (req, res, next)=>{ postcStateImgsList = []; postTodoImgsList=[];next()}, postcStateImgs.any(), async (req, res)=>{
+app.post("/makePost", (req, res, next)=>{ postcStateImgsList = []; postTodoImgsList=[];next()}, postImgs.any(), async (req, res)=>{
     console.log("...........make post..............")
     console.log(req.body)
     console.log(req.headers.authorization)
@@ -474,13 +474,13 @@ app.post("/makePost", (req, res, next)=>{ postcStateImgsList = []; postTodoImgsL
 
 })
 
-app.post("/fdcImgs", (req, res, next)=>{ postcStateImgsList = [];next()}, postcStateImgs.any(), (req, res)=>{
+// app.post("/fdcImgs", (req, res, next)=>{ postcStateImgsList = [];next()}, postcStateImgs.any(), (req, res)=>{
 
-})
+// })
 
-app.post("/fdTodoImgs", (req, res, next)=>{ postTodoImgsList = [];next()}, postTodoImgs.any(), (req, res)=>{
+// app.post("/fdTodoImgs", (req, res, next)=>{ postTodoImgsList = [];next()}, postTodoImgs.any(), (req, res)=>{
 
-})
+// })
 
 
 ////mode; 
