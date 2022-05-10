@@ -397,32 +397,88 @@ app.post("/follow", (req, res)=>{
 
 /////storing post imgs
 ///need to store the list of imgs
+/////get current state and todo imgs 
 
-let postImg
-let postImgsList
-let postImgStoring = multer.diskStorage({
+let postCstateImg
+let postcStateImgsList
+
+let postTodoImg
+let postTodoImgsList
+
+let postcStateImgStoring = multer.diskStorage({
+    
     destination: "./public/posts",
+    // destination: (req, file, cb)=>{
+    //     if(file.fieldname == "cStateImgs"){
+    //         cb(null, "./public/posts/cState")
+    //     }else{
+    //         cb(null, "./public/posts/todo")
+    //     }
+    // },
+    filename: async (req, file, cb)=>{
+        console.log(file)
+        if(file.fieldname == "cStateImgs"){
+            postCstateImg = await new Date().toISOString().replace(/:/g, '-') +file.originalname.replaceAll(" ", "")
+            postcStateImgsList.push(postCstateImg)
+            cb(null, postCstateImg)
+        }else{
+            postTodoImg = await new Date().toISOString().replace(/:/g, '-') +file.originalname.replaceAll(" ", "")
+            postTodoImgsList.push(postTodoImg)
+            cb(null, postTodoImg)
+
+        }
+
+    }
+})
+const postcStateImgs = multer({storage: postcStateImgStoring})
+
+/////get todo imgs; no need
+
+let postTodoImgStoring = multer.diskStorage({
+    destination: "./public/posts/cState",
     filename: async (req, file, cb)=>{
         console.log(file)
 
-        postImg = await new Date().toISOString().replace(/:/g, '-') +file.originalname.replaceAll(" ", "")
-        postImgsList.push(postImg)
-        cb(null, postImg)
+        postTodoImg = await new Date().toISOString().replace(/:/g, '-') +file.originalname.replaceAll(" ", "")
+        postTodoImgsList.push(postTodoImg)
+        cb(null, postTodoImg)
     }
 })
-const postImgs = multer({storage: postImgStoring})
+const postTodoImgs = multer({storage: postTodoImgStoring})
 
-let initImgsList = function(req, res, next){
-    postImgsList = []
-    next()
-}
 
-/////make post 
-app.post("/makePost", (req, res, next)=>{ postImgsList = [];next()}, postImgs.any(), (req, res)=>{
+/////make post; not to insert imgs; but make specific routes 
+app.post("/makePost", (req, res, next)=>{ postcStateImgsList = []; postTodoImgsList=[];next()}, postcStateImgs.any(), async (req, res)=>{
     console.log("...........make post..............")
     console.log(req.body)
-    console.log(postImg)
-    console.log(postImgsList)
+    console.log(req.headers.authorization)
+    console.log(postcStateImgsList)
+    console.log(postTodoImgsList)
+    console.log(env)
+
+    ////decode; 
+    jwt.verify(req.headers.authorization, process.env.TOKEN, (err, data)=>{
+        if(err) return res.sendStatus(401)
+        req.tokenData = data
+        // next()
+    })
+
+    ////make object 
+    let post = {dataOfUpload: new Date(),cStateImgs: postcStateImgsList, todoImgs: postTodoImgsList, cStateInfo: req.body.cStateInfo, campType: req.body.campType, timeState: req.body.timeState, location: req.body.location, campTime: req.body.campTime, skills: req.body.skills, knowledge: req.body.knowledge, toolsMaterials: req.body.toolsMaterials, neededDonation: req.body.donation, currentDonation: 0}
+
+    ////mongodb
+    mongodb.connect(process.env.MONGOKEY, async (err, client)=>{
+        let dbb = client.db()
+        let found = await dbb.collection("orgs").findOneAndUpdate({userName: req.tokenData}, {$push: {posts: post}})
+    })
+
+})
+
+app.post("/fdcImgs", (req, res, next)=>{ postcStateImgsList = [];next()}, postcStateImgs.any(), (req, res)=>{
+
+})
+
+app.post("/fdTodoImgs", (req, res, next)=>{ postTodoImgsList = [];next()}, postTodoImgs.any(), (req, res)=>{
 
 })
 
@@ -609,14 +665,14 @@ function authToken(req, res, next){
         next()
     })
     }else{return res.status(401).send("no token sent")}
+
+}
     ///verify
-    // jwt.verify(token, env.process.TOKEN, (err, data)=>{
+    // jwt.verify(token, process.env.TOKEN, (err, data)=>{
     //     if(err) return res.sendStatus(401)
     //     req.user = data
     //     next()
     // })
-
-}
 
 
 app.get("/auth", (req, res)=>{

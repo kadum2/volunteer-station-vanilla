@@ -406,8 +406,11 @@
             ////make the object 
 
             let fd = new FormData()
-
+            let fdCImgs = new FormData()
+            let fdTodoImgs = new FormData()
+            
             fd.append("cStateInfo", document.querySelector("#current-state-info").value)
+            fd.append("todoInfo", document.querySelector("#todo-info").value)
             fd.append("campType", document.querySelector("#camp-type").value)
             fd.append("timeState", document.querySelector("#time-state").value)
             fd.append("location", document.querySelector("#location").value)
@@ -430,6 +433,19 @@
                 method: "POST",
                 body: fd
             })
+
+            ////specific route for current imgs and todo imgs; 
+
+            // let dcImgs = await fetch("/fdcImgs", {
+            //     headers: new Headers({"authorization": localStorage.getItem("token")}),
+            //     method: "POST",
+            //     body: fdCImgs
+            // })
+            // let dTodoImgs = await fetch("/fdTodoImgs", {
+            //     headers: new Headers({"authorization": localStorage.getItem("token")}),
+            //     method: "POST",
+            //     body: fdTodoImgs
+            // })
 
 
 
