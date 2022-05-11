@@ -329,7 +329,7 @@
 
             }
 
-            function displayOrgEditing(){
+            function displayOrgEditing(){ ////post making 
                 let postMakingTemplate = `<div id="createPost">
                 <div class="post">
                     <!-- first seciton -->
@@ -349,9 +349,26 @@
                     <div class="toDo flex">
         
                         <div class="maintags">
-                            <input type="text" placeholder="camp type" id="camp-type">
-                            <input type="text" placeholder="time state" id="time-state">
-                        </div>
+                            <select id="camp-type">
+                                <option value="">نوع الحملة</option>
+                                <option value="صناعة">صناعة</option>
+                                <option value="صيانة">صيانة</option>
+                            </select>
+                            <select id="camp-prototype">
+                                <option value="">خطة الحملة</option>
+                                <option value="بناء">بناء</option>
+                                <option value="زراعة">زراعة</option>
+                                <option value="ننظيف">ننظيف</option>
+                            </select>
+
+                            <select id="time-state">
+                                <option value="">الحالة الزمنية</option>
+                                <option value="الان">الان</option>
+                                <option value="قريبا">قريبا</option>
+                                <option value="مكتملة">مكتملة</option>
+                                <option value="طوال-الوقت">طوال-الوقت</option>
+                            </select>
+                                    </div>
         
                         <div class="todo-info flex">
                             <input type="file" multiple id="todo-imgs" name="todoImgs">
@@ -360,8 +377,18 @@
                         </div>
 
                         <div class="todotags">
-                            <input type="text" placeholder="location" id="location">
-                            <input type="text" name="" id="camp-time" placeholder="camp time">
+                        
+                            <select id="base-location">
+                                <option value="">المحافظة</option>
+                                <option value="بغداد">بغداد</option>
+                                <option value="البصرة">البصرة</option>
+                                <option value="نينوى">نينوى</option>
+                                <option value="اربيل">اربيل</option>
+                            </select>
+                            <input type="text" placeholder="قضاء: ناحية: ..." id="location">
+
+
+                            <input type="date" name="" id="camp-time" placeholder="camp time">
                         </div>
                     </div>
         
@@ -419,6 +446,9 @@
             fd.append("knowledge", document.querySelector("#knowledge").value)
             fd.append("toolsMaterials", document.querySelector("#tools-materials").value)
             fd.append("donation", document.querySelector("#donation").value)
+            fd.append("baseLocation", document.querySelector("#base-location").value)
+            fd.append("campPrototype", document.querySelector("#camp-prototype").value)
+
 
             for(let i of document.querySelector("#current-state-imgs").files){fd.append("cStateImgs", i)}
             for(let i of document.querySelector("#todo-imgs").files){fd.append("todoImgs", i)}
@@ -613,7 +643,6 @@
                 }
             }
         }
-
 
         //main profile data (onload) 
         window.onload = async () => {

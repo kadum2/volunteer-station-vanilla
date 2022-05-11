@@ -18,10 +18,8 @@
 
         <input type="text" id="searchbar"></input>
 
-        <div id="current-account">
+        <div id="cUserTemplate">
             <div class="account-object">
-                <img alt="" class="accountAv">
-                <h3 class="userName">the userName
             </div>
         </div>
         </div>
@@ -34,47 +32,64 @@
         <!-- <div id="sub-filter">
         </div> -->
         <div id="main-filters">
-            <select id="timeState">
-                <option value="">الحالة الزمنية</option>
-                <option value="now">الان</option>
-                <option value="soon">قريبا</option>
-                <option value="done">مكتملة</option>
-                <option value="all-the-time">طوال الوقت</option>
-            </select>
-            <select id="location">
-                <option value="">الموقع</option>
-            </select>
+            <div class="filter-type">
+                <select id="timeState">
+                    <option value="">الحالة الزمنية</option>
+                    <option value="now">الان</option>
+                    <option value="soon">قريبا</option>
+                    <option value="done">مكتملة</option>
+                    <option value="all-the-time">طوال الوقت</option>
+                </select>
+                <select id="location">
+                    <option value="">الموقع</option>
+                    <option value="بغداد">بغداد</option>
+                    <option value="البصرة">البصرة</option>
+                    <option value="الموصل">الموصل</option>
+                    <option value="اربيل">اربيل</option>
+                </select>
 
-            <!-- type -->
-            <select id="campType">
-                <option value="">نوع الحملة</option>
-                <option value="make">بناء</option>
-                <option value="maintain">تنظيف</option>
-            </select>
-            <select id="campPrototype">
-                <option value="">خطة الحملة</option>
-                <option value="make-build">بناء</option>
-                <option value="maintain-clean">تنظيف</option>
-                <option value="make-grow">زراعة</option>
-            </select>
+                <!-- type -->
+                <select id="campType">
+                    <option value="">نوع الحملة</option>
+                    <option value="صناعة">صناعة</option>
+                    <option value="صيانة">صيانة</option>
+                </select>
+                <select id="campPrototype">
+                    <option value="">خطة الحملة</option>
+                    <option value="بناء">بناء</option>
+                    <option value="تنظيف">تنظيف</option>
+                    <option value="زراعة">زراعة</option>
+                </select>
 
-            <select id="skills">
-                <option value="">المهارة</option>
-                <option value="?">?</option>
-                <option value="??">??</option>
-                <option value="???">???</option>
-            </select>
-            <select id="knowledge">
-                <option value="">المعرفة</option>
-            </select>
-            <select id="toolsMaterials">
-                <option value="">الادوات و المواد</option>
-            </select>
+                <select id="camp-time">
+                    <option value="">توقيت الحملة</option>
+                    <option value="تصاعديا">تصاعديا</option>
+                    <option value="تنازليا">تنازليا</option>
+                </select>
+
+            </div>
+            <div class="filter-type">
+                <select id="skills">
+                    <option value="">المهارة</option>
+                    <option value="?">?</option>
+                    <option value="??">??</option>
+                    <option value="???">???</option>
+                </select>
+                <select id="knowledge">
+                    <option value="">المعرفة</option>
+                </select>
+                <select id="toolsMaterials">
+                    <option value="">الادوات و المواد</option>
+                </select>
+            </div>
+
+
+            <button id="all">الجميع</button>
         </div>
-        <div id="all">الجميع</div>
 
         <div id="cont-cont">
-            <h3>writing </h3>
+            <!-- may make it for highlight section -->
+            <h3>highlight</h3>
             <h1>writing writing writing</h1>
 
             <div class="post">
@@ -130,37 +145,6 @@
                 <div class="uploadDate">9.5.2021</div>
             </div>
 
-            <div></div>
-            <!-- <div class="post-pro">
-                <div class="post-head">
-                    <div class="post-head-acc">
-                        <div class="post-head-acc-av"></div>
-                        <h3 class="post-head-acc-name"></h3>
-                    </div>
-                    <h3 class="post-head-date"></h3>
-                </div>
-                <div class="post-currentCase">
-                    <div class="post-currentCase-imgs"></div>
-                    <div class="post-currentCase-info"></div>
-                </div>
-                <div class="post-whatToDo">
-                    <div class="post-whatToDo-imgs"></div>
-                    <div class="post-whatToDo-info"></div>
-                    <div class="post-whatToDo-tags">
-                        <div class="post-whatToDo-tags-time"></div>
-                        <div class="post-whatToDo-tags-location"></div>
-                        <div class="post-whatToDo-tags-campType"></div>
-                        <div class="post-whatToDo-tags-prototype"></div>
-                    </div>
-                </div>
-                <div class="post-requirements">
-                    <div class="post-requirements-skillTags"></div>
-                    <div class="post-requirements-knowledgeTags"></div>
-                    <div class="post-requirements-toolsAndMaterials">
-                        <h3 class="donation"></h3>
-                    </div>
-                </div>
-            </div> -->
         </div>
         <!-- <div id="relatedAccounts"></div> -->
         <!-- or the login state -->

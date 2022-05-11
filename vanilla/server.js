@@ -463,8 +463,10 @@ app.post("/makePost", (req, res, next)=>{ postcStateImgsList = []; postTodoImgsL
         // next()
     })
 
+    //////new date(); minutes; hours; day; month; year
+    let da= new Date().getMinutes() + ":"+( new Date().getHours()>12? + new Date().getHours() -12 + "pm": new Date().getHours() +"am") + "," + new Date().getDay() +"/" + new Date().getMonth() + "/"+new Date().getFullYear()
     ////make object 
-    let post = {dateOfUpload: new Date(),cStateImgs: postcStateImgsList, todoImgs: postTodoImgsList, cStateInfo: req.body.cStateInfo, todoInfo: req.body.todoInfo, campType: req.body.campType, timeState: req.body.timeState, location: req.body.location, campTime: req.body.campTime, skills: req.body.skills, knowledge: req.body.knowledge, toolsMaterials: req.body.toolsMaterials, neededDonation: req.body.donation, currentDonation: 0}
+    let post = {dateOfUpload: da,cStateImgs: postcStateImgsList, todoImgs: postTodoImgsList, cStateInfo: req.body.cStateInfo, todoInfo: req.body.todoInfo, campType: req.body.campType, timeState: req.body.timeState, baseLocation: req.body.baseLocation, campPrototype: req.body.campPrototype, location: req.body.location, campTime: req.body.campTime, skills: req.body.skills, knowledge: req.body.knowledge, toolsMaterials: req.body.toolsMaterials, neededDonation: req.body.donation, currentDonation: 0}
 
     ////mongodb
     mongodb.connect(process.env.MONGOKEY, async (err, client)=>{
