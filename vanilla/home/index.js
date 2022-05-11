@@ -1,17 +1,16 @@
         ////// dom elements  
         ////templates
-        let auth = document.querySelector("#auth")
         let relatedAccounts = document.querySelector("#relatedAccounts")
 
         //register
-        let registerEm = document.querySelector("#register-em")
-        let registerPw = document.querySelector("#register-pw")
-        let userRegisterBtn = document.querySelector("#user-register")
-        let orgRegisterBtn = document.querySelector("#org-register")
+        let registerEm = document.querySelector("#registerEm")
+        let registerPw = document.querySelector("#registerPw")
+        let userRegisterBtn = document.querySelector("#userRegister")
+        let orgRegisterBtn = document.querySelector("#orgRegister")
 
         //login
-        let loginEm = document.querySelector("#login-em")
-        let loginPw = document.querySelector("#login-pw")
+        let loginEm = document.querySelector("#loginEm")
+        let loginPw = document.querySelector("#loginPw")
         let loginBtn = document.querySelector("#login")
 
         ////filters no ndeed ?
@@ -51,7 +50,7 @@
         function makingPosts(postsArray){
 
             console.log(postsArray)
-            document.querySelector("#cont-cont").innerHTML = ""
+            document.querySelector("#postsFeed").innerHTML = ""
             
             postsArray.forEach(e => {
                 console.log(e)
@@ -59,7 +58,7 @@
             <div class="post">
             <!-- first seciton -->
             <div class="postHeader flex">
-                <div class="orgObject flex">
+                <div class="accountObject flex">
                     <img alt="" class="orgObjectAv" style="
                         background: url(${e.avatar};background-size: cover;background-position: center center;
                         height: 2rem;
@@ -69,22 +68,27 @@
             </div>
             <!-- second sectino -->
             <div class="currentState flex">
-                <div class="current-state-imgs flex">
+            الوضع الحالي
+
+                <div class="info flex">${e.cStateInfo}</div>
+                <div class="imgs flex">
                 ${e.cStateImgs.map(e=>  `<img style="background:url('../posts/${e}');        
                 background-size: cover;
                 background-position: center center;">`).join('')}
                 </div>
-                <div class="info flex">${e.cStateInfo}</div>
             </div>
             <!-- third section -->
             <div class="todo flex">
-                <div class="maintags">
-                    <span class="camp-prototype">${e.campPrototype}</span>
-                    <span class="camp-type">${e.campType}</span>
-                    <span class="time-state">${e.timeState}</span>
-                </div>
+            للقيام به
 
-                    <div class="todo-imgs flex">
+                <div class="mainTags">
+                    <span class="campPrototype">${e.campPrototype}</span>
+                    <span class="campType">${e.campType}</span>
+                    <span class="timeState">${e.timeState}</span>
+                </div>
+                    <div class="info flex">${e.todoInfo}</div>
+
+                    <div class="imgs flex">
                     ${
                         e.todoImgs.map(e=>{
                         console.log(e)
@@ -92,12 +96,11 @@
                         background-size: cover;
                         background-position: center center;">`}).join('')}
                     </div>
-                    <div class="info flex">${e.todoInfo}</div>
 
-                <div class="todotags">
+                <div class="todoTags">
                 <span class="baseLocation">${e.baseLocation}</span>                    
                     <span class="location">${e.location}</span>
-                    <span class="camp-time">${e.campTime}</span>
+                    <span class="campTime">${e.campTime}</span>
                 </div>
             </div>
 
@@ -127,7 +130,7 @@
 `
                         let postToAdd = document.createElement("div")
                         postToAdd.innerHTML = postTemplate
-                document.querySelector("#cont-cont").append(postToAdd)
+                document.querySelector("#postsFeed").append(postToAdd)
             });
         }
 
@@ -135,32 +138,34 @@
         /////functions; 
         async function regLoginPanels(){
             console.log("no user; should generate the auth")
-            auth.innerHTML = `            
-            <div id="registerPanel">
-                <b>register</b>
-                <input id="register-userName" type="text" placeholder="username">
-                <input id="register-em" type="email" placeholder="email">
-                <input id="register-pw" type="text" placeholder="password">
-                <button id="regBtn">user register</button>
-            </div>
-            <div id="loginPanel">
-                <b>login</b>
-                <input id="login-em" type="email" placeholder="email">
-                <input id="login-pw" type="text" placeholder="password">
-                <button id="loginBtn">login</button>
+            document.querySelector("#conts").innerHTML += ` 
+            <div id="regLogPanel">           
+                <div id="registerPanel">
+                    <b>register</b>
+                    <input id="registerUserName" type="text" placeholder="username">
+                    <input id="registerEm" type="email" placeholder="email">
+                    <input id="registerPw" type="text" placeholder="password">
+                    <button id="regBtn">user register</button>
+                </div>
+                <div id="loginPanel">
+                    <b>login</b>
+                    <input id="loginEm" type="email" placeholder="email">
+                    <input id="loginPw" type="text" placeholder="password">
+                    <button id="loginBtn">login</button>
+                </div>
             </div>`
 
             ////register
             let register = document.querySelector("#registerPanel")
-            let registerEm = document.querySelector("#register-em")
-            let registerPw = document.querySelector("#register-pw")
-            let regiseterUn = document.querySelector("#register-userName")
+            let registerEm = document.querySelector("#registerEm")
+            let registerPw = document.querySelector("#registerPw")
+            let regiseterUn = document.querySelector("#registerUserName")
             let regBtn = document.querySelector("#regBtn")
 
             ////login
             let login = document.querySelector("#loginPanel")
-            let loginEm = document.querySelector("#login-em")
-            let loginPw = document.querySelector("#login-pw")
+            let loginEm = document.querySelector("#loginEm")
+            let loginPw = document.querySelector("#loginPw")
             let loginBtn = document.querySelector("#loginBtn")
 
             ////register
@@ -279,7 +284,7 @@
                     checkAccout()
                 })
                 document.querySelector("#cUserTemplate").append(cUser, logoutBtn)
-                auth.innerHTML = ""
+                relatedAccounts.innerHTML = ""
             }
 
 

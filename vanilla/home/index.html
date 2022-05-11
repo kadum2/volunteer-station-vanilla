@@ -5,8 +5,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-
+    <title>home</title>
     <link rel="stylesheet" href="./style.css">
 </head>
 
@@ -15,30 +14,26 @@
     <!-- header -->
     <header>
         <div id="logo">logo</div>
-
-        <input type="text" id="searchbar"></input>
-
+        <input type="text" id="searchbar" placeholder="search"></input>
         <div id="cUserTemplate">
-            <div class="account-object">
-            </div>
-        </div>
+            <!-- <div class="account-object"></div> -->
         </div>
     </header>
-    <!-- main filter bar -->
 
-    <!-- conts -->
+
+    <!-- container -->
     <div id="conts">
 
-        <!-- <div id="sub-filter">
-        </div> -->
-        <div id="main-filters">
-            <div class="filter-type">
+        <!-- main filter bar -->
+        <div id="mainFilters">
+            <button id="medicalCase">تبرعات (حالات طبية)</button>
+            <div class="filterType">
                 <select id="timeState">
                     <option value="">الحالة الزمنية</option>
-                    <option value="now">الان</option>
-                    <option value="soon">قريبا</option>
-                    <option value="done">مكتملة</option>
-                    <option value="all-the-time">طوال الوقت</option>
+                    <option value="الان">الان</option>
+                    <option value="قريبا">قريبا</option>
+                    <option value="مكتملة">مكتملة</option>
+                    <option value="طوال الوقت">طوال الوقت</option>
                 </select>
                 <select id="location">
                     <option value="">الموقع</option>
@@ -61,14 +56,14 @@
                     <option value="زراعة">زراعة</option>
                 </select>
 
-                <select id="camp-time">
+                <select id="campTime">
                     <option value="">توقيت الحملة</option>
                     <option value="تصاعديا">تصاعديا</option>
                     <option value="تنازليا">تنازليا</option>
                 </select>
 
             </div>
-            <div class="filter-type">
+            <div class="filterType">
                 <select id="skills">
                     <option value="">المهارة</option>
                     <option value="?">?</option>
@@ -83,67 +78,88 @@
                 </select>
             </div>
 
-
             <button id="all">الجميع</button>
         </div>
 
-        <div id="cont-cont">
-            <!-- may make it for highlight section -->
-            <h3>highlight</h3>
-            <h1>writing writing writing</h1>
+        <div id="mainBody">
+            <!-- may make it for highlight section; one for volunteer based camp and one
+            for donating based -->
+            <h3>highlighted</h3>
+            <h1>specific posts</h1>
 
-            <div class="post">
-                <!-- first seciton -->
-                <div class="postHeader flex">
-                    <div class="orgObject flex">
-                        <img alt="" class="orgObjectAv">
-                        <h3 class="orgObjectUserName">org userName</h3>
-                    </div>
-                    <div class="startDate">start at; 9.5.2021</div>
-                </div>
-                <!-- second sectino -->
-                <div class="currentState flex">
+            <div id="postsFeed">
 
-                    <div class="imgs flex">
-                        <img alt="">
-                        <img alt="">
-                        <img alt="">
-                        <img alt="">
-                    </div>
-                    <div class="info flex"></div>
-                </div>
-                <!-- third section -->
-                <div class="todo flex">
-                    <div class="maintags">
-                        <span class="camp-type">camp type</span>
-                        <span class="time-state">time state</span>
-                    </div>
-
-                    <div class="todo-info flex">
-                        <div class="imgs flex">
-                            <img alt="">
-                            <img alt="">
-                            <img alt="">
-                            <img alt="">
+                <!-- post prototype -->
+                <div class="post">
+                    <!-- first seciton -->
+                    <div class="postHeader flex">
+                        <div class="accountObject">
+                            <img alt="" class="orgObjectAv" style="">
+                            <h3 class="orgObjectUserName">${e.userName}</h3>
                         </div>
-                        <div class="info flex"></div>
+                    </div>
+                    <!-- second sectino -->
+                    <div class="currentState flex">
+                        الوضع الحالي
+                        <div class="info flex">${e.cStateInfo}</div>
+                        <div class="imgs flex">
+                            ${e.cStateImgs.map(e=> `<img style="background:url('../posts/${e}');        
+                            background-size: cover;
+                            background-position: center center;">`).join('')}
+                        </div>
+                    </div>
+                    <!-- third section -->
+                    <div class="todo flex">
+                        للقيام به
+                        <div class="maintags">
+                            <span class="campPrototype">${e.campPrototype}</span>
+                            <span class="campType">${e.campType}</span>
+                            <span class="timeState">${e.timeState}</span>
+                        </div>
+                        <div class="info flex">${e.todoInfo}</div>
+
+                        <div class="imgs flex">
+                            ${
+                            e.todoImgs.map(e=>{
+                            console.log(e)
+                            return `<img style="background:url('../posts/${e}');
+                                    background-size: cover;
+                                    background-position: center center;">`}).join('')}
+                        </div>
+
+                        <div class="todotags">
+                            <span class="baseLocation">${e.baseLocation}</span>
+                            <span class="location">${e.location}</span>
+                            <span class="camp-time">${e.campTime}</span>
+                        </div>
                     </div>
 
-                    <div class="todotags">
-                        <span class="location">location</span>
-                        <span class="time">camp time</span>
+                    <!-- fourth section -->
+                    <div class="requirements flex">
+                        <div class="req-tags flex">
+                            <span id="skills-tag" class="flex">skills;
+                                <span>${e.skills}; x/x</span>
+                            </span>
+                            <span id="knowledge-tag" class="flex">knowledge;
+                                <span>${e.knowledge}; x/x</span>
+                            </span>
+                            <span id="tools-materials-tag" class="flex">tools and materials
+                                <span>${e.toolsMaterials}; x/x</span>
+                            </span>
+
+                        </div>
+                        <div class="dona flex">
+                            <span>المبلغ المطلوب; ${e.neededDonation} </span>
+                            <span>المبلغ الحالي; ${e.currentDonation} </span>
+                        </div>
                     </div>
+                    <div class="timeAgo">قبل ${e.dataOfUpload - Date.now()}</div>
+                    <div class="uploadDate">وقت الرفع: ${e.dataOfUpload}</div>
+
                 </div>
 
-                <!-- fourth section -->
-                <div class="requirements flex">
-                    <p>skills; x/x</p>
-                    <p>knowledge; x/x</p>
-                    <p>tools; x/x</p>
-                    <h3>donation; </h3>
-                </div>
-                <div class="uploadDate">9.5.2021</div>
             </div>
+
 
         </div>
         <!-- <div id="relatedAccounts"></div> -->
@@ -151,7 +167,19 @@
     </div>
 
     <!-- footer -->
-    <footer></footer>
+    <footer>
+        <div class="ourAccounts">
+            حساباتنا
+            <a href="https://instagram.com/icv"></a>
+            <a href="https://instagram.com/me"></a>
+            <a href="https://instagram.com/importantManager; marshy?"></a>
+        </div>
+        <div class="directContactingToReg">
+            تواصل مباشر للتسجيل من خلال الايميل
+            ايميل التواصل مع المشروع
+
+        </div>
+    </footer>
     <script src="./index.js"></script>
 
 </body>

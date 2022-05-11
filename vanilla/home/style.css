@@ -2,9 +2,7 @@
         body {
             margin: 0%;
             height: 100vh;
-            /* display: flex; */
             position: relative;
-            /* font-size: 2rem; */
         }
 
         * {
@@ -38,26 +36,9 @@
         }
 
         /* current account  */
-        #current-account{
-            height: 100%;
-            width: 100%;
-            /* background: red; */
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-
-        }
-        .account-object {
-            width: 100%;
-            display: flex;
-            flex-direction: row;
-            justify-content: end;
-            align-items: center;
-            gap: .4rem;
-        }
         #cUserTemplate {
             height: 2rem;
+            width: 8rem;
             background: red;
             display: flex;
             flex-direction: row;
@@ -65,23 +46,16 @@
             align-items: center;
         }
 
-        .accountAv {
-            display: inline;
-            height: 3rem;
-            width: 3rem;
-            background: url("./anders-jilden-Sc5RKXLBjGg-unsplash.jpg");
-            /* background: url("anders-jilden-Sc5RKXLBjGg-unsplash.jpg"); */
-            background-size: cover;
-            border-radius: 50%;
-        }
-        .userName{
 
-        }
+        /* container */
 
+        #conts {
+            background: rgb(65, 230, 114);
+            padding-left: 20vw;
+        }
 
         /* main filter */
-        #main-filters {
-            /* height: 10vh; */
+        #mainFilters {
             width: 8vw;
             background: rgb(155, 255, 185);
             display: flex;
@@ -90,52 +64,21 @@
             align-items: center;
             gap: 1rem;
             padding: 0 6rem;
-            /* flex-grow: fit-content; */
-            flex-grow: 0.1;
             position: fixed;
             left: 0%;
             top: 10vh;
         }
-        .filter-type{
+        .filterType{
             background: rgb(95, 236, 95);
             border-radius: .4rem;
             padding: 1rem;
             margin: .4rem;
         }
 
-        .selected {
-            background: rgb(66, 196, 105);
-            /* background: ; */
-        }
-    
 
-        #conts {
-            background: rgb(65, 230, 114);
-            padding-left: 16rem;
-        }
-
-        
-
-        /* cont */
-        #cont-cont {
-            height: fit-content;
-            /* overflow-y: scroll; */
-            width: 100%;
-            /* display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center; */
-            background: rgb(20, 204, 164);
-            flex-grow: 2;
-            padding: auto auto;
-        }
-
-
-        #relatedAccounts {
-            height: 100%;
-            /* flex-grow: .8; */
-            background: rgb(0, 92, 212);
-
+        #postsFeed{
+            /* background: red; */
+            padding: 2rem;
         }
 
 
@@ -145,15 +88,17 @@
             height: 20vh;
             width: 100%;
             background: hsl(145, 74%, 29%);
+            display: flex;
+            flex-direction: row;
+            justify-content: space-evenly;
         }
 
-        #relatedAccounts {
-            display: flex;
-            flex-direction: column;
-            width: 4vw;
-            gap: 1rem;
-            padding: 2rem;
-        }
+
+
+
+
+
+        /* generated objects */
 
         #loginPanel,
         #registerPanel {
@@ -168,23 +113,23 @@
             padding: 1rem;
         }
 
-        #loginPanel input,
-        #registerPanel input,
-        b {
-            font-size: 1.4rem;
+        .accountObject{
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            gap: .4rem;
         }
-
-        /* cont */
-
-
-
 
 
         /* post stylings */
     .post {
         background: rgb(153, 153, 153);
         width: 80%;
-        margin: 3rem 0;
+        margin-top: 3rem;
+    }
+    .post *{
+        margin: .6rem;
     }
     .flex {
         display: flex;
@@ -194,75 +139,61 @@
 
     /* first section; post header */
     .currentState,
-    .toDo,
+    .todo,
     .requirements {
         background-color: rgb(216, 216, 216);
-        height: 30vh;
-        margin: .5rem;
-        gap: .5rem;
-        /* padding: 1rem; */
+        /* height: 30vh; */
+        height: fit-content;
+        margin: .5rem 0;
+        /* gap: .5rem; */
+        padding: 1rem;
         box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
     }
 
-    /* second section; current state */
     .postHeader {
         height: 4rem;
         flex-direction: row;
         justify-content: space-between;
         padding: 0 2rem;
         background-color: rgb(216, 216, 216);
+        margin: .5rem 0;
+    }
+    .postHeader *{
+        margin: 0;
     }
 
-    
-    .orgObject {
-        gap: 1rem;
-    }
-
-    .postHeader img {
+    .accountObject img {
         background: url("/orgAvImgs/2022-05-09T16-38-53.430Zdcf96b9a-ba88-46cc-96ef-54d2e3f14507_rwc_0x303x1677x261x1677-Copy.png");
         background-size: cover;
         background-position: center center;
         height: 2rem;
         width: 2rem;
-    }
-
-    .currentState {
-        gap: 1rem;
+        border-radius: .4rem;
     }
 
     .imgs {
-        /* all: unset; */
-        height: 80%;
-        width: 40%;
+        height: 8rem;
         background: rgb(233, 77, 77);
         box-sizing: border-box;
-    }
-    .current-state-imgs img, .todo-imgs img{
-        height: 6rem;
-        width: 6rem;
+        width: 100%;
         background-size: contain;
         background-position: center center;
-
     }
 
     .info {
-        /* all: unset; */
         background: rgb(79, 209, 79);
-        height: 80%;
-        width: 40%;
-    }
-
-    .todo-info {
         height: 100%;
-        height: 3rem;
-        width: 100%;
-        width: 4rem;
-        background-color: red;
+        width: 40%;
+        padding: 1rem;
+
     }
 
+    /* second section; current state */
 
     /* third seciton; todo */
-    .todo {
+    /* .todo {
         display: flex;
         justify-content: center;
         align-items: center;
@@ -271,20 +202,7 @@
         height: auto;
         gap: 1rem;
         padding: 1rem;
-        /* height: fit-content; */
-        /* height: 30vh; */
-    }
-    .todo-info{
-        height: auto;
-        padding: 1rem;
-    }
-    .todo-imgs{
-
-    }
-    .info{
-        height: fit-content;
-        padding: 1rem;
-    }
+    } */
 
 
     /* fourth section; requirements */
@@ -318,6 +236,8 @@
         /* absolute elements */
         button {
             padding: .3rem;
+            font-size: 1.4rem;
+            width: 12rem;
             background: rgb(125, 241, 160);
             border: 2px solid rgb(15, 32, 23);
             border-radius: .3rem;
@@ -355,5 +275,50 @@
             font-size: 1.3rem;
         }
     
+
+
+
+
+
+
+        /* after generated objects */
+
+
+        #regLogPanel{
+            position: absolute;
+            /* z-index:-1; */
+            height: fit-content;
+            width: fit-content;
+            /* background: red; */
+            top: 4rem;
+            right: .2rem;
+        }
+
+
+        #current-account{
+            height: 100%;
+            width: 100%;
+            /* background: red; */
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+
+        }
+        .account-object {
+        }
+
+        .accountAv {
+            display: inline;
+            height: 3rem;
+            width: 3rem;
+            background: url("./anders-jilden-Sc5RKXLBjGg-unsplash.jpg");
+            /* background: url("anders-jilden-Sc5RKXLBjGg-unsplash.jpg"); */
+            background-size: cover;
+            border-radius: 50%;
+        }
+        .userName{
+
+        }
 
 
