@@ -464,7 +464,7 @@ app.post("/makePost", (req, res, next)=>{ postcStateImgsList = []; postTodoImgsL
     })
 
     ////make object 
-    let post = {dataOfUpload: new Date(),cStateImgs: postcStateImgsList, todoImgs: postTodoImgsList, cStateInfo: req.body.cStateInfo, campType: req.body.campType, timeState: req.body.timeState, location: req.body.location, campTime: req.body.campTime, skills: req.body.skills, knowledge: req.body.knowledge, toolsMaterials: req.body.toolsMaterials, neededDonation: req.body.donation, currentDonation: 0}
+    let post = {dateOfUpload: new Date(),cStateImgs: postcStateImgsList, todoImgs: postTodoImgsList, cStateInfo: req.body.cStateInfo, todoInfo: req.body.todoInfo, campType: req.body.campType, timeState: req.body.timeState, location: req.body.location, campTime: req.body.campTime, skills: req.body.skills, knowledge: req.body.knowledge, toolsMaterials: req.body.toolsMaterials, neededDonation: req.body.donation, currentDonation: 0}
 
     ////mongodb
     mongodb.connect(process.env.MONGOKEY, async (err, client)=>{
@@ -528,6 +528,34 @@ app.post("/makePost", (req, res, next)=>{ postcStateImgsList = []; postTodoImgsL
 //         console.log("dont send mode")
 //     }
 // })
+
+app.get("/posts", (req, res)=>{
+    console.log("............post...........")
+    console.log()
+    let posts = []
+
+mongodb.connect(process.env.MONGOKEY, async (err, client)=>{
+    let dbb = client.db()
+    let found = await dbb.collection("orgs").find({}, "posts").toArray()
+    console.log(found.forEach(e=> {
+        // if(e.posts != [])
+        e.posts.forEach(i=>{
+            i.userName = e.userName
+            i.name = e.name
+            i.avatar = e.avatar
+            posts.push(i)
+        })
+    }))
+    console.log(posts)
+
+    res.json({posts})
+})
+
+// console.log(posts)
+
+})
+
+
 
 app.get("/mode", (req, res)=>{
     res.sendfile("./mode.html")
