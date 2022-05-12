@@ -454,7 +454,12 @@ app.post("/makePost", (req, res, next)=>{ postcStateImgsList = []; postTodoImgsL
     console.log(req.headers.authorization)
     console.log(postcStateImgsList)
     console.log(postTodoImgsList)
-    console.log(env)
+
+    // req.body.skills = req.body.skills.map(e=>{skillType: e.split(",")[0],reqNum: e.split(",")[1]})
+    req.body.skills = req.body.skills.map(e=>e.split(","))
+    req.body.knowledge = req.body.knowledge.map(e=>e.split(","))
+    req.body.toolsMaterials = req.body.toolsMaterials.map(e=>e.split(","))
+    console.log(req.body.skills)
 
     ////decode; 
     jwt.verify(req.headers.authorization, process.env.TOKEN, (err, data)=>{
@@ -463,6 +468,7 @@ app.post("/makePost", (req, res, next)=>{ postcStateImgsList = []; postTodoImgsL
         // next()
     })
 
+    
     //////new date(); minutes; hours; day; month; year
     let da= new Date().getMinutes() + ":"+( new Date().getHours()>12? + new Date().getHours() -12 + "pm": new Date().getHours() +"am") + "," + new Date().getDay() +"/" + new Date().getMonth() + "/"+new Date().getFullYear()
     ////make object 

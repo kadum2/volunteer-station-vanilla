@@ -446,28 +446,49 @@
 
             /////requiremtents structuring 
             let skills = []
-            
+
             document.querySelector("#skillsLi").value.replaceAll(" ", '').split(",").forEach(e=>{
                 let i = e.split(";")
-                skills.push({skillType: i[0], reqNum: i[1]})
+                skills.push([i[0], i[1]])
             })
             let knowledge = []
             document.querySelector("#knowledge").value.replaceAll(" ", '').split(",").forEach(e=>{
                 let i = e.split(";")
-                knowledge.push({knowledgeType: i[0], reqNum: i[1]})
+                knowledge.push([i[0], i[1]])
             })
             let toolsMaterials = []
             document.querySelector("#toolsMaterials").value.replaceAll(" ", '').split(",").forEach(e=>{
                 let i = e.split(";")
-                toolsMaterials.push({material: i[0], reqNum: i[1]})
+                toolsMaterials.push([i[0], i[1]])
             })
+            
+            /////////object methods 
+            // document.querySelector("#skillsLi").value.replaceAll(" ", '').split(",").forEach(e=>{
+            //     let i = e.split(";")
+            //     skills.push({skillType: i[0], reqNum: i[1]})
+            // })
+            // let knowledge = []
+            // document.querySelector("#knowledge").value.replaceAll(" ", '').split(",").forEach(e=>{
+            //     let i = e.split(";")
+            //     knowledge.push({knowledgeType: i[0], reqNum: i[1]})
+            // })
+            // let toolsMaterials = []
+            // document.querySelector("#toolsMaterials").value.replaceAll(" ", '').split(",").forEach(e=>{
+            //     let i = e.split(";")
+            //     toolsMaterials.push({material: i[0], reqNum: i[1]})
+            // })
+            
             console.log(skills)
             console.log(knowledge)
             console.log(toolsMaterials)
 
-            fd.append("skills", skills)
-            fd.append("knowledge", knowledge)
-            fd.append("toolsMaterials", toolsMaterials)
+            // fd.append("skills", skills)
+            skills.forEach(e=>{fd.append("skills", e)})
+            // fd.append("knowledge", knowledge)
+            knowledge.forEach(e=>fd.append("knowledge", e))
+            toolsMaterials.forEach(e=>fd.append("toolsMaterials", e))
+
+            // fd.append("toolsMaterials", toolsMaterials)
             
             fd.append("donation", document.querySelector("#donation").value)
             fd.append("baseLocation", document.querySelector("#baseLocation").value)
@@ -483,11 +504,11 @@
 
 
             ////send the object 
-            // let d = await fetch("/makePost", {
-            //     headers: new Headers({"authorization": localStorage.getItem("token")}),
-            //     method: "POST",
-            //     body: fd
-            // })
+            let d = await fetch("/makePost", {
+                headers: new Headers({"authorization": localStorage.getItem("token")}),
+                method: "POST",
+                body: fd
+            })
 
             ////specific route for current imgs and todo imgs; 
 

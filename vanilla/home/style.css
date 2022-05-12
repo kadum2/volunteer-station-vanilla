@@ -245,6 +245,9 @@
             background-position: center center;
         }
     
+        p{
+            display: inline;
+        }
         span {
             padding: .5rem;
             background: rgb(116, 235, 116);

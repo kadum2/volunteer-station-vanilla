@@ -104,13 +104,20 @@
             <div class="requirements flex">
                 <div class="req-tags flex">
                     <span id="skillsTag" class="flex">skills; 
-                        <span>${e.skills.skillType}; ${e.skills.reqNum}/<p>0</p></span>
+                    ${Object.entries(e.skills).map(ee=>`<span>${ee[1][0]}   ;${ee[1][1]}/<p>0</p></span>`).join("")}
+
+                    <!--<span>${e.skills[0]?e.skills[0]:e.skills}; ${e.skills[1]?e.skills[1]:0}/<p>0</p></span>-->
                     </span>
+
                     <span id="knowledgeTag" class="flex">knowledge; 
-                        <span>${e.knowledge.knowledgeType}; ${e.knowledge.reqNum}/<p>0</p></span>
+                    ${Object.entries(e.knowledge).map(ee=>`<span>${ee[1][0]}   ;${ee[1][1]}/<p>0</p></span>`).join("")}
+
+                    <!--<span>${e.knowledge[0]?e.knowledge[0]:e.knowledge}; ${e.knowledge[1]?e.knowledge[1]: 0}/<p>0</p></span>-->
                     </span>
                     <span id="toolsMaterialsTag" class="flex">tools and materials;
-                        <span>${e.toolsMaterials}; ${e.toolsMaterials.reqNum}/<p>0</p></span>
+                    ${Object.entries(e.toolsMaterials).map(ee=>`<span>${ee[1][0]}   ;${ee[1][1]}/<p>0</p></span>`).join("")}
+
+                    <!--<span>${e.toolsMaterials[0]?e.toolsMaterials[0]:e.toolsMaterials}; ${e.toolsMaterials[1]?e.toolsMaterials[1]:0}/<p>0</p></span>-->
                     </span>
 
                 </div>
