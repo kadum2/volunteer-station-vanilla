@@ -37,13 +37,17 @@
 
         /* current account  */
         #cUserTemplate {
-            height: 2rem;
-            width: 8rem;
-            background: red;
+            /* height: 2rem; */
+            /* width: 8rem; */
+            /* background: red; */
             display: flex;
             flex-direction: row;
             justify-content: center;
             align-items: center;
+            padding: .4rem;
+        }
+        #cUserTemplate button{
+            width: auto;
         }
 
 
@@ -193,35 +197,11 @@
     /* second section; current state */
 
     /* third seciton; todo */
-    /* .todo {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        background-color: rgb(216, 216, 216);
-        flex-direction: column;
-        height: auto;
-        gap: 1rem;
-        padding: 1rem;
-    } */
 
 
     /* fourth section; requirements */
-    .requirements {
-        flex-direction: column;
-        background-color: rgb(216, 216, 216);
-    }
-    .requirements div{
-        /* display: flex; */
-        background: red;
-        gap: 1rem;
-    }
 
-    .req-tags{
-    }
-    .dona{
-
-    }
-    #skills-tag, #knowledge-tag, #tools-materials-tag{
+    #skillsTag, #knowledgeTag, #toolsMaterialsTag{
     flex-direction: column;
     gap: .3rem;
     }
@@ -284,7 +264,7 @@
         /* after generated objects */
 
 
-        #regLogPanel{
+        #auth{
             position: absolute;
             /* z-index:-1; */
             height: fit-content;
@@ -292,6 +272,7 @@
             /* background: red; */
             top: 4rem;
             right: .2rem;
+            font-size: 1.3rem;
         }
 
 

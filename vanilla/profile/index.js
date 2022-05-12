@@ -174,7 +174,7 @@
                         registerEm.value = ""
                         registerPw.value = ""
                         readCookies()
-                        checkAccout()
+                        checkAccount()
                     }
                 })
                 ///login 
@@ -217,7 +217,7 @@
                         loginPw.value = ""
 
                         readCookies()
-                        checkAccout()
+                        checkAccount()
 
                     }
                 })
@@ -250,7 +250,7 @@
                     console.log("logout")
                     document.querySelector("#cUserTemplate").innerHTML = ""
                     editing.innerHTML = ""
-                    checkAccout()
+                    checkAccount()
                 })
                 document.querySelector("#cUserTemplate").append(cUser, logoutBtn)
                 auth.innerHTML = ""
@@ -587,7 +587,7 @@
             info.insertBefore(follow, info.firstElementChild)
         }
 
-        async function checkAccout() {
+        async function checkAccount() {
 
             console.log(cookies)
             cUserJson = JSON.parse(localStorage.getItem("cUser"))
@@ -653,7 +653,7 @@
 
             readCookies()
             insertProfileData(pdd)
-            checkAccout()
+            checkAccount()
 
         }
         ////test code 

@@ -1,17 +1,8 @@
-        ////// dom elements  
-        ////templates
-        let relatedAccounts = document.querySelector("#relatedAccounts")
 
-        //register
-        let registerEm = document.querySelector("#registerEm")
-        let registerPw = document.querySelector("#registerPw")
-        let userRegisterBtn = document.querySelector("#userRegister")
-        let orgRegisterBtn = document.querySelector("#orgRegister")
 
-        //login
-        let loginEm = document.querySelector("#loginEm")
-        let loginPw = document.querySelector("#loginPw")
-        let loginBtn = document.querySelector("#login")
+        //////dom elements  
+        //////templates
+        let auth = document.querySelector("#auth")
 
         ////filters no ndeed ?
         let timeState = document.querySelector("#timeState")
@@ -28,16 +19,21 @@
         ////// data containers
 
         let currentUser
-        let token
         let postsArray
         let contributer = false
         // span or tag.addeventlistener("click", e=>fetch("/contri", {method:
         // "POST", body: e.target.value}))
 
-        // .prototype.forEach = Array.prototype.forEach
 
         let filters = document.querySelectorAll("select")
         console.log(filters)
+
+
+
+
+        ///////functions
+
+        ////filters 
         for(let item of filters){
                 item.addEventListener("change", (e)=>{
                     console.log(postsArray.filter(i=> i[item.getAttribute("id")] == e.target.value))
@@ -46,7 +42,7 @@
             
         }
 
-        ///////
+        ////making post
         function makingPosts(postsArray){
 
             console.log(postsArray)
@@ -107,13 +103,13 @@
             <!-- fourth section -->
             <div class="requirements flex">
                 <div class="req-tags flex">
-                    <span id="skills-tag" class="flex">skills; 
+                    <span id="skillsTag" class="flex">skills; 
                         <span>${e.skills}; x/x</span>
                     </span>
-                    <span id="knowledge-tag" class="flex">knowledge; 
+                    <span id="knowledgeTag" class="flex">knowledge; 
                         <span>${e.knowledge}; x/x</span>
                     </span>
-                    <span id="tools-materials-tag" class="flex">tools and materials
+                    <span id="toolsMaterialsTag" class="flex">tools and materials
                         <span>${e.toolsMaterials}; x/x</span>
                     </span>
 
@@ -134,11 +130,10 @@
             });
         }
 
-
-        /////functions; 
+        /////auth
         async function regLoginPanels(){
             console.log("no user; should generate the auth")
-            document.querySelector("#conts").innerHTML += ` 
+            auth.innerHTML += ` 
             <div id="regLogPanel">           
                 <div id="registerPanel">
                     <b>register</b>
@@ -204,8 +199,7 @@
                     regiseterUn.value = ""
                     registerEm.value = ""
                     registerPw.value = ""
-                    readCookies()
-                    checkAccout()
+                    checkAccount()
                 }
             })
             ///login 
@@ -247,17 +241,16 @@
                     loginEm.value = ""
                     loginPw.value = ""
 
-                    readCookies()
-                    checkAccout()
+                    checkAccount()
 
                 }
             })
 
         }
-        
+
             function createUserObject(){
                 let cuser = document.createElement("div")
-                cuser.classList.add("userObject")
+                cuser.classList.add("accountObject")
                 cuser.addEventListener("click", () => location.href =
                     `http://localhost:4000/profile/${cUserJson.userName}`)
                 let cAv = document.createElement("img")
@@ -266,7 +259,7 @@
                 }else{
                     cAv.src = "/orgAvImgs/" + cUserJson.avatar
                 }
-                let cP = document.createElement("p")
+                let cP = document.createElement("h3")
                 cP.textContent = cUserJson.userName
                 cuser.append(cAv, cP)
                 return cuser
@@ -280,33 +273,47 @@
                     localStorage.clear()
                     console.log("logout")
                     document.querySelector("#cUserTemplate").innerHTML = ""
-                    editing.innerHTML = ""
-                    checkAccout()
+                    // editing.innerHTML = ""
+                    checkAccount()
                 })
                 document.querySelector("#cUserTemplate").append(cUser, logoutBtn)
-                relatedAccounts.innerHTML = ""
+                auth.innerHTML = ""
             }
 
 
 
-        /////account checking; 
-        cUserJson = JSON.parse(localStorage.getItem("cUser"))
+        /////account checking;
+        function checkAccount(){
+            cUserJson = JSON.parse(localStorage.getItem("cUser"))
 
-        ///not account; register and login
-        if (cUserJson == undefined) { ////no account 
-            regLoginPanels()
-        }else{
-            console.log("account is; " + cUserJson.userName)
-            
-            /////make the cUser object
-            let cUser = createUserObject()
+            ///not account; register and login
+            if (cUserJson == undefined) { ////no account 
+                regLoginPanels()
+            }else{///account
+                console.log("account is; " + cUserJson.userName)
+                
+                /////make the cUser object
+                let cUser = createUserObject()
 
-            ///create logout button
-            createLogoutBtn(cUser)
+                ///create logout button
+                createLogoutBtn(cUser)
 
+                ////check account type; 
+                    if(cUserJson.isUser == true){ ////display the specific filters and allow contri
 
+                        console.log("you are user and allowed to get specific filters and contri")
+                        ////display the specifici filters 
+
+                        /////allow contri 
+                        /// loop over the tags and addeventlistener that
+                        /// onlclick send the cUserJson username with the value
+                        /// of the main tag and the sub tag  
+
+                    }else{
+                        console.log("you are org and not allowed to contri")
+                    }
+            }
         }
-
 
 
         ////// getting data 
@@ -320,6 +327,11 @@
 
             ////making posts 
             makingPosts(postsArray)
+
+
+            ////check account 
+            checkAccount()
+
         }
 
 
