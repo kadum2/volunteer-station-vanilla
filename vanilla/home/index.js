@@ -104,18 +104,20 @@
             <div class="requirements flex">
                 <div class="req-tags flex">
                     <span id="skillsTag" class="flex">skills; 
-                    ${Object.entries(e.skills).map(ee=>`<span>${ee[1][0]}   ;${ee[1][1]}/<p>0</p></span>`).join("")}
+                    ${Object.values(e.skills).map(ee=>`<span>${ee.skillType};${ee.reqNum}/<p>${ee.contri.length}</p></span>`).join("")}
+
+                    ${Object.values(e.skills).map(ee=>console.log(ee))}
 
                     <!--<span>${e.skills[0]?e.skills[0]:e.skills}; ${e.skills[1]?e.skills[1]:0}/<p>0</p></span>-->
                     </span>
 
                     <span id="knowledgeTag" class="flex">knowledge; 
-                    ${Object.entries(e.knowledge).map(ee=>`<span>${ee[1][0]}   ;${ee[1][1]}/<p>0</p></span>`).join("")}
+                    ${Object.values(e.knowledge).map(ee=>`<span>${ee.knowledgeType};${ee.reqNum}/<p>${ee.contri.length}</p></span>`).join("")}
 
                     <!--<span>${e.knowledge[0]?e.knowledge[0]:e.knowledge}; ${e.knowledge[1]?e.knowledge[1]: 0}/<p>0</p></span>-->
                     </span>
                     <span id="toolsMaterialsTag" class="flex">tools and materials;
-                    ${Object.entries(e.toolsMaterials).map(ee=>`<span>${ee[1][0]}   ;${ee[1][1]}/<p>0</p></span>`).join("")}
+                    ${Object.values(e.toolsMaterials).map(ee=>`<span>${ee.toolsMaterialsType};${ee.reqNum}/<p>${ee.contri.length}</p></span>`).join("")}
 
                     <!--<span>${e.toolsMaterials[0]?e.toolsMaterials[0]:e.toolsMaterials}; ${e.toolsMaterials[1]?e.toolsMaterials[1]:0}/<p>0</p></span>-->
                     </span>
@@ -135,6 +137,8 @@
                         postToAdd.innerHTML = postTemplate
                 document.querySelector("#postsFeed").append(postToAdd)
             });
+
+            checkAccount()
         }
 
         /////auth
@@ -268,6 +272,7 @@
                 }
                 let cP = document.createElement("h3")
                 cP.textContent = cUserJson.userName
+                
                 cuser.append(cAv, cP)
                 return cuser
             }
@@ -283,6 +288,7 @@
                     // editing.innerHTML = ""
                     checkAccount()
                 })
+                document.querySelector("#cUserTemplate").innerHTML = ""
                 document.querySelector("#cUserTemplate").append(cUser, logoutBtn)
                 auth.innerHTML = ""
             }
@@ -311,7 +317,37 @@
                         console.log("you are user and allowed to get specific filters and contri")
                         ////display the specifici filters 
 
+
+
                         /////allow contri 
+                        
+
+                        if(document.querySelector("#skillsTag")){
+
+                            console.log(document.querySelector("#skillsTag").children)
+                            document.querySelectorAll("#skillsTag").forEach(e=>{
+                                for (let item of e.children){
+                                    console.log(item);
+                                    item.addEventListener("click", (ee)=>{
+                                        console.log(ee.target)
+                                        
+                                        /// based on the color change; true
+                                        /// false; get the full post address; 
+                                        let contri = {}
+
+
+                                    })    
+                                }
+                            })
+
+                            // for (let item of document.querySelector("#skillsTag").children) {
+                            //     console.log(item);
+                            //     item.addEventListener("click", (e)=>{console.log("clicked on the sub tag")})
+                            // }
+                            // document.querySelector("#skillsTag").children.forEach(e=>{
+                            //     e.addEventListener("")
+                            // })
+                        }
                         /// loop over the tags and addeventlistener that
                         /// onlclick send the cUserJson username with the value
                         /// of the main tag and the sub tag  
@@ -337,7 +373,7 @@
 
 
             ////check account 
-            checkAccount()
+            // checkAccount()
 
         }
 

@@ -457,9 +457,21 @@ app.post("/makePost", (req, res, next)=>{ postcStateImgsList = []; postTodoImgsL
 
     // req.body.skills = req.body.skills.map(e=>{skillType: e.split(",")[0],reqNum: e.split(",")[1]})
     req.body.skills = req.body.skills.map(e=>e.split(","))
+    req.body.skills = req.body.skills.map(e=>{
+        return {skillType:e[0], reqNum: e[1], contri:[]}
+    })
     req.body.knowledge = req.body.knowledge.map(e=>e.split(","))
+    req.body.knowledge= req.body.knowledge.map(e=>{
+        return {knowledgeType:e[0], reqNum: e[1], contri:[]}
+    })
+    
     req.body.toolsMaterials = req.body.toolsMaterials.map(e=>e.split(","))
+    req.body.toolsMaterials= req.body.toolsMaterials.map(e=>{
+        return {toolsMaterialsType:e[0], reqNum: e[1], contri:[]}
+    })
+
     console.log(req.body.skills)
+    //////add a contri section for each subtag; 
 
     ////decode; 
     jwt.verify(req.headers.authorization, process.env.TOKEN, (err, data)=>{
@@ -468,9 +480,8 @@ app.post("/makePost", (req, res, next)=>{ postcStateImgsList = []; postTodoImgsL
         // next()
     })
 
-    
     //////new date(); minutes; hours; day; month; year
-    let da= new Date().getMinutes() + ":"+( new Date().getHours()>12? + new Date().getHours() -12 + "pm": new Date().getHours() +"am") + "," + new Date().getDay() +"/" + new Date().getMonth() + "/"+new Date().getFullYear()
+    let da= new Date().getMinutes() + ":"+( new Date().getHours()>12? + new Date().getHours() -12 + "pm": new Date().getHours() +"am")+","+new Date().getDay()+"/"+new Date().getMonth()+"/"+new Date().getFullYear()
     ////make object 
     let post = {dateOfUpload: da,cStateImgs: postcStateImgsList, todoImgs: postTodoImgsList, cStateInfo: req.body.cStateInfo, todoInfo: req.body.todoInfo, campType: req.body.campType, timeState: req.body.timeState, baseLocation: req.body.baseLocation, campPrototype: req.body.campPrototype, location: req.body.location, campTime: req.body.campTime, skills: req.body.skills, knowledge: req.body.knowledge, toolsMaterials: req.body.toolsMaterials, neededDonation: req.body.donation, currentDonation: 0}
 
@@ -540,23 +551,29 @@ app.post("/makePost", (req, res, next)=>{ postcStateImgsList = []; postTodoImgsL
 app.get("/posts", (req, res)=>{
     console.log("............post...........")
     console.log()
-    let posts = []
+    let orgPosts = []
+
+    //{orgName: --, posts: [{}, {}, ...]}
 
 mongodb.connect(process.env.MONGOKEY, async (err, client)=>{
     let dbb = client.db()
     let found = await dbb.collection("orgs").find({}, "posts").toArray()
-    console.log(found.forEach(e=> {
-        // if(e.posts != [])
-        e.posts.forEach(i=>{
-            i.userName = e.userName
-            i.name = e.name
-            i.avatar = e.avatar
-            posts.push(i)
-        })
-    }))
-    console.log(posts)
+    // found.forEach(e=> {
+    //     // if(e.posts != [])
+    //     e.posts.forEach(i=>{
+    //         i.userName = e.userName
+    //         i.name = e.name
+    //         i.avatar = e.avatar
+    //         orgPosts.push(i)
+    //     })
+    // })
 
-    res.json({posts})
+    found.forEach(e=>{
+        orgPosts.push({orgName: e.userName, posts: e.posts})
+    })
+    console.log(orgPosts)
+
+    res.json({orgPosts})
 })
 
 // console.log(posts)
