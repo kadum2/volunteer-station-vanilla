@@ -101,59 +101,6 @@ app.get("/profileData/:username", (req, res)=>{
 })
 
 
-///to remove and mix with first route 
-// //////send profile complex data; objects; following, followers, conts (posts); 
-// app.get("/profileObjects", async (req, res)=>{
-//     // console.log(".....get profile objects....")
-//     // console.log(req.cookies)
-
-//     mongodb.connect(process.env.MONGOKEY, async (err, client)=>{
-//         let dbb = client.db()
-//         let found = await dbb.collection("users").findOne({userName: req.cookies.pUserName})
-
-//         ///send followings account object 
-//         let followingObjects = []
-//         let contsObjects = []
-//         // if(found.following != null && found.following != undefined){
-
-
-//             found.following.forEach( async(e)=>{
-//                 ////users
-//                 let d = await dbb.collection("users").findOne({userName: e})
-//                 followingObjects.push({userName: d.userName, name: d.name, avatar: d.avatar,isUser: d.isUser })
-
-//                 // if(followingObjects.length == Object.entries(found.following).length){
-//                 //     console.log("will send the following object")
-//                 //     res.json(followingObjects)
-//                 // }
-//                 if(followingObjects.length + contsObjects.length== Object.entries(found.following).length + Object.entries(found.conts).length){
-//                     console.log("will send the following object")
-//                     res.json({followingObjects, contsObjects})
-//                 }
-    
-//             })
-//             found.conts.forEach(async (e)=>{
-//                 /// /conts is an array of objects that do; {orgName: --, postIndex:--, contType: , contValue: --}
-//                 ///e.orgUserName, e.postIndex, contType(tag)
-//                 let cont = await dbb.collection("orgs").findOne({orgName: e.orgName })
-//                 contsObjects.push({post: cont[e.contIndex], contType: e.contType, contValue: e.contValue})
-    
-    
-//                 if(followingObjects.length + contsObjects.length== Object.entries(found.following).length + Object.entries(found.conts).length){
-//                     console.log("will send the following object")
-//                     res.json({followingObjects, contsObjects})
-//                 }
-    
-//             })
-    
-//         }
-
-//     // }
-//     )
-
-// }
-// )
-
 ////registering user; encrypt; send data; 
 app.post("/regUser", async (req, res)=>{
     console.log(".....post regUser........")
@@ -449,7 +396,7 @@ const postTodoImgs = multer({storage: postTodoImgStoring})
 
 
 /////make post; not to insert imgs; but make specific routes 
-app.post("/makePost", (req, res, next)=>{ postcStateImgsList = []; postTodoImgsList=[];next()}, postImgs.any(), async (req, res)=>{
+app.post("/posts", (req, res, next)=>{ postcStateImgsList = []; postTodoImgsList=[];next()}, postImgs.any(), async (req, res)=>{
     console.log("...........make post..............")
     console.log(req.body)
     console.log(req.headers.authorization)
@@ -478,7 +425,6 @@ app.post("/makePost", (req, res, next)=>{ postcStateImgsList = []; postTodoImgsL
     jwt.verify(req.headers.authorization, process.env.TOKEN, (err, data)=>{
         if(err) return res.sendStatus(401)
         req.tokenData = data
-        // next()
     })
 
 
@@ -488,19 +434,23 @@ app.post("/makePost", (req, res, next)=>{ postcStateImgsList = []; postTodoImgsL
         let dbb = client.db()
 
         
-        let index = (await dbb.collection("orgs").findOne({userName: req.tokenData})).posts.length
+        /////prepare some additional stuff; make post id; orgUserNamePostIndex
+        let index = (await dbb.collection("posts").find({org: req.tokenData}).toArray()).length
+        let postID = req.tokenData+"@"+index
+        let found = await dbb.collection("orgs").findOne({userName: req.tokenData})
+        console.log(found)
+        let name = found.name
+        let avatar = found.avatar
 
+        // let 
 
     //////new date(); minutes; hours; day; month; year
     let da= new Date().getMinutes() + ":"+( new Date().getHours()>12? + new Date().getHours() -12 + "pm": new Date().getHours() +"am")+","+new Date().getDay()+"/"+new Date().getMonth()+"/"+new Date().getFullYear()
     ////make object 
-    let post = {dateOfUpload: da, postIndex: index ,cStateImgs: postcStateImgsList, todoImgs: postTodoImgsList, cStateInfo: req.body.cStateInfo, todoInfo: req.body.todoInfo, campType: req.body.campType, timeState: req.body.timeState, baseLocation: req.body.baseLocation, campPrototype: req.body.campPrototype, location: req.body.location, campTime: req.body.campTime, skills: req.body.skills, knowledge: req.body.knowledge, toolsMaterials: req.body.toolsMaterials, neededDonation: req.body.donation, currentDonation: 0}
 
-
-        let found = await dbb.collection("orgs").findOneAndUpdate({userName: req.tokenData}, {$push: {posts: post}})
-
-
-    })
+    await dbb.collection("posts").insertOne({orgUserName: req.tokenData, orgName: name, orgAvatar: avatar,dateOfUpload: da, postID ,cStateImgs: postcStateImgsList, todoImgs: postTodoImgsList, cStateInfo: req.body.cStateInfo, todoInfo: req.body.todoInfo, campType: req.body.campType, timeState: req.body.timeState, baseLocation: req.body.baseLocation, campPrototype: req.body.campPrototype, location: req.body.location, campTime: req.body.campTime, skills: req.body.skills, knowledge: req.body.knowledge, toolsMaterials: req.body.toolsMaterials, neededDonation: req.body.donation, currentDonation: 0})
+    
+})
 
 })
 
@@ -561,33 +511,58 @@ app.post("/makePost", (req, res, next)=>{ postcStateImgsList = []; postTodoImgsL
 
 app.get("/posts", (req, res)=>{
     console.log("............post...........")
-    console.log()
-    let orgPosts = []
+mongodb.connect(process.env.MONGOKEY, async (err, client)=>{
+    let dbb = client.db()
+    let found = await dbb.collection("posts").find({}).toArray()
+    res.json({found})
+})
+})
 
-    //{orgName: --, posts: [{}, {}, ...]}
+
+app.post("/contribute", async (req, res)=>{
+    console.log(req.body)
+    console.log(req.headers.authorization)
+
+    ////decode the token 
+    jwt.verify(req.headers.authorization, process.env.TOKEN, (err, data)=>{
+    if(err) return res.sendStatus(401)
+    req.tokenData = data
+})
+
+console.log(req.tokenData)
+
+    ///make the contri object ??
+    let contri = {}
+
+    ///set the contri object 
 
 mongodb.connect(process.env.MONGOKEY, async (err, client)=>{
     let dbb = client.db()
-    let found = await dbb.collection("orgs").find({}, "posts").toArray()
-    // found.forEach(e=> {
-    //     // if(e.posts != [])
-    //     e.posts.forEach(i=>{
-    //         i.userName = e.userName
-    //         i.name = e.name
-    //         i.avatar = e.avatar
-    //         orgPosts.push(i)
-    //     })
-    // })
 
-    found.forEach(e=>{
-        orgPosts.push({orgUserName: e.userName ,orgName: e.name, orgAvatar: e.avatar, posts: e.posts})
-    })
-    console.log(orgPosts)
+    let mainTag = req.body.mainTag
+    let subTag = req.body.subTag
+    let serch = mainTag+"."+subTag+".contri"
+    console.log(serch)
 
-    res.json({orgPosts})
+    // let found = await dbb.collection("orgs").findOne({userName:
+    // req.body.postOrgUserName})
+    ///get into the intended post
+
+    // let found = await dbb.collection("orgs").findOneAndUpdate({userName:
+    // req.body.postOrgUserName, posts: req.body.postIndex }, {$push: {serch: req.tokenData }})
+    
+
+    // let found = await dbb.collection("orgs").findOne({userName: req.body.postOrgUserName, posts: req.body.postIndex})
+    // let found = await dbb.collection("orgs").findOne({userName: req.body.postOrgUserName})
+    // let found = await dbb.collection("orgs").findOne({"posts.todoInfo": "cstateinfo"})
+    // let found7 = await dbb.collection("orgs").findOneAndUpdate({"posts.todoInfo": "cstateinfo" }, {$push: {skills: ["nice"]}})
+
+    // let found7 = await dbb.collection("orgs").findOneAndUpdate({"posts.todoInfo": "cstateinfo"}, {$push: {"posts.skills.skill1"}})
+
+    
+    // console.log("......found...........")
+    // console.log(found)
 })
-
-// console.log(posts)
 
 })
 
@@ -596,8 +571,6 @@ mongodb.connect(process.env.MONGOKEY, async (err, client)=>{
 app.get("/mode", (req, res)=>{
     res.sendfile("./mode.html")
 })
-
-
 
 ///////register org
 //////multer stuff
@@ -688,51 +661,6 @@ app.post("/regOrg", orgAvatarImg.any(), (req, res)=>{
 })
 
 
-
-
-app.post("/contribute", async (req, res)=>{
-    console.log(req.body)
-    console.log(req.headers.authorization)
-
-    ////decode the token 
-    jwt.verify(req.headers.authorization, process.env.TOKEN, (err, data)=>{
-    if(err) return res.sendStatus(401)
-    req.tokenData = data
-})
-
-console.log(req.tokenData)
-
-    ///make the contri object ??
-    let contri = {}
-
-    ///set the contri object 
-
-mongodb.connect(process.env.MONGOKEY, async (err, client)=>{
-    let dbb = client.db()
-
-    let mainTag = req.body.mainTag
-    let subTag = req.body.subTag
-    let serch = mainTag+"."+subTag+".contri"
-    console.log(serch)
-
-    // let found = await dbb.collection("orgs").findOne({userName:
-    // req.body.postOrgUserName})
-    ///get into the intended post
-
-    // let found = await dbb.collection("orgs").findOneAndUpdate({userName:
-    // req.body.postOrgUserName, posts: req.body.postIndex }, {$push: {serch: req.tokenData }})
-    
-
-    // let found = await dbb.collection("orgs").findOne({userName: req.body.postOrgUserName, posts: req.body.postIndex})
-    // let found = await dbb.collection("orgs").findOne({userName: req.body.postOrgUserName})
-    let found = await dbb.collection("orgs").findOne({"posts.todoInfo": "cstateinfo"})
-    let found7 = await dbb.collection("orgs").findOneAndUpdate({"posts.todoInfo": "cstateinfo"}, {$push: {serch: ["nice"]}})
-    
-    console.log("......found...........")
-    console.log(found)
-})
-
-})
 
 
 

@@ -143,8 +143,7 @@
                     ///check if exist
                     if (registerEm.value && registerPw.value && regiseterUn.value) {
 
-                    // register(registerEm.value, registerPw, regiseterUn.value)
-                                            ///make the object data to be send 
+                        ///make the object data to be send 
                                             let newUser = {
                                                 em: registerEm.value,
                                                 pw: registerPw.value,
@@ -182,11 +181,6 @@
 
                     ///check if exist
                     if (loginEm.value && loginPw.value) {
-                        console.log("......login......")
-
-                        // login(loginEm.value, loginPw.value)
-                        /////////login
-                        // console.log(".....login.......")
 
                         ///make the object data to be send 
                         let newUser = {
@@ -462,22 +456,6 @@
                 toolsMaterials.push([i[0], i[1]])
             })
             
-            /////////object methods 
-            // document.querySelector("#skillsLi").value.replaceAll(" ", '').split(",").forEach(e=>{
-            //     let i = e.split(";")
-            //     skills.push({skillType: i[0], reqNum: i[1]})
-            // })
-            // let knowledge = []
-            // document.querySelector("#knowledge").value.replaceAll(" ", '').split(",").forEach(e=>{
-            //     let i = e.split(";")
-            //     knowledge.push({knowledgeType: i[0], reqNum: i[1]})
-            // })
-            // let toolsMaterials = []
-            // document.querySelector("#toolsMaterials").value.replaceAll(" ", '').split(",").forEach(e=>{
-            //     let i = e.split(";")
-            //     toolsMaterials.push({material: i[0], reqNum: i[1]})
-            // })
-
             console.log(skills)
             console.log(knowledge)
             console.log(toolsMaterials)
@@ -499,12 +477,9 @@
             for(let i of document.querySelector("#current-state-imgs").files){fd.append("cStateImgs", i)}
             for(let i of document.querySelector("#todo-imgs").files){fd.append("todoImgs", i)}
 
-            // document.querySelector("#current-state-imgs").files.forEach(e=>fd.append("cStateImgs", e))
-            // document.querySelector("#todo-imgs").files.forEach(e=>fd.append("todoImgs", e))
-
 
             ////send the object 
-            let d = await fetch("/makePost", {
+            let d = await fetch("/posts", {
                 headers: new Headers({"authorization": localStorage.getItem("token")}),
                 method: "POST",
                 body: fd

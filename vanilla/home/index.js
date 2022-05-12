@@ -50,11 +50,9 @@
             
 
             postsArray.forEach(ee=>{
-
-            ee.posts.forEach((e, i )=> {
-                console.log(e)
+                console.log(ee)
             let postTemplate = `
-            <div class="post" data-index="${i}">
+            <div class="post" data-index="${ee.postId}">
             <!-- first seciton -->
             <div class="postHeader flex">
                 <div class="accountObject flex">
@@ -69,9 +67,9 @@
             <div class="currentState flex">
             الوضع الحالي
 
-                <div class="info flex">${e.cStateInfo}</div>
+                <div class="info flex">${ee.cStateInfo}</div>
                 <div class="imgs flex">
-                ${e.cStateImgs.map(e=>  `<img style="background:url('../posts/${e}');        
+                ${ee.cStateImgs.map(e=>  `<img style="background:url('../posts/${e}');        
                 background-size: cover;
                 background-position: center center;">`).join('')}
                 </div>
@@ -81,15 +79,15 @@
             للقيام به
 
                 <div class="mainTags">
-                    <span class="campPrototype">${e.campPrototype}</span>
-                    <span class="campType">${e.campType}</span>
-                    <span class="timeState">${e.timeState}</span>
+                    <span class="campPrototype">${ee.campPrototype}</span>
+                    <span class="campType">${ee.campType}</span>
+                    <span class="timeState">${ee.timeState}</span>
                 </div>
-                    <div class="info flex">${e.todoInfo}</div>
+                    <div class="info flex">${ee.todoInfo}</div>
 
                     <div class="imgs flex">
                     ${
-                        e.todoImgs.map(e=>{
+                        ee.todoImgs.map(e=>{
                         console.log(e)
                         return `<img style="background:url('../posts/${e}');
                         background-size: cover;
@@ -97,9 +95,9 @@
                     </div>
 
                 <div class="todoTags">
-                <span class="baseLocation">${e.baseLocation}</span>                    
-                    <span class="location">${e.location}</span>
-                    <span class="campTime">${e.campTime}</span>
+                <span class="baseLocation">${ee.baseLocation}</span>                    
+                    <span class="location">${ee.location}</span>
+                    <span class="campTime">${ee.campTime}</span>
                 </div>
             </div>
 
@@ -107,39 +105,33 @@
             <div class="requirements flex">
                 <div class="req-tags flex">
                     <span id="skillsTag" class="flex">skills 
-                    ${Object.values(e.skills).map(ee=>`<span>${ee.skillType};${ee.reqNum}/<p>${ee.contri.length}</p></span>`).join("")}
+                    ${Object.values(ee.skills).map(eee=>`<span>${eee.skillType};${eee.reqNum}/<p>${eee.contri.length}</p></span>`).join("")}
 
-                    ${Object.values(e.skills).map(ee=>console.log(ee))}
-
-                    <!--<span>${e.skills[0]?e.skills[0]:e.skills}; ${e.skills[1]?e.skills[1]:0}/<p>0</p></span>-->
                     </span>
 
                     <span id="knowledgeTag" class="flex">knowledge
-                    ${Object.values(e.knowledge).map(ee=>`<span>${ee.knowledgeType};${ee.reqNum}/<p>${ee.contri.length}</p></span>`).join("")}
+                    ${Object.values(ee.knowledge).map(eee=>`<span>${eee.knowledgeType};${eee.reqNum}/<p>${eee.contri.length}</p></span>`).join("")}
 
-                    <!--<span>${e.knowledge[0]?e.knowledge[0]:e.knowledge}; ${e.knowledge[1]?e.knowledge[1]: 0}/<p>0</p></span>-->
                     </span>
                     <span id="toolsMaterialsTag" class="flex">tools and materials
-                    ${Object.values(e.toolsMaterials).map(ee=>`<span>${ee.toolsMaterialsType};${ee.reqNum}/<p>${ee.contri.length}</p></span>`).join("")}
+                    ${Object.values(ee.toolsMaterials).map(eee=>`<span>${eee.toolsMaterialsType};${eee.reqNum}/<p>${eee.contri.length}</p></span>`).join("")}
 
-                    <!--<span>${e.toolsMaterials[0]?e.toolsMaterials[0]:e.toolsMaterials}; ${e.toolsMaterials[1]?e.toolsMaterials[1]:0}/<p>0</p></span>-->
                     </span>
 
                 </div>
                 <div class="dona flex">
-                    <span>المبلغ المطلوب; ${e.neededDonation} </span>
-                    <span>المبلغ الحالي; ${e.currentDonation} </span>
+                    <span>المبلغ المطلوب; ${ee.neededDonation} </span>
+                    <span>المبلغ الحالي; ${ee.currentDonation} </span>
                 </div>
             </div>
-            <div class="uploadDate">قبل  ${e.dataOfUpload - Date.now()}</div>
-            <div class="uploadDate">وقت الرفع: ${e.dataOfUpload}</div>
+            <div class="uploadDate">قبل  ${ee.dataOfUpload - Date.now()}</div>
+            <div class="uploadDate">وقت الرفع: ${ee.dataOfUpload}</div>
 
             </div>
 `
                         let postToAdd = document.createElement("div")
                         postToAdd.innerHTML = postTemplate
                 document.querySelector("#postsFeed").append(postToAdd)
-            })
         })
 
 
@@ -402,8 +394,8 @@
             let d = await fetch("/posts")
             let pd = await d.json()
 
-            console.log(pd.orgPosts)
-            postsArray = pd.orgPosts
+            console.log(pd.found)
+            postsArray = pd.found
 
             ////making posts 
             makingPosts(postsArray)
