@@ -77,6 +77,7 @@ app.get("/profileData/:username", (req, res)=>{
         }else{ ///org case 
             let members = []
 
+        
             console.log("........found members...........")
             console.log(found.members)
 
@@ -480,15 +481,25 @@ app.post("/makePost", (req, res, next)=>{ postcStateImgsList = []; postTodoImgsL
         // next()
     })
 
-    //////new date(); minutes; hours; day; month; year
-    let da= new Date().getMinutes() + ":"+( new Date().getHours()>12? + new Date().getHours() -12 + "pm": new Date().getHours() +"am")+","+new Date().getDay()+"/"+new Date().getMonth()+"/"+new Date().getFullYear()
-    ////make object 
-    let post = {dateOfUpload: da,cStateImgs: postcStateImgsList, todoImgs: postTodoImgsList, cStateInfo: req.body.cStateInfo, todoInfo: req.body.todoInfo, campType: req.body.campType, timeState: req.body.timeState, baseLocation: req.body.baseLocation, campPrototype: req.body.campPrototype, location: req.body.location, campTime: req.body.campTime, skills: req.body.skills, knowledge: req.body.knowledge, toolsMaterials: req.body.toolsMaterials, neededDonation: req.body.donation, currentDonation: 0}
 
     ////mongodb
     mongodb.connect(process.env.MONGOKEY, async (err, client)=>{
+
         let dbb = client.db()
+
+        
+        let index = (await dbb.collection("orgs").findOne({userName: req.tokenData})).posts.length
+
+
+    //////new date(); minutes; hours; day; month; year
+    let da= new Date().getMinutes() + ":"+( new Date().getHours()>12? + new Date().getHours() -12 + "pm": new Date().getHours() +"am")+","+new Date().getDay()+"/"+new Date().getMonth()+"/"+new Date().getFullYear()
+    ////make object 
+    let post = {dateOfUpload: da, postIndex: index ,cStateImgs: postcStateImgsList, todoImgs: postTodoImgsList, cStateInfo: req.body.cStateInfo, todoInfo: req.body.todoInfo, campType: req.body.campType, timeState: req.body.timeState, baseLocation: req.body.baseLocation, campPrototype: req.body.campPrototype, location: req.body.location, campTime: req.body.campTime, skills: req.body.skills, knowledge: req.body.knowledge, toolsMaterials: req.body.toolsMaterials, neededDonation: req.body.donation, currentDonation: 0}
+
+
         let found = await dbb.collection("orgs").findOneAndUpdate({userName: req.tokenData}, {$push: {posts: post}})
+
+
     })
 
 })
@@ -569,7 +580,7 @@ mongodb.connect(process.env.MONGOKEY, async (err, client)=>{
     // })
 
     found.forEach(e=>{
-        orgPosts.push({orgName: e.userName, posts: e.posts})
+        orgPosts.push({orgUserName: e.userName ,orgName: e.name, orgAvatar: e.avatar, posts: e.posts})
     })
     console.log(orgPosts)
 
@@ -677,6 +688,51 @@ app.post("/regOrg", orgAvatarImg.any(), (req, res)=>{
 })
 
 
+
+
+app.post("/contribute", async (req, res)=>{
+    console.log(req.body)
+    console.log(req.headers.authorization)
+
+    ////decode the token 
+    jwt.verify(req.headers.authorization, process.env.TOKEN, (err, data)=>{
+    if(err) return res.sendStatus(401)
+    req.tokenData = data
+})
+
+console.log(req.tokenData)
+
+    ///make the contri object ??
+    let contri = {}
+
+    ///set the contri object 
+
+mongodb.connect(process.env.MONGOKEY, async (err, client)=>{
+    let dbb = client.db()
+
+    let mainTag = req.body.mainTag
+    let subTag = req.body.subTag
+    let serch = mainTag+"."+subTag+".contri"
+    console.log(serch)
+
+    // let found = await dbb.collection("orgs").findOne({userName:
+    // req.body.postOrgUserName})
+    ///get into the intended post
+
+    // let found = await dbb.collection("orgs").findOneAndUpdate({userName:
+    // req.body.postOrgUserName, posts: req.body.postIndex }, {$push: {serch: req.tokenData }})
+    
+
+    // let found = await dbb.collection("orgs").findOne({userName: req.body.postOrgUserName, posts: req.body.postIndex})
+    // let found = await dbb.collection("orgs").findOne({userName: req.body.postOrgUserName})
+    let found = await dbb.collection("orgs").findOne({"posts.todoInfo": "cstateinfo"})
+    let found7 = await dbb.collection("orgs").findOneAndUpdate({"posts.todoInfo": "cstateinfo"}, {$push: {serch: ["nice"]}})
+    
+    console.log("......found...........")
+    console.log(found)
+})
+
+})
 
 
 

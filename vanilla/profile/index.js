@@ -146,9 +146,9 @@
                     // register(registerEm.value, registerPw, regiseterUn.value)
                                             ///make the object data to be send 
                                             let newUser = {
-                                                em: em,
-                                                pw: pw,
-                                                userName: userName
+                                                em: registerEm.value,
+                                                pw: registerPw.value,
+                                                userName: regiseterUn.value
                                             }
                     
                                             ////send and recieve data
@@ -477,7 +477,7 @@
             //     let i = e.split(";")
             //     toolsMaterials.push({material: i[0], reqNum: i[1]})
             // })
-            
+
             console.log(skills)
             console.log(knowledge)
             console.log(toolsMaterials)

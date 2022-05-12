@@ -48,18 +48,21 @@
             console.log(postsArray)
             document.querySelector("#postsFeed").innerHTML = ""
             
-            postsArray.forEach(e => {
+
+            postsArray.forEach(ee=>{
+
+            ee.posts.forEach((e, i )=> {
                 console.log(e)
             let postTemplate = `
-            <div class="post">
+            <div class="post" data-index="${i}">
             <!-- first seciton -->
             <div class="postHeader flex">
                 <div class="accountObject flex">
                     <img alt="" class="orgObjectAv" style="
-                        background: url(${e.avatar};background-size: cover;background-position: center center;
+                        background: url('/orgAvImgs/${ee.orgAvatar}');background-size: cover;background-position: center center;
                         height: 2rem;
                         width: 2rem; )">
-                    <h3 class="orgObjectUserName">${e.userName}</h3>
+                    <h3 class="orgObjectUserName">${ee.orgUserName}</h3>
                 </div>
             </div>
             <!-- second sectino -->
@@ -103,7 +106,7 @@
             <!-- fourth section -->
             <div class="requirements flex">
                 <div class="req-tags flex">
-                    <span id="skillsTag" class="flex">skills; 
+                    <span id="skillsTag" class="flex">skills 
                     ${Object.values(e.skills).map(ee=>`<span>${ee.skillType};${ee.reqNum}/<p>${ee.contri.length}</p></span>`).join("")}
 
                     ${Object.values(e.skills).map(ee=>console.log(ee))}
@@ -111,12 +114,12 @@
                     <!--<span>${e.skills[0]?e.skills[0]:e.skills}; ${e.skills[1]?e.skills[1]:0}/<p>0</p></span>-->
                     </span>
 
-                    <span id="knowledgeTag" class="flex">knowledge; 
+                    <span id="knowledgeTag" class="flex">knowledge
                     ${Object.values(e.knowledge).map(ee=>`<span>${ee.knowledgeType};${ee.reqNum}/<p>${ee.contri.length}</p></span>`).join("")}
 
                     <!--<span>${e.knowledge[0]?e.knowledge[0]:e.knowledge}; ${e.knowledge[1]?e.knowledge[1]: 0}/<p>0</p></span>-->
                     </span>
-                    <span id="toolsMaterialsTag" class="flex">tools and materials;
+                    <span id="toolsMaterialsTag" class="flex">tools and materials
                     ${Object.values(e.toolsMaterials).map(ee=>`<span>${ee.toolsMaterialsType};${ee.reqNum}/<p>${ee.contri.length}</p></span>`).join("")}
 
                     <!--<span>${e.toolsMaterials[0]?e.toolsMaterials[0]:e.toolsMaterials}; ${e.toolsMaterials[1]?e.toolsMaterials[1]:0}/<p>0</p></span>-->
@@ -136,7 +139,9 @@
                         let postToAdd = document.createElement("div")
                         postToAdd.innerHTML = postTemplate
                 document.querySelector("#postsFeed").append(postToAdd)
-            });
+            })
+        })
+
 
             checkAccount()
         }
@@ -328,13 +333,45 @@
                             document.querySelectorAll("#skillsTag").forEach(e=>{
                                 for (let item of e.children){
                                     console.log(item);
-                                    item.addEventListener("click", (ee)=>{
+                                    item.addEventListener("click", async (ee)=>{
                                         console.log(ee.target)
                                         
+                                        let contribute
+                                        // ee.target.classList.toggle("red")
+                                        ee.target.style.background != "red"?ee.target.style.background = "red":ee.target.style.background = "rgb(43, 158, 43)"
+
+                                        console.log(ee.target.style.background)
+                                        if(ee.target.style.background == "red"){
+                                            console.log("to contribute and to send true")
+                                            contribute = true
+                                        }else{
+                                            console.log("to not contribute and to send false")
+                                            contribute = false
+                                        }
+                                        console.log(contribute)
                                         /// based on the color change; true
                                         /// false; get the full post address; 
-                                        let contri = {}
+                                        ////then make fetch post 
 
+                                        ////get the address data from paretn; 
+                                        let subTag = ee.target.firstChild.textContent.split(";")[0]
+                                        let mainTag = ee.target.parentElement.firstChild.textContent.trim()
+                                        let postIndex = ee.target.parentElement.parentElement.parentElement.parentElement.getAttribute("data-index")
+                                        let postOrgUserName = ee.target.parentElement.parentElement.parentElement.parentElement.firstElementChild.firstElementChild.lastElementChild.textContent
+
+
+                                        console.log(ee.target.parentElement.firstChild.textContent.trim())
+
+                                        let contri = {subTag, mainTag, postIndex, postOrgUserName, contribute}
+
+                                        let d =await fetch("/contribute", {
+                                            method: "POST", 
+                                            headers: {
+                                                'Content-Type': 'application/json',
+                                                "Authorization": localStorage.getItem("token")
+                                            },
+                                            body: JSON.stringify(contri)
+                                        })
 
                                     })    
                                 }
@@ -365,15 +402,11 @@
             let d = await fetch("/posts")
             let pd = await d.json()
 
-            console.log(pd)
-            postsArray = pd.posts
+            console.log(pd.orgPosts)
+            postsArray = pd.orgPosts
 
             ////making posts 
             makingPosts(postsArray)
-
-
-            ////check account 
-            // checkAccount()
 
         }
 

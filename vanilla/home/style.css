@@ -169,7 +169,7 @@
     }
 
     .accountObject img {
-        background: url("/orgAvImgs/2022-05-09T16-38-53.430Zdcf96b9a-ba88-46cc-96ef-54d2e3f14507_rwc_0x303x1677x261x1677-Copy.png");
+        /* background: url("/orgAvImgs/2022-05-09T16-38-53.430Zdcf96b9a-ba88-46cc-96ef-54d2e3f14507_rwc_0x303x1677x261x1677-Copy.png"); */
         background-size: cover;
         background-position: center center;
         height: 2rem;
@@ -247,6 +247,7 @@
     
         p{
             display: inline;
+            pointer-events: none;
         }
         span {
             padding: .5rem;
@@ -303,6 +304,11 @@
         }
         .userName{
 
+        }
+
+
+        .red{
+            background: red;
         }
 
 
