@@ -104,13 +104,13 @@
             <div class="requirements flex">
                 <div class="req-tags flex">
                     <span id="skillsTag" class="flex">skills; 
-                        <span>${e.skills}; x/x</span>
+                        <span>${e.skills.skillType}; ${e.skills.reqNum}/<p>0</p></span>
                     </span>
                     <span id="knowledgeTag" class="flex">knowledge; 
-                        <span>${e.knowledge}; x/x</span>
+                        <span>${e.knowledge.knowledgeType}; ${e.knowledge.reqNum}/<p>0</p></span>
                     </span>
-                    <span id="toolsMaterialsTag" class="flex">tools and materials
-                        <span>${e.toolsMaterials}; x/x</span>
+                    <span id="toolsMaterialsTag" class="flex">tools and materials;
+                        <span>${e.toolsMaterials}; ${e.toolsMaterials.reqNum}/<p>0</p></span>
                     </span>
 
                 </div>

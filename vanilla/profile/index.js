@@ -329,7 +329,9 @@
 
             }
 
-            function displayOrgEditing(){ ////post making 
+            /////org 
+            function displayOrgEditing(){ 
+                ////post making 
                 let postMakingTemplate = `<div id="createPost">
                 <div class="post">
                     <!-- first seciton -->
@@ -354,7 +356,7 @@
                                 <option value="صناعة">صناعة</option>
                                 <option value="صيانة">صيانة</option>
                             </select>
-                            <select id="camp-prototype">
+                            <select id="campPrototype">
                                 <option value="">خطة الحملة</option>
                                 <option value="بناء">بناء</option>
                                 <option value="زراعة">زراعة</option>
@@ -378,7 +380,7 @@
 
                         <div class="todotags">
                         
-                            <select id="base-location">
+                            <select id="baseLocation">
                                 <option value="">المحافظة</option>
                                 <option value="بغداد">بغداد</option>
                                 <option value="البصرة">البصرة</option>
@@ -394,12 +396,11 @@
         
                     <!-- fourth section -->
                     <div class="requirements flex">
-                        <textarea name="skills" id="skills" cols="30" rows="10" placeholder="skills;number"></textarea>
+                        <textarea name="skills" id="skillsLi" cols="30" rows="10" placeholder="skills;number"></textarea>
                         <textarea name="knowledge" id="knowledge" cols="30" rows="10" placeholder="knowledge;number"></textarea>
-                        <textarea name="tools" id="tools-materials" cols="30" rows="10" placeholder="tools;number"></textarea>
+                        <textarea name="tools" id="toolsMaterials" cols="30" rows="10" placeholder="tools;number"></textarea>
                         <input type="text" name="" id="donation" placeholder="donation">
                     </div>
-                    <!-- <div class="uploadDate">9.5.2021</div> -->
                 </div>
         
                 <button id="postCamp">post camp</button>
@@ -424,7 +425,7 @@
                 console.log(inputFeilds.length)
 
                 if(validInputs.length == inputFeilds.length){postBtn.disabled = false}} ))
-
+                postBtn.disabled = false
 
         postBtn.addEventListener("click", async ()=>{
             console.log("clicked make post btn")
@@ -442,12 +443,36 @@
             fd.append("timeState", document.querySelector("#time-state").value)
             fd.append("location", document.querySelector("#location").value)
             fd.append("campTime", document.querySelector("#camp-time").value)
-            fd.append("skills", document.querySelector("#skills").value)
-            fd.append("knowledge", document.querySelector("#knowledge").value)
-            fd.append("toolsMaterials", document.querySelector("#tools-materials").value)
+
+            /////requiremtents structuring 
+            let skills = []
+            
+            document.querySelector("#skillsLi").value.replaceAll(" ", '').split(",").forEach(e=>{
+                let i = e.split(";")
+                skills.push({skillType: i[0], reqNum: i[1]})
+            })
+            let knowledge = []
+            document.querySelector("#knowledge").value.replaceAll(" ", '').split(",").forEach(e=>{
+                let i = e.split(";")
+                knowledge.push({knowledgeType: i[0], reqNum: i[1]})
+            })
+            let toolsMaterials = []
+            document.querySelector("#toolsMaterials").value.replaceAll(" ", '').split(",").forEach(e=>{
+                let i = e.split(";")
+                toolsMaterials.push({material: i[0], reqNum: i[1]})
+            })
+            console.log(skills)
+            console.log(knowledge)
+            console.log(toolsMaterials)
+
+            fd.append("skills", skills)
+            fd.append("knowledge", knowledge)
+            fd.append("toolsMaterials", toolsMaterials)
+            
             fd.append("donation", document.querySelector("#donation").value)
-            fd.append("baseLocation", document.querySelector("#base-location").value)
-            fd.append("campPrototype", document.querySelector("#camp-prototype").value)
+            fd.append("baseLocation", document.querySelector("#baseLocation").value)
+            fd.append("campPrototype", document.querySelector("#campPrototype").value)
+
 
 
             for(let i of document.querySelector("#current-state-imgs").files){fd.append("cStateImgs", i)}
@@ -458,11 +483,11 @@
 
 
             ////send the object 
-            let d = await fetch("/makePost", {
-                headers: new Headers({"authorization": localStorage.getItem("token")}),
-                method: "POST",
-                body: fd
-            })
+            // let d = await fetch("/makePost", {
+            //     headers: new Headers({"authorization": localStorage.getItem("token")}),
+            //     method: "POST",
+            //     body: fd
+            // })
 
             ////specific route for current imgs and todo imgs; 
 
