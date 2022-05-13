@@ -719,6 +719,6 @@ app.get("/auth", (req, res)=>{
     console.log(req.headers)
 
 })
-const port = 4000 || process.env.PORT
+const port = process.env.PORT || 4040
 app.listen(port, ()=>console.log(`listening on port ${port}`))
 
