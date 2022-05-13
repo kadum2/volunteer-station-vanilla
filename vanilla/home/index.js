@@ -106,7 +106,7 @@
             <div class="requirements flex">
                 <div class="req-tags flex">
                     <span class="skills flex" >skills 
-                    ${Object.values(ee.skills).map(eee=>`<span class="${localStoraga.getItem("cUser")?
+                    ${Object.values(ee.skills).map(eee=>`<span class="${localStorage.getItem("cUser")?
                         eee.contri.includes(JSON.parse(localStorage.getItem("cUser")).userName)?"contri":"":null}">${eee.skillType};${eee.reqNum}/<p>${eee.contri.length}</p></span>`).join("")}
 
                     </span>
