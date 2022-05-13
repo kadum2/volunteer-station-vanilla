@@ -668,6 +668,7 @@
         //main profile data (onload) 
         window.onload = async () => {
 
+            console.log("shold send fetch ")
             ////insert basic info;
             let dd = await fetch("/profileData/" + window.location.pathname.split("/")[2])
             let pdd = await dd.json()

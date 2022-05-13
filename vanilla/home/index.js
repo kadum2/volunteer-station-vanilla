@@ -52,7 +52,7 @@
             postsArray.forEach(ee=>{
                 console.log(ee)
             let postTemplate = `
-            <div class="post" data-index="${ee.postId}">
+            <div class="post" data-index="${ee.postID}">
             <!-- first seciton -->
             <div class="postHeader flex">
                 <div class="accountObject flex">
@@ -322,7 +322,9 @@
                         if(document.querySelector("#skillsTag")){
 
                             console.log(document.querySelector("#skillsTag").children)
-                            document.querySelectorAll("#skillsTag").forEach(e=>{
+
+                            function addEvent(id){
+                            document.querySelectorAll(id).forEach(e=>{
                                 for (let item of e.children){
                                     console.log(item);
                                     item.addEventListener("click", async (ee)=>{
@@ -346,7 +348,12 @@
                                         ////then make fetch post 
 
                                         ////get the address data from paretn; 
-                                        let subTag = ee.target.firstChild.textContent.split(";")[0]
+                                        // let subTag =
+                                        // ee.target.firstChild.textContent.split(";")[0]
+                                        let index = [...ee.target.parentElement.children].indexOf(ee.target)
+
+                                        // console.log([...ee.target.parentElement.children].indexOf(ee.target))
+
                                         let mainTag = ee.target.parentElement.firstChild.textContent.trim()
                                         let postIndex = ee.target.parentElement.parentElement.parentElement.parentElement.getAttribute("data-index")
                                         let postOrgUserName = ee.target.parentElement.parentElement.parentElement.parentElement.firstElementChild.firstElementChild.lastElementChild.textContent
@@ -354,7 +361,7 @@
 
                                         console.log(ee.target.parentElement.firstChild.textContent.trim())
 
-                                        let contri = {subTag, mainTag, postIndex, postOrgUserName, contribute}
+                                        let contri = {mainTag, index, postIndex, contribute}
 
                                         let d =await fetch("/contribute", {
                                             method: "POST", 
@@ -368,6 +375,12 @@
                                     })    
                                 }
                             })
+                            }
+
+                            addEvent("#skillsTag")
+                            addEvent("#knowledgeTag")
+                            addEvent("#toolsMaterialsTag")
+
 
                             // for (let item of document.querySelector("#skillsTag").children) {
                             //     console.log(item);

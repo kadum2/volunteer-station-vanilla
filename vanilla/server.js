@@ -33,8 +33,8 @@ app.use(express.static("./public"))
 /////f1; basic profile info; cookies; 
 app.get("/profileData/:username", (req, res)=>{
 
-    // console.log("..........profile Data ........")
-    // console.log(req.params.username)
+    console.log("..........profile Data ........")
+    console.log(req.params.username)
 
     ////check db if exist
     mongodb.connect(process.env.MONGOKEY, async (err, client)=>{
@@ -95,7 +95,11 @@ app.get("/profileData/:username", (req, res)=>{
 
         }
         }else{ ///not found the profile user 
+        
+        console.log("not found")
             res.sendStatus(404)
+        
+        
         }
     })
 })
@@ -138,7 +142,7 @@ try{
         let token = jwt.sign(user.userName, process.env.TOKEN)
 
         ///send data and token localstorage; then save it at the client
-        res.json({status: "created user", token: token, cUser: {userNmae: user.userName, name: user.name, avatar: user.avatar, following: found.following, isUser: user.isUser}})
+        res.json({status: "created user", token: token, cUser: {userNmae: user.userName, name: user.name, avatar: user.avatar, following: user.following, isUser: user.isUser}})
             }
         }
         })
@@ -435,8 +439,8 @@ app.post("/posts", (req, res, next)=>{ postcStateImgsList = []; postTodoImgsList
 
         
         /////prepare some additional stuff; make post id; orgUserNamePostIndex
-        let index = (await dbb.collection("posts").find({org: req.tokenData}).toArray()).length
-        let postID = req.tokenData+"@"+index
+        let index = (await dbb.collection("posts").find({orgUserName: req.tokenData}).toArray()).length
+        let postID = req.tokenData+"@"+(index + 1)
         let found = await dbb.collection("orgs").findOne({userName: req.tokenData})
         console.log(found)
         let name = found.name
@@ -540,28 +544,52 @@ mongodb.connect(process.env.MONGOKEY, async (err, client)=>{
     let dbb = client.db()
 
     let mainTag = req.body.mainTag
-    let subTag = req.body.subTag
-    let serch = mainTag+"."+subTag+".contri"
+    let index = req.body.index
+
+    // let serch = mainTag+".$."+subTag+".$.contri"
+    // let serch = mainTag+"."+index+".contri"
+    let serch = `${mainTag}.${index}.contri`
+    search = mainTag.index
+
+    let pushObj = {};
+    // pushObj[mainTag + '.array'] = { "field3": "text3" };
+    pushObj[mainTag + '.' + index] = { "contri": req.tokenData };
+    let mainTg = mainTag+"."+index
+    // let ind = "contri"
+
+    console.log(pushObj)
+
+    
     console.log(serch)
 
-    // let found = await dbb.collection("orgs").findOne({userName:
-    // req.body.postOrgUserName})
-    ///get into the intended post
+    let r = await dbb.collection("posts").findOne({postID: req.body.postIndex})
+    console.log(r)
+    console.log(r[mainTag][index].contri)
 
-    // let found = await dbb.collection("orgs").findOneAndUpdate({userName:
-    // req.body.postOrgUserName, posts: req.body.postIndex }, {$push: {serch: req.tokenData }})
-    
 
-    // let found = await dbb.collection("orgs").findOne({userName: req.body.postOrgUserName, posts: req.body.postIndex})
-    // let found = await dbb.collection("orgs").findOne({userName: req.body.postOrgUserName})
-    // let found = await dbb.collection("orgs").findOne({"posts.todoInfo": "cstateinfo"})
-    // let found7 = await dbb.collection("orgs").findOneAndUpdate({"posts.todoInfo": "cstateinfo" }, {$push: {skills: ["nice"]}})
+    // let rr = await dbb.collection("posts").findOne({postID:
+    // req.body.postIndex})
 
-    // let found7 = await dbb.collection("orgs").findOneAndUpdate({"posts.todoInfo": "cstateinfo"}, {$push: {"posts.skills.skill1"}})
+    //////for add or delete 
+    if(r[mainTag][index].contri.includes(req.tokenData)){
+        console.log("true; then remove")
+        // let rs = await dbb.collection("posts").findOneAndUpdate({postID:
+        // req.body.postIndex}, {$pull:{search: {"contri":req.tokenData}}})
+        
+        // let rs = await dbb.collection("posts").findOneAndUpdate({postID: req.body.postIndex}, {$pull: pushObj})
+        let rs = await dbb.collection("posts").findOneAndUpdate({postID: req.body.postIndex}, {$pull: {mainTg: {"contri": req.tokenData}}})
 
-    
-    // console.log("......found...........")
-    // console.log(found)
+        console.log(rs)
+
+    }else{
+        console.log("false; then add")
+        // let rs4 = await dbb.collection("posts").findOneAndUpdate({postID:
+        // req.body.postIndex}, {$push:{search: {"contri":req.tokenData}}})
+        // let r = await dbb.collection("posts").findOneAndUpdate({postID: req.body.postIndex}, {$push: pushObj})
+        let r = await dbb.collection("posts").findOneAndUpdate({postID: req.body.postIndex}, {$push: {mainTg: {"contri": req.tokenData}}})
+
+        console.log(r)
+    }
 })
 
 })
