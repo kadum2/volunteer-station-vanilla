@@ -545,6 +545,7 @@ mongodb.connect(process.env.MONGOKEY, async (err, client)=>{
 
     let mainTag = req.body.mainTag
     let index = req.body.index
+    let indx = "."+ req.body.index + "."
 
     // let serch = mainTag+".$."+subTag+".$.contri"
     // let serch = mainTag+"."+index+".contri"
@@ -553,7 +554,7 @@ mongodb.connect(process.env.MONGOKEY, async (err, client)=>{
 
     let pushObj = {};
     // pushObj[mainTag + '.array'] = { "field3": "text3" };
-    pushObj[mainTag + '.' + index] = { "contri": req.tokenData };
+    pushObj[mainTag + indx + "contri"] = req.tokenData ;
     let mainTg = mainTag+"."+index
     // let ind = "contri"
 
@@ -576,8 +577,9 @@ mongodb.connect(process.env.MONGOKEY, async (err, client)=>{
         // let rs = await dbb.collection("posts").findOneAndUpdate({postID:
         // req.body.postIndex}, {$pull:{search: {"contri":req.tokenData}}})
         
-        // let rs = await dbb.collection("posts").findOneAndUpdate({postID: req.body.postIndex}, {$pull: pushObj})
-        let rs = await dbb.collection("posts").findOneAndUpdate({postID: req.body.postIndex}, {$pull: {mainTg: {"contri": req.tokenData}}})
+        let rs = await dbb.collection("posts").findOneAndUpdate({postID: req.body.postIndex}, {$pull: pushObj})
+        // let rs = await dbb.collection("posts").findOneAndUpdate({postID: req.body.postIndex}, {$pull: {mainTg: {"contri": req.tokenData}}})
+        // let rs = await dbb.collection("posts").findOneAndUpdate({postID: req.body.postIndex}, {$push: {mainTag: {indx: {"contri": req.tokenData}}}})
 
         console.log(rs)
 
@@ -585,8 +587,10 @@ mongodb.connect(process.env.MONGOKEY, async (err, client)=>{
         console.log("false; then add")
         // let rs4 = await dbb.collection("posts").findOneAndUpdate({postID:
         // req.body.postIndex}, {$push:{search: {"contri":req.tokenData}}})
-        // let r = await dbb.collection("posts").findOneAndUpdate({postID: req.body.postIndex}, {$push: pushObj})
-        let r = await dbb.collection("posts").findOneAndUpdate({postID: req.body.postIndex}, {$push: {mainTg: {"contri": req.tokenData}}})
+        let r = await dbb.collection("posts").findOneAndUpdate({postID: req.body.postIndex}, {$push: pushObj})
+        // let r = await dbb.collection("posts").findOneAndUpdate({postID:
+        // req.body.postIndex}, {$push: {mainTg: {"contri": req.tokenData}}})
+        // let rs = await dbb.collection("posts").findOneAndUpdate({postID: req.body.postIndex}, {$pull: {mainTag: {indx: {"contri": req.tokenData}}}})
 
         console.log(r)
     }
