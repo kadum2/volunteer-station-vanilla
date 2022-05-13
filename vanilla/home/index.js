@@ -112,11 +112,11 @@
                     </span>
 
                     <span class="knowledge flex">knowledge
-                    ${Object.values(ee.knowledge).map(eee=>`<span class="${eee.contri.includes(JSON.parse(localStorage.getItem("cUser")).userName)?"contri":""}">${eee.knowledgeType};${eee.reqNum}/<p>${eee.contri.length}</p></span>`).join("")}
+                    ${Object.values(ee.knowledge).map(eee=>`<span class="${localStorage.getItem("cUser")?eee.contri.includes(JSON.parse(localStorage.getItem("cUser")).userName)?"contri":"":null}">${eee.knowledgeType};${eee.reqNum}/<p>${eee.contri.length}</p></span>`).join("")}
 
                     </span>
                     <span class="toolsMaterials flex">tools and materials
-                    ${Object.values(ee.toolsMaterials).map(eee=>`<span class="${eee.contri.includes(JSON.parse(localStorage.getItem("cUser")).userName)?"contri":""}">${eee.toolsMaterialsType};${eee.reqNum}/<p>${eee.contri.length}</p></span>`).join("")}
+                    ${Object.values(ee.toolsMaterials).map(eee=>`<span class="${localStorage.getItem("cUser")?eee.contri.includes(JSON.parse(localStorage.getItem("cUser")).userName)?"contri":"":null}">${eee.toolsMaterialsType};${eee.reqNum}/<p>${eee.contri.length}</p></span>`).join("")}
                     </span>
 
                 </div>
