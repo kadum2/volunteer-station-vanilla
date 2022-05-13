@@ -21,7 +21,7 @@ app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
 ////sending pages; setting public dirs
-app.use("/home", express.static("./home"))
+app.use("/", express.static("./home"))
 app.use("/profile/:username", express.static("profile"))
 app.use(express.static("./public"))
 
