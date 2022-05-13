@@ -325,21 +325,7 @@
 
                             function addEvent(mainTagClass){
                             document.querySelectorAll(mainTagClass).forEach(e=>{
-                                // document.querySelector(id).children.forEach(e=>{
-                                console.log(e)
                                 for (let item of e.children){
-                                    console.log(item);
-
-                                    // postsArray.forEach(pos=>{
-                                    //     // console.log(pos)
-
-                                    // pos[mainTagClass.replace(".", "")].forEach(ee=>{
-                                    //     if(item.textContent.split(";")[0] == ee.type && ee.contri.contains(cUserJson.userName)){
-                                    //         console.log("contri then add contri ")
-                                    //         item.classList.add("contri")
-                                    //     }
-                                    // })
-                                    // })
 
                                     item.addEventListener("click", async (ee)=>{
                                         console.log(ee.target)
@@ -348,32 +334,17 @@
                                         ////toggle method; 
                                         ee.target.classList.toggle("contri")
 
-                                        ////color based method; 
-                                        // ee.target.style.background != "red"?ee.target.style.background = "red":ee.target.style.background = "rgb(43, 158, 43)"
-                                        // if(ee.target.style.background == "red"){
-                                        //     console.log("to contribute and to send true")
-                                        //     contribute = true
-                                        // }else{
-                                        //     console.log("to not contribute and to send false")
-                                        //     contribute = false
-                                        // }
-
                                         if(ee.target.classList.contains("contri")){
                                             console.log("to contribute and to send true")
                                             contribute = true
+                                            ee.target.lastElementChild.innerHTML ++
                                         }else{
                                             console.log("to not contribute and to send false")
                                             contribute = false
+                                            ee.target.lastElementChild.innerHTML --
                                         }
 
-                                        console.log(contribute)
-                                        /// based on the color change; true
-                                        /// false; get the full post address; 
-                                        ////then make fetch post 
-
                                         ////get the address data from paretn; 
-                                        // let subTag =
-                                        // ee.target.firstChild.textContent.split(";")[0]
                                         let index = [...ee.target.parentElement.children].indexOf(ee.target)
 
                                         // console.log([...ee.target.parentElement.children].indexOf(ee.target))
