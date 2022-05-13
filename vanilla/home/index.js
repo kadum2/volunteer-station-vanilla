@@ -19,6 +19,7 @@
         ////// data containers
 
         let currentUser
+        let cUserJson
         let postsArray
         let contributer = false
         // span or tag.addeventlistener("click", e=>fetch("/contri", {method:
@@ -104,18 +105,17 @@
             <!-- fourth section -->
             <div class="requirements flex">
                 <div class="req-tags flex">
-                    <span id="skillsTag" class="flex">skills 
-                    ${Object.values(ee.skills).map(eee=>`<span>${eee.skillType};${eee.reqNum}/<p>${eee.contri.length}</p></span>`).join("")}
+                    <span class="skills flex" >skills 
+                    ${Object.values(ee.skills).map(eee=>`<span class="${eee.contri.includes(JSON.parse(localStorage.getItem("cUser")).userName)?"contri":""}">${eee.skillType};${eee.reqNum}/<p>${eee.contri.length}</p></span>`).join("")}
 
                     </span>
 
-                    <span id="knowledgeTag" class="flex">knowledge
-                    ${Object.values(ee.knowledge).map(eee=>`<span>${eee.knowledgeType};${eee.reqNum}/<p>${eee.contri.length}</p></span>`).join("")}
+                    <span class="knowledge flex">knowledge
+                    ${Object.values(ee.knowledge).map(eee=>`<span class="${eee.contri.includes(JSON.parse(localStorage.getItem("cUser")).userName)?"contri":""}">${eee.knowledgeType};${eee.reqNum}/<p>${eee.contri.length}</p></span>`).join("")}
 
                     </span>
-                    <span id="toolsMaterialsTag" class="flex">tools and materials
-                    ${Object.values(ee.toolsMaterials).map(eee=>`<span>${eee.toolsMaterialsType};${eee.reqNum}/<p>${eee.contri.length}</p></span>`).join("")}
-
+                    <span class="toolsMaterials flex">tools and materials
+                    ${Object.values(ee.toolsMaterials).map(eee=>`<span class="${eee.contri.includes(JSON.parse(localStorage.getItem("cUser")).userName)?"contri":""}">${eee.toolsMaterialsType};${eee.reqNum}/<p>${eee.contri.length}</p></span>`).join("")}
                     </span>
 
                 </div>
@@ -263,7 +263,7 @@
                     `http://localhost:4000/profile/${cUserJson.userName}`)
                 let cAv = document.createElement("img")
                 if(cUserJson.isUser){
-                cAv.src = "../" + cUserJson.avatar
+                cAv.src =cUserJson.avatar
                 }else{
                     cAv.src = "/orgAvImgs/" + cUserJson.avatar
                 }
@@ -319,29 +319,53 @@
                         /////allow contri 
                         
 
-                        if(document.querySelector("#skillsTag")){
+                        if(document.querySelector(".skills")){
 
-                            console.log(document.querySelector("#skillsTag").children)
+                            console.log(document.querySelector(".skills").children)
 
-                            function addEvent(id){
-                            document.querySelectorAll(id).forEach(e=>{
+                            function addEvent(mainTagClass){
+                            document.querySelectorAll(mainTagClass).forEach(e=>{
+                                // document.querySelector(id).children.forEach(e=>{
+                                console.log(e)
                                 for (let item of e.children){
                                     console.log(item);
+
+                                    // postsArray.forEach(pos=>{
+                                    //     // console.log(pos)
+
+                                    // pos[mainTagClass.replace(".", "")].forEach(ee=>{
+                                    //     if(item.textContent.split(";")[0] == ee.type && ee.contri.contains(cUserJson.userName)){
+                                    //         console.log("contri then add contri ")
+                                    //         item.classList.add("contri")
+                                    //     }
+                                    // })
+                                    // })
+
                                     item.addEventListener("click", async (ee)=>{
                                         console.log(ee.target)
                                         
                                         let contribute
-                                        // ee.target.classList.toggle("red")
-                                        ee.target.style.background != "red"?ee.target.style.background = "red":ee.target.style.background = "rgb(43, 158, 43)"
+                                        ////toggle method; 
+                                        ee.target.classList.toggle("contri")
 
-                                        console.log(ee.target.style.background)
-                                        if(ee.target.style.background == "red"){
+                                        ////color based method; 
+                                        // ee.target.style.background != "red"?ee.target.style.background = "red":ee.target.style.background = "rgb(43, 158, 43)"
+                                        // if(ee.target.style.background == "red"){
+                                        //     console.log("to contribute and to send true")
+                                        //     contribute = true
+                                        // }else{
+                                        //     console.log("to not contribute and to send false")
+                                        //     contribute = false
+                                        // }
+
+                                        if(ee.target.classList.contains("contri")){
                                             console.log("to contribute and to send true")
                                             contribute = true
                                         }else{
                                             console.log("to not contribute and to send false")
                                             contribute = false
                                         }
+
                                         console.log(contribute)
                                         /// based on the color change; true
                                         /// false; get the full post address; 
@@ -354,10 +378,12 @@
 
                                         // console.log([...ee.target.parentElement.children].indexOf(ee.target))
 
-                                        let mainTag = ee.target.parentElement.firstChild.textContent.trim()
+                                        // let mainTag = ee.target.parentElement.firstChild.textContent.trim()
+                                        let mainTag = ee.target.parentElement.classList[0]
                                         let postIndex = ee.target.parentElement.parentElement.parentElement.parentElement.getAttribute("data-index")
                                         let postOrgUserName = ee.target.parentElement.parentElement.parentElement.parentElement.firstElementChild.firstElementChild.lastElementChild.textContent
 
+                                        // if(mainTag == "tools and materials")mainTag = "toolsMaterials"
 
                                         console.log(ee.target.parentElement.firstChild.textContent.trim())
 
@@ -377,10 +403,13 @@
                             })
                             }
 
-                            addEvent("#skillsTag")
-                            addEvent("#knowledgeTag")
-                            addEvent("#toolsMaterialsTag")
+                            addEvent(".skills")
+                            addEvent(".knowledge")
+                            addEvent(".toolsMaterials")
 
+                            function checkIfCont(tags){
+                                document.querySelectorAll(tags)
+                            }
 
                             // for (let item of document.querySelector("#skillsTag").children) {
                             //     console.log(item);

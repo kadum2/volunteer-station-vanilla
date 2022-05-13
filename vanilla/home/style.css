@@ -201,9 +201,11 @@
 
     /* fourth section; requirements */
 
-    #skillsTag, #knowledgeTag, #toolsMaterialsTag{
+    .skills, .knowledge, .toolsMaterials{
+    display: flex;
     flex-direction: column;
-    gap: .3rem;
+    gap: .1rem;
+    /* background: red; */
     }
     span span{
         background: rgb(43, 158, 43);
@@ -307,7 +309,7 @@
         }
 
 
-        .red{
+        .contri{
             background: red;
         }
 

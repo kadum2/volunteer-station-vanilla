@@ -410,16 +410,16 @@ app.post("/posts", (req, res, next)=>{ postcStateImgsList = []; postTodoImgsList
     // req.body.skills = req.body.skills.map(e=>{skillType: e.split(",")[0],reqNum: e.split(",")[1]})
     req.body.skills = req.body.skills.map(e=>e.split(","))
     req.body.skills = req.body.skills.map(e=>{
-        return {skillType:e[0], reqNum: e[1], contri:[]}
+        return {type:e[0], reqNum: e[1], contri:[]}
     })
     req.body.knowledge = req.body.knowledge.map(e=>e.split(","))
     req.body.knowledge= req.body.knowledge.map(e=>{
-        return {knowledgeType:e[0], reqNum: e[1], contri:[]}
+        return {type:e[0], reqNum: e[1], contri:[]}
     })
     
     req.body.toolsMaterials = req.body.toolsMaterials.map(e=>e.split(","))
     req.body.toolsMaterials= req.body.toolsMaterials.map(e=>{
-        return {toolsMaterialsType:e[0], reqNum: e[1], contri:[]}
+        return {type:e[0], reqNum: e[1], contri:[]}
     })
 
     console.log(req.body.skills)
@@ -524,8 +524,9 @@ mongodb.connect(process.env.MONGOKEY, async (err, client)=>{
 
 
 app.post("/contribute", async (req, res)=>{
+
+    console.log(".......contribute.......")
     console.log(req.body)
-    console.log(req.headers.authorization)
 
     ////decode the token 
     jwt.verify(req.headers.authorization, process.env.TOKEN, (err, data)=>{
@@ -535,9 +536,6 @@ app.post("/contribute", async (req, res)=>{
 
 console.log(req.tokenData)
 
-    ///make the contri object ??
-    let contri = {}
-
     ///set the contri object 
 
 mongodb.connect(process.env.MONGOKEY, async (err, client)=>{
@@ -545,57 +543,28 @@ mongodb.connect(process.env.MONGOKEY, async (err, client)=>{
 
     let mainTag = req.body.mainTag
     let index = req.body.index
-    let indx = "."+ req.body.index + "."
-
-    // let serch = mainTag+".$."+subTag+".$.contri"
-    // let serch = mainTag+"."+index+".contri"
-    let serch = `${mainTag}.${index}.contri`
-    search = mainTag.index
 
     let pushObj = {};
-    // pushObj[mainTag + '.array'] = { "field3": "text3" };
-    pushObj[mainTag + indx + "contri"] = req.tokenData ;
-    let mainTg = mainTag+"."+index
-    // let ind = "contri"
+    pushObj[mainTag + "."+ index + ".contri"] = req.tokenData ;
 
     console.log(pushObj)
 
-    
-    console.log(serch)
-
     let r = await dbb.collection("posts").findOne({postID: req.body.postIndex})
-    console.log(r)
-    console.log(r[mainTag][index].contri)
+    // console.log(r)
+    // console.log(r[mainTag][index].contri)
 
-
-    // let rr = await dbb.collection("posts").findOne({postID:
-    // req.body.postIndex})
 
     //////for add or delete 
     if(r[mainTag][index].contri.includes(req.tokenData)){
         console.log("true; then remove")
-        // let rs = await dbb.collection("posts").findOneAndUpdate({postID:
-        // req.body.postIndex}, {$pull:{search: {"contri":req.tokenData}}})
-        
         let rs = await dbb.collection("posts").findOneAndUpdate({postID: req.body.postIndex}, {$pull: pushObj})
-        // let rs = await dbb.collection("posts").findOneAndUpdate({postID: req.body.postIndex}, {$pull: {mainTg: {"contri": req.tokenData}}})
-        // let rs = await dbb.collection("posts").findOneAndUpdate({postID: req.body.postIndex}, {$push: {mainTag: {indx: {"contri": req.tokenData}}}})
-
         console.log(rs)
-
     }else{
         console.log("false; then add")
-        // let rs4 = await dbb.collection("posts").findOneAndUpdate({postID:
-        // req.body.postIndex}, {$push:{search: {"contri":req.tokenData}}})
         let r = await dbb.collection("posts").findOneAndUpdate({postID: req.body.postIndex}, {$push: pushObj})
-        // let r = await dbb.collection("posts").findOneAndUpdate({postID:
-        // req.body.postIndex}, {$push: {mainTg: {"contri": req.tokenData}}})
-        // let rs = await dbb.collection("posts").findOneAndUpdate({postID: req.body.postIndex}, {$pull: {mainTag: {indx: {"contri": req.tokenData}}}})
-
         console.log(r)
     }
 })
-
 })
 
 
