@@ -619,12 +619,9 @@ const orgAvatarImg = multer({storage: orgAvatarStoring})
 //             const hashed = await bcrypt.hash(req.body.pw, 10)
 //             const user = {userName: req.body.userName, name: req.body.name, pw: hashed, em: req.body.em, locationsOfService: req.body.locationsOfService, following: [], followers: [], avatar: orgAvImg, members: req.body.members}
 //             await dbb.collection("orgs").insertOne(user) ///to get the id in db
-
-//             }}
+//}}
 // })
-
 // }
-
 // })
 
 

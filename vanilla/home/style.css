@@ -1,14 +1,7 @@
 
-        body {
-            margin: 0%;
-            height: 100vh;
-            position: relative;
-        }
 
-        * {
-            box-sizing: border-box;
-        }
 
+        /* basic */
         /* header */
         header {
             height: 10%;
@@ -17,13 +10,15 @@
             justify-content: space-between;
             align-items: center;
             padding: 0% 2rem;
-            position: fixed;
+            /* position: fixed; */
             width: 100%;
             top: 0;
         }
 
-        #logo {
+        .logo {
             width: 100%;
+            height: 100%;
+            /* background: red; */
         }
 
         #searchbar {
@@ -37,26 +32,25 @@
 
         /* current account  */
         #cUserTemplate {
-            /* height: 2rem; */
-            /* width: 8rem; */
+            height: 2rem;
+            width: 8rem;
             /* background: red; */
             display: flex;
             flex-direction: row;
             justify-content: center;
             align-items: center;
             padding: .4rem;
+            cursor: pointer;
+            background: url('./no-user-image-icon-27.jpg');
+            background-size: contain;
         }
         #cUserTemplate button{
             width: auto;
         }
 
 
-        /* container */
 
-        #conts {
-            background: rgb(65, 230, 114);
-            padding-left: 20vw;
-        }
+        /* main */
 
         /* main filter */
         #mainFilters {
@@ -72,6 +66,8 @@
             left: 0%;
             top: 10vh;
         }
+
+
         .filterType{
             background: rgb(95, 236, 95);
             border-radius: .4rem;
@@ -79,26 +75,12 @@
             margin: .4rem;
         }
 
-
         #postsFeed{
             /* background: red; */
             padding: 2rem;
         }
 
-
-        /* footer */
-        footer {
-            /* position: relative; */
-            height: 20vh;
-            width: 100%;
-            background: hsl(145, 74%, 29%);
-            display: flex;
-            flex-direction: row;
-            justify-content: space-evenly;
-        }
-
-
-
+        
 
 
 
@@ -125,6 +107,10 @@
             gap: .4rem;
         }
 
+        main {
+            /* background: rgb(65, 230, 114); */
+            padding-left: 20vw;
+        }
 
         /* post stylings */
     .post {
@@ -207,15 +193,123 @@
     gap: .1rem;
     /* background: red; */
     }
-    span span{
-        background: rgb(43, 158, 43);
-    }
+
+
+        
+        /* footer */
+        footer {
+            /* min-height: 20vh; */
+            border-top: 2px solid black;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            align-items: center;
+            padding: 2rem;
+            gap: 3rem;
+            width: 100%;
+            background: #1F2721;
+            
+        }
+        footer .features{
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem 2rem;
+        }
+        
+        footer .features, h2{
+            width: 100%;
+            /* height: 5vh; */
+            /* color: white; */
+            text-align: center;
+            font-size: 2rem;
+        }
+        footer .features div{
+            color: white;
+            text-align: center;
+            font-size: 2rem;
+            background: #1F2721;
+            border-radius: .4rem;
+            display: block;
+            width: fit-content;
+            margin: .2rem auto;
+            padding: 1rem;
+            transition: .1s linear;
+            display: inline-block;
+            display: flex;
+        }
+        footer .features div:hover{
+            background: rgb(52, 56, 54);
+        }
+        footer .features img{
+            height: 4rem;
+        }
+        footer #info div,footer .features, footer .additionalInfo {
+            min-width: 20vw;
+            max-width: 80vw;
+            color: black;
+            /* height: 40vh; */
+            display: flex;
+            justify-content: start;
+            align-items: center;
+            flex-direction: column;
+            border: 1px solid black;
+            transition: .1s linear;
+            padding: 1rem;
+            border-radius: 1rem;
+            box-shadow: 4px 4px 2px rgba(0, 0, 0, 0.2);
+            /* cursor: pointer; */
+            background: white;
+        }
+        
+        footer #info div:hover,footer .features:hover {
+            box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.2);
+            transform: scale(1.01);
+        }
+        
+        footer span {
+            height: 1.5rem;
+            width: 3rem;
+            /* margin-bottom: 10%; */
+            margin-bottom: .2rem;
+            transform: rotateZ(-15deg);
+            align-self: flex-start;
+        }
+        footer img{
+            height: 3rem;
+        }
+        
+        footer #info{
+            /* background: red; */
+            width: 100%;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-around;
+        }
+        footer #info img{
+            height: 2rem;
+        }
 
 
 
+        /* elements */
 
+        body {
+            margin: 0%;
+            height: 100vh;
+            position: relative;
+        }
 
-        /* absolute elements */
+        * {
+            box-sizing: border-box;
+        }
+
+        span span{
+            background: rgb(43, 158, 43);
+        }
+    
+        
         button {
             padding: .3rem;
             font-size: 1.4rem;
@@ -251,7 +345,7 @@
             display: inline;
             pointer-events: none;
         }
-        span {
+        main span {
             padding: .5rem;
             background: rgb(116, 235, 116);
             border-radius: .4rem;
@@ -260,7 +354,60 @@
         input {
             font-size: 1.3rem;
         }
+
+
     
+
+        /* shared */
+
+
+        .on{
+            background: rgb(223, 39, 39);
+        }
+        
+        .red, .contri {
+            background: #ff2a2a;
+        }
+        
+        .green {
+            background: #27f060;
+        }
+        
+        .black {
+            background: #0a0a0a;
+        }
+        
+
+
+
+
+
+        @media all and (max-width: 500px){
+            .post {
+                background: rgb(153, 153, 153);
+                width: 95vw;
+                margin-top: 1rem;
+            }
+
+            #postsFeed{
+                /* background: red; */
+                /* padding: 2rem; */
+            }
+    
+            main{
+                padding: 0%;
+            }
+
+            #mainFilters{
+                width: 100%;
+                position: relative;
+                /* display: ; */
+                flex-direction: row;
+                top: 0%;
+            }
+
+
+        }
 
 
 
@@ -279,6 +426,7 @@
             top: 4rem;
             right: .2rem;
             font-size: 1.3rem;
+            display: none;
         }
 
 
@@ -307,10 +455,4 @@
         .userName{
 
         }
-
-
-        .contri{
-            background: red;
-        }
-
 

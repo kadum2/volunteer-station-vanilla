@@ -16,8 +16,8 @@
         let allBtn = document.querySelector("#all")
         allBtn.addEventListener("click", ()=>makingPosts(postsArray))
 
-        ////// data containers
-
+        ////// data container
+    
         let currentUser
         let cUserJson
         let postsArray
@@ -423,7 +423,15 @@
 
 
 
+document.querySelector("#cUserTemplate").addEventListener("click", (e)=>{
+    e.target.classList.toggle("on")
+    if(e.target.classList.contains("on")){
+        document.querySelector("#auth").style.display = "inline-block"
+    }else{
+        document.querySelector("#auth").style.display = "none"
 
+    }
+})
 
 
 

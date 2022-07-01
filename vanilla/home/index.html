@@ -5,24 +5,34 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>home</title>
+    <title>volunteer station</title>
     <link rel="stylesheet" href="./style.css">
 </head>
 
 <body>
 
     <!-- header -->
-    <header>
-        <div id="logo">logo</div>
+    <header class="green">
+        <div class="logo ">
+            <a href="https://kadum2.github.io/ivc-2de/" target="_blank">
+                <div class="black"></div>
+                <div class="red"></div>
+                <div class="white"></div>
+                <!-- <div class="green"></div> -->
+            </a>
+        </div>
+        <h2 id="projectName"> volunteer station | المحطة التطوعية</h2>
         <input type="text" id="searchbar" placeholder="search"></input>
         <div id="cUserTemplate">
             <!-- <div class="account-object"></div> -->
         </div>
+        <!-- <button id="en">en</button> -->
     </header>
 
 
+
     <!-- container -->
-    <div id="conts">
+    <main>
 
         <!-- main filter bar -->
         <div id="mainFilters">
@@ -79,106 +89,157 @@
             </div>
 
             <button id="all">الجميع</button>
-        </div>
+    </main>
 
-        <div id="mainBody">
-            <!-- may make it for highlight section; one for volunteer based camp and one
+    <div id="mainBody">
+        <!-- may make it for highlight section; one for volunteer based camp and one
             for donating based -->
-            <h3>highlighted</h3>
-            <h1>specific posts</h1>
+        <h3>highlighted</h3>
+        <h1>specific posts</h1>
 
-            <div id="postsFeed">
+        <div id="postsFeed">
 
-                <!-- post prototype -->
-                <div class="post">
-                    <!-- first seciton -->
-                    <div class="postHeader flex">
-                        <div class="accountObject">
-                            <img alt="" class="orgObjectAv" style="">
-                            <h3 class="orgObjectUserName">${e.userName}</h3>
-                        </div>
+            <!-- post prototype -->
+            <div class="post">
+                <!-- first seciton -->
+                <div class="postHeader flex">
+                    <div class="accountObject">
+                        <img alt="" class="orgObjectAv" style="">
+                        <h3 class="orgObjectUserName">${e.userName}</h3>
                     </div>
-                    <!-- second sectino -->
-                    <div class="currentState flex">
-                        الوضع الحالي
-                        <div class="info flex">${e.cStateInfo}</div>
-                        <div class="imgs flex">
-                            ${e.cStateImgs.map(e=> `<img style="background:url('../posts/${e}');        
+                </div>
+                <!-- second sectino -->
+                <div class="currentState flex">
+                    الوضع الحالي
+                    <div class="info flex">${e.cStateInfo}</div>
+                    <div class="imgs flex">
+                        ${e.cStateImgs.map(e=> `<img style="background:url('../posts/${e}');        
                             background-size: cover;
                             background-position: center center;">`).join('')}
-                        </div>
                     </div>
-                    <!-- third section -->
-                    <div class="todo flex">
-                        للقيام به
-                        <div class="maintags">
-                            <span class="campPrototype">${e.campPrototype}</span>
-                            <span class="campType">${e.campType}</span>
-                            <span class="timeState">${e.timeState}</span>
-                        </div>
-                        <div class="info flex">${e.todoInfo}</div>
+                </div>
+                <!-- third section -->
+                <div class="todo flex">
+                    للقيام به
+                    <div class="maintags">
+                        <span class="campPrototype">${e.campPrototype}</span>
+                        <span class="campType">${e.campType}</span>
+                        <span class="timeState">${e.timeState}</span>
+                    </div>
+                    <div class="info flex">${e.todoInfo}</div>
 
-                        <div class="imgs flex">
-                            ${
-                            e.todoImgs.map(e=>{
-                            console.log(e)
-                            return `<img style="background:url('../posts/${e}');
+                    <div class="imgs flex">
+                        ${
+                        e.todoImgs.map(e=>{
+                        console.log(e)
+                        return `<img style="background:url('../posts/${e}');
                                     background-size: cover;
                                     background-position: center center;">`}).join('')}
-                        </div>
-
-                        <div class="todotags">
-                            <span class="baseLocation">${e.baseLocation}</span>
-                            <span class="location">${e.location}</span>
-                            <span class="camp-time">${e.campTime}</span>
-                        </div>
                     </div>
 
-                    <!-- fourth section -->
-                    <div class="requirements flex">
-                        <div class="req-tags flex">
-                            <span id="skillsTag" class="flex">skills;
-                                <span>${e.skills}; x/x</span>
-                            </span>
-                            <span id="knowledgeTag" class="flex">knowledge;
-                                <span>${e.knowledge}; x/x</span>
-                            </span>
-                            <span id="toolsMaterialsTag" class="flex">tools and materials
-                                <span>${e.toolsMaterials}; x/x</span>
-                            </span>
-
-                        </div>
-                        <div class="dona flex">
-                            <span>المبلغ المطلوب; ${e.neededDonation} </span>
-                            <span>المبلغ الحالي; ${e.currentDonation} </span>
-                        </div>
+                    <div class="todotags">
+                        <span class="baseLocation">${e.baseLocation}</span>
+                        <span class="location">${e.location}</span>
+                        <span class="camp-time">${e.campTime}</span>
                     </div>
-                    <div class="timeAgo">قبل ${e.dataOfUpload - Date.now()}</div>
-                    <div class="uploadDate">وقت الرفع: ${e.dataOfUpload}</div>
-
                 </div>
+
+                <!-- fourth section -->
+                <div class="requirements flex">
+                    <div class="req-tags flex">
+                        <span id="skillsTag" class="flex">skills;
+                            <span>${e.skills}; x/x</span>
+                        </span>
+                        <span id="knowledgeTag" class="flex">knowledge;
+                            <span>${e.knowledge}; x/x</span>
+                        </span>
+                        <span id="toolsMaterialsTag" class="flex">tools and materials
+                            <span>${e.toolsMaterials}; x/x</span>
+                        </span>
+
+                    </div>
+                    <div class="dona flex">
+                        <span>المبلغ المطلوب; ${e.neededDonation} </span>
+                        <span>المبلغ الحالي; ${e.currentDonation} </span>
+                    </div>
+                </div>
+                <div class="timeAgo">قبل ${e.dataOfUpload - Date.now()}</div>
+                <div class="uploadDate">وقت الرفع: ${e.dataOfUpload}</div>
 
             </div>
 
-
         </div>
-        <!-- <div id="relatedAccounts"></div> -->
-        <div id="auth"></div>
-        <!-- or the login state -->
+
+
+    </div>
+    <!-- <div id="relatedAccounts"></div> -->
+    <div id="auth"></div>
+    <!-- or the login state -->
     </div>
 
-    <!-- footer -->
-    <footer>
-        <div class="ourAccounts">
-            حساباتنا
-            <a href="https://instagram.com/icv"></a>
-            <a href="https://instagram.com/me"></a>
-            <a href="https://instagram.com/importantManager; marshy?"></a>
-        </div>
-        <div class="directContactingToReg">
-            تواصل مباشر للتسجيل من خلال الايميل
-            ايميل التواصل مع المشروع
 
+    <!-- footer -->
+
+    <footer>
+        <div class="features">
+            <span class="black"></span>
+            <h2>مميزات الموقع: الغرض و الاستخدام </h2>
+            <div>
+                <img src="./لقطة الشاشة 2022-06-23 185255.png" alt="">
+                للجهات التطوعية: تسهيل نشر الحملات و تنظيمها على اساس تفاصيل
+                محددة في منصة واحدة
+                :على شكل منشور (بوست)
+            </div>
+            <div>
+                <img src="./لقطة الشاشة 2022-06-23 185255.png" alt="">
+                للافراد: الوصول الى الحملات و امكانية فلترة الحملات بتحديد التفاصيل المطلوبة
+            </div>
+            <div>
+                <img src="./لقطة الشاشة 2022-06-23 185255.png" alt="">
+                تمكين نوع جديد من الحملات من خلال طلب الخبرات, المهارات, الموارد
+                و الادوات بطريقة مباشرة لصناعة شيء او تقديم خدمة بدلا من جمع
+                المال (التبراعات) لشراء هذا الشيء او الخدمة
+            </div>
+
+
+
+        </div>
+        <div id="info">
+            <div class="achievements">
+                <span class="green"></span>
+                <h2>نتائج المشروع</h2>
+                <li>تم اكمال ؟ حملة</li>
+                <!-- <li>هناك ؟ نوع (قالب) من الحملات ليتم انشاء حملة منها</li> -->
+                <li>هناك ؟ نوع من الحملات التي يمكن نشرها</li>
+                <li>عدد الحملات الحالية: ؟</li>
+                <li>عدد الحملات القادمة: ؟؟</li>
+
+            </div>
+            <div class="contact">
+                <span class="red"></span>
+                <h2>تواصل معنا</h2>
+                <a href="https://www.instagram.com/kadum_0/"><img
+                        src="./instagram-round-icon-vector-instagram-round-multicolor-icon-white-background-134391805.jpg"
+                        alt=""></a>
+                <a href="t.me/kadum0">
+                    <img src="./Telegram-Logo.png" alt="">
+                </a>
+                <!-- <p>facebook</p> -->
+                <p>email; kadom1230@gmail.com</p>
+            </div>
+        </div>
+
+        <div class="additionalInfo">
+            <h2>معلومات اضافية</h2>
+            <li>
+                حملة = منشور (بوست)
+            </li>
+            <li>
+                فقط الجهات او الفرق التطوعية تستطيع نشر حملة (منشور)
+            </li>
+            <li>
+                المستخدم يستطيع فقط التفاعل مع المنشور عند قسم "المتطلبات" في المنشور
+            </li>
         </div>
     </footer>
     <script src="./index.js"></script>
