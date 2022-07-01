@@ -244,6 +244,7 @@
         }
         footer .features img{
             height: 4rem;
+            width: auto;
         }
         footer #info div,footer .features, footer .additionalInfo {
             min-width: 20vw;
@@ -330,6 +331,9 @@
         }
         option{
 
+        }
+        b{
+            color: red;
         }
 
         img {
