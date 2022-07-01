@@ -410,12 +410,23 @@
                 top: 0%;
             }
 
+            .features div{
+                font-size: .5rem;
+            }
+
 
         }
 
 
 
-
+.mainTags span{
+    background: #27f060;
+    border-radius: .4rem;
+    font-size: 1.3rem;
+}
+.info{
+    width: 90%;
+}
 
 
         /* after generated objects */
