@@ -111,12 +111,18 @@
             /* background: rgb(65, 230, 114); */
             padding-left: 20vw;
         }
+        #mainBody{
+            margin-left: 20vw;
+        }
+
 
         /* post stylings */
     .post {
         background: rgb(153, 153, 153);
         width: 80%;
-        margin-top: 3rem;
+        margin-top: 6rem;
+        border-radius: .8rem;
+        overflow: hidden;
     }
     .post *{
         margin: .6rem;
@@ -136,10 +142,15 @@
         height: fit-content;
         margin: .5rem 0;
         /* gap: .5rem; */
-        padding: 1rem;
+        padding: .5rem;
         box-sizing: border-box;
         display: flex;
         flex-direction: column;
+    }
+    .currentState img, .todo img{
+        background: url('../Broken-image-icon-in-Chrome.png');
+        background-size: cover;
+        background-position: center center;
     }
 
     .postHeader {
@@ -307,7 +318,8 @@
         }
 
         span span{
-            background: rgb(43, 158, 43);
+            /* background: rgb(43, 158, 43); */
+            background: #20af49;
         }
     
         
@@ -419,10 +431,13 @@
 
 
 
-.mainTags span{
+ span{
     background: #27f060;
     border-radius: .4rem;
     font-size: 1.3rem;
+    padding: .3rem;
+}
+.mainTags span{
 }
 .info{
     width: 90%;

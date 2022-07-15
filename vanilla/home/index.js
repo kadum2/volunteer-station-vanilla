@@ -70,6 +70,11 @@
 
                 <div class="info flex">${ee.cStateInfo}</div>
                 <div class="imgs flex">
+                <img>
+                <img>
+                <img>
+
+
                 ${ee.cStateImgs.map(e=>  `<img style="background:url('../posts/${e}');        
                 background-size: cover;
                 background-position: center center;">`).join('')}
@@ -87,6 +92,9 @@
                     <div class="info flex">${ee.todoInfo}</div>
 
                     <div class="imgs flex">
+                        <img>
+                        <img>
+                        <img>
                     ${
                         ee.todoImgs.map(e=>{
                         console.log(e)
