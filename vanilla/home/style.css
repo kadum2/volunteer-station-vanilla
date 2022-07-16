@@ -147,8 +147,21 @@
         display: flex;
         flex-direction: column;
     }
-    .currentState img, .todo img{
-        background: url('../Broken-image-icon-in-Chrome.png');
+
+
+    .firstimg{
+        background: url('../285866462_1148375562619000_7901557339052260703_n.jpg');
+    }
+    .secondimg{
+        background:url('../277444716_363590915649663_1222020439177148902_n.jpg') ;
+
+    }
+    .thirdimg{
+        background: url('../284694778_585601819454208_4557121981080084148_n.jpg');
+    }
+
+    .currentState img, .imgs img{
+        /* background: url('../Broken-image-icon-in-Chrome.png'); */
         background-size: cover;
         background-position: center center;
     }
@@ -206,6 +219,10 @@
     }
 
 
+    #map{
+        height:20rem;
+        width: 20rem;
+    }
         
         /* footer */
         footer {
@@ -320,6 +337,11 @@
         span span{
             /* background: rgb(43, 158, 43); */
             background: #20af49;
+            cursor: pointer;
+            transition: .1s linear;
+        }
+        span span:hover{
+            /* background: #2b9b4b; */
         }
     
         

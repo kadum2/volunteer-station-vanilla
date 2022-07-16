@@ -24,6 +24,10 @@ app.set("views", path.join(__dirname, "views"));
 app.use("/", express.static("./home"))
 app.use("/profile/:username", express.static("profile"))
 app.use(express.static("./public"))
+app.get("/map-api-key", (req, res)=>{
+    res.send({apiKey: process.env.MAPAPIKEY})
+})
+
 
 
 
@@ -153,9 +157,16 @@ try{
 
 ////login user and org???; 
 app.post("/login", async (req, res)=>{
+
+    console.log('post into login')
+    console.log(req.body)
+
     mongodb.connect(process.env.MONGOKEY, async (err, client)=>{
         let dbb = client.db()
         ///check if exist
+
+        console.log("login .............")
+
         let user = await dbb.collection("users").findOne({em: req.body.em})
         if(user == undefined) user = await dbb.collection("orgs").findOne({em: req.body.em})
         if(user){

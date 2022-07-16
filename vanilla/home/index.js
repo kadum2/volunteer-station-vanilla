@@ -50,7 +50,7 @@
             document.querySelector("#postsFeed").innerHTML = ""
             
 
-            postsArray.forEach(ee=>{
+            postsArray.forEach(async ee=>{
                 console.log(ee)
             let postTemplate = `
             <div class="post" data-index="${ee.postID}">
@@ -70,12 +70,8 @@
 
                 <div class="info flex">${ee.cStateInfo}</div>
                 <div class="imgs flex">
-                <img>
-                <img>
-                <img>
 
-
-                ${ee.cStateImgs.map(e=>  `<img style="background:url('../posts/${e}');        
+                ${ee.cStateImgs.map(e=>  `<img style="background:url('../${e}');        
                 background-size: cover;
                 background-position: center center;">`).join('')}
                 </div>
@@ -92,9 +88,9 @@
                     <div class="info flex">${ee.todoInfo}</div>
 
                     <div class="imgs flex">
-                        <img>
-                        <img>
-                        <img>
+                        <img class='firstimg'>
+                        <img class='secondimg'>
+                        <img class='thirdimg'>
                     ${
                         ee.todoImgs.map(e=>{
                         console.log(e)
@@ -104,7 +100,8 @@
                     </div>
 
                 <div class="todoTags">
-                <span class="baseLocation">${ee.baseLocation}</span>                    
+                <span class="baseLocation">${ee.baseLocation}</span>  
+                    <div id='map'></div>
                     <span class="location">${ee.location}</span>
                     <span class="campTime">${ee.campTime}</span>
                 </div>
@@ -141,6 +138,22 @@
                         let postToAdd = document.createElement("div")
                         postToAdd.innerHTML = postTemplate
                 document.querySelector("#postsFeed").append(postToAdd)
+
+
+                let map = L.map('map').setView([33.396600, 44.356579], 9); //leaflet basic map
+
+                    //////get api key 
+                    let rApiKey = await fetch("/map-api-key")
+                    let apiKey = await rApiKey.json()
+                    L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
+                    maxZoom: 18,
+                    id: 'mapbox/streets-v11',
+                    tileSize: 512,
+                    zoomOffset: -1,
+                    accessToken: apiKey.apiKey
+                }).addTo(map);
+
+                L.marker([33.396600, 44.356579]).addTo(map)
         })
 
 
@@ -151,21 +164,7 @@
         async function regLoginPanels(){
             console.log("no user; should generate the auth")
             auth.innerHTML += ` 
-            <div id="regLogPanel">           
-                <div id="registerPanel">
-                    <b>register</b>
-                    <input id="registerUserName" type="text" placeholder="username">
-                    <input id="registerEm" type="email" placeholder="email">
-                    <input id="registerPw" type="text" placeholder="password">
-                    <button id="regBtn">user register</button>
-                </div>
-                <div id="loginPanel">
-                    <b>login</b>
-                    <input id="loginEm" type="email" placeholder="email">
-                    <input id="loginPw" type="text" placeholder="password">
-                    <button id="loginBtn">login</button>
-                </div>
-            </div>`
+            `
 
             ////register
             let register = document.querySelector("#registerPanel")
@@ -189,9 +188,9 @@
                 // register(registerEm.value, registerPw, regiseterUn.value)
                                         ///make the object data to be send 
                                         let newUser = {
-                                            em: em,
-                                            pw: pw,
-                                            userName: userName
+                                            em: registerEm.value,
+                                            pw: registerPw.value,
+                                            userName: regiseterUn.value
                                         }
                 
                                         ////send and recieve data
@@ -222,6 +221,8 @@
             ///login 
             loginBtn.addEventListener("click", async () => {
 
+                console.log(loginEm.value, loginPw.value)
+                console.log("clicked on login")
                 ///check if exist
                 if (loginEm.value && loginPw.value) {
                     console.log("......login......")
