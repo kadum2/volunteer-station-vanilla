@@ -251,9 +251,9 @@
             /* height: 5vh; */
             /* color: white; */
             text-align: center;
-            font-size: 2rem;
+            /* font-size: 2rem; */
         }
-        footer .features div{
+        .features div{
             color: white;
             text-align: center;
             font-size: 2rem;
@@ -328,6 +328,7 @@
             margin: 0%;
             height: 100vh;
             position: relative;
+            /* overflow: hidden; */
         }
 
         * {
@@ -425,7 +426,14 @@
                 background: rgb(153, 153, 153);
                 width: 95vw;
                 margin-top: 1rem;
+                /* overflow: auto; */
+                overflow: visible;
             }
+            #mainBody{
+                margin-left: 2vw;
+            }
+    
+            
 
             #postsFeed{
                 /* background: red; */
@@ -445,7 +453,7 @@
             }
 
             .features div{
-                font-size: .5rem;
+                font-size: 1rem;
             }
 
 
@@ -453,7 +461,7 @@
 
 
 
- span{
+span{
     background: #27f060;
     border-radius: .4rem;
     font-size: 1.3rem;
